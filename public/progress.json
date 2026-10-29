@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-10-29T11:17:06.609163+00:00",
+  "phase": "Section 5 \u00b7 offline synthesis and verification",
+  "source_digest": "c4f67d74576a145e289dbdb742f9a2b6b34bef17d48aaa97e436bc30dff0cf9d",
+  "tests": {
+    "total": 30,
+    "passed": 30,
+    "failed": 0,
+    "skipped": 0,
+    "verified_at": "2026-10-29T11:16:12.019375+00:00",
+    "source_digest": "c4f67d74576a145e289dbdb742f9a2b6b34bef17d48aaa97e436bc30dff0cf9d",
+    "scope": "Offline fixtures and deterministic checks; no genuine model inference"
+  },
+  "sections": [
+    {
+      "number": 1,
+      "name": "1. Project identity",
+      "status": "Defined; deliverables open",
+      "evidence": "`project-identity.md`; remote repository, hosted demo and research remain pending"
+    },
+    {
+      "number": 2,
+      "name": "2. Research foundation",
+      "status": "Reviewed",
+      "evidence": "`research-foundation.md`; no reproduced research claims"
+    },
+    {
+      "number": 3,
+      "name": "3. Technical architecture",
+      "status": "Decided; modules in progress",
+      "evidence": "`architecture.md`; official package installed and inspected"
+    },
+    {
+      "number": 4,
+      "name": "4. Real RLM engine",
+      "status": "Offline integration verified; real-model gate open",
+      "evidence": "Indexed context, artifact protocol, pre-dispatch reservations and official runtime tested with scripted HTTP responses; owner selected offline implementation/testing"
+    },
+    {
+      "number": 5,
+      "name": "5. Application synthesis",
+      "status": "Offline core in progress",
+      "evidence": "Task graph, durable artifacts, source checks, provenance coverage and a tested bounded-repair coordinator implemented; full compilation, functional tests and model-backed repair remain open"
+    },
+    {
+      "number": 6,
+      "name": "6. Studio",
+      "status": "Partial prior work",
+      "evidence": "CPU replay UI only; full requested pages and generated app preview remain open"
+    },
+    {
+      "number": 7,
+      "name": "7. Live/replay modes",
+      "status": "Partial prior work",
+      "evidence": "Replay works; genuine live run pending"
+    },
+    {
+      "number": 8,
+      "name": "8. Evaluation harness",
+      "status": "Pending",
+      "evidence": "No baseline implementations or model measurements"
+    },
+    {
+      "number": 9,
+      "name": "9. Tracing",
+      "status": "Partial prior work",
+      "evidence": "CPU events only; full schema and real-model trace pending"
+    },
+    {
+      "number": 10,
+      "name": "10. Security/reliability",
+      "status": "Partial prior work",
+      "evidence": "Replay boundaries tested; isolated execution pending"
+    },
+    {
+      "number": 11,
+      "name": "11. Example applications",
+      "status": "Pending",
+      "evidence": "None generated through model pipeline"
+    },
+    {
+      "number": 12,
+      "name": "12. Repository structure",
+      "status": "Partial",
+      "evidence": "Existing useful modules only; final organization/license/CI pending"
+    },
+    {
+      "number": 13,
+      "name": "13. Engineering strategy",
+      "status": "Partial",
+      "evidence": "AGENTS exists; real-model vertical slice pending"
+    },
+    {
+      "number": 14,
+      "name": "14. Priority gates",
+      "status": "P0 open",
+      "evidence": "Do not expand frontend or large benchmarks yet"
+    },
+    {
+      "number": 15,
+      "name": "15. Deployment/portfolio",
+      "status": "Publishing development preview",
+      "evidence": "Owner authorized publication October 29; CPU replay Space and portfolio integration are being validated"
+    },
+    {
+      "number": 16,
+      "name": "16. Documentation",
+      "status": "Partial",
+      "evidence": "Honest README and setup; final complete guide pending"
+    },
+    {
+      "number": 17,
+      "name": "17. Definition of done",
+      "status": "Not satisfied",
+      "evidence": "Genuine RLM and research evidence missing"
+    },
+    {
+      "number": 18,
+      "name": "18. Final handoff",
+      "status": "Pending",
+      "evidence": "Only interim evidence may be reported"
+    },
+    {
+      "number": 19,
+      "name": "19. Operating rules",
+      "status": "Applied throughout",
+      "evidence": "No fabricated evidence or paid provisioning"
+    },
+    {
+      "number": 20,
+      "name": "20. Implementation sequence",
+      "status": "Step 1 verified; step 2 offline integration passes",
+      "evidence": "Smallest real model-backed route remains current gate"
+    },
+    {
+      "number": 21,
+      "name": "21. Compute optimization",
+      "status": "Partial prior work",
+      "evidence": "CPU/Drive batch tooling; actual Colab and model/GPU resume unverified"
+    }
+  ],
+  "mode": "public-development-preview",
+  "live_inference": false,
+  "notice": "Auto-refresh shows the latest published release. This is development progress, not live model inference.",
+  "links": {
+    "source": "https://github.com/jacobhroutzong/recursa",
+    "portfolio": "https://jacobroutzong.dev/projects/recursa/",
+    "space": "https://huggingface.co/spaces/jacobroutzong/recursa"
+  }
+}

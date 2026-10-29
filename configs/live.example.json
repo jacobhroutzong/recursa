@@ -1,0 +1,25 @@
+{
+  "name": "authorized-small-live",
+  "mode": "live",
+  "spec": "examples/specs/tasks.json",
+  "trials": 1,
+  "trusted_local_execution": false,
+  "models": {"root": "configure-root-model", "sub": "configure-sub-model"},
+  "provider": {"base_url": "http://127.0.0.1:8000/v1", "api_key_env": "RECURSA_API_KEY"},
+  "rates": {
+    "configure-root-model": {"input_per_million": 0, "output_per_million": 0},
+    "configure-sub-model": {"input_per_million": 0, "output_per_million": 0}
+  },
+  "max_iterations": 4,
+  "per_call_output_tokens": 2048,
+  "budget": {
+    "max_wall_seconds": 120,
+    "max_calls": 4,
+    "max_cost_usd": 0.05,
+    "max_output_tokens": 8192,
+    "max_input_bytes": 100000,
+    "max_depth": 1,
+    "max_concurrency": 1,
+    "max_repairs": 0
+  }
+}

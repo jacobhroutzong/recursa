@@ -1,0 +1,13 @@
+# Section 5 — offline synthesis foundation
+
+The section 4 adapter now exposes section 5's task tools: `set_task_plan`, `begin_task`, `submit_task_output` and `read_contracts`. The root selects decomposition, and deterministic checks enforce valid IDs, known requirement references, acyclic dependencies and start ordering. Pending tasks may be refined; started task history cannot be rewritten. A submitted artifact must remain within its task's requirement scope and cannot overwrite another task's output. Intermediate source and a task graph snapshot are persisted. Declared interfaces can be retrieved without copying source.
+
+Final output can reference registered artifact paths, avoiding a second copy of the generated source in the root answer. Inline final manifests must match registered hashes. Source paths, provenance and metadata are validated before host writes. After that validation, the verification stage performs non-executing source checks and emits `reports/verification.json` and `reports/coverage.json`.
+
+JavaScript is parsed with `node --check` over standard input; no generated file is executed and package scripts are never run. Inherited Node preload settings are removed. Inline HTML scripts can be checked; external scripts are recorded as not run, without fetching them. Strict JSON rejects nonstandard NaN/Infinity values. Timeouts are failures, and missing tools/source types are explicitly not checked. Node parsing does not resolve imports or demonstrate browser compatibility. HTML parsing is permissive, not standards validation.
+
+Requirement coverage maps declared artifact references back to stable requirement IDs. This is provenance coverage only. Requirement satisfaction, build success, functional success, unit tests and E2E outcomes remain null until independently measured. Syntax success never implies a working application.
+
+The offline integration fixture exercises the source-manifest and report-writing path. Its TypeScript source is deliberately reported as not checked because no pinned compiler is installed. Separate tests parse actual JavaScript with Node, reject invalid syntax, and verify that a source payload containing a filesystem write is never executed by the syntax checker.
+
+Still required in order: independently typechecked shared interfaces, application assembly behavior, pinned compilation/build tooling, independently checkable application tests, and bounded repair. The owner requested offline-first work, so real-model generation evidence remains pending from section 4; it is not silently replaced by fixture output. P0 remains open, and frontend expansion/large experiments remain deferred.

@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "id": "723b49beeca86479-trial-001",
+  "label": "Task management · CPU check",
+  "mode": "deterministic-smoke",
+  "status": "completed",
+  "created_at": "2026-10-28T22:33:28.919596+00:00",
+  "spec": {
+    "name": "Task management",
+    "description": "A local productivity app with persistent tasks and deterministic acceptance criteria.",
+    "requirements": [
+      {
+        "id": "TASK-01",
+        "text": "Create a task with a required title. Reject blank titles.",
+        "acceptance": "Submitting a blank title shows an error and does not add a task."
+      },
+      {
+        "id": "TASK-02",
+        "text": "Toggle a task between active and complete.",
+        "depends_on": [
+          "TASK-01"
+        ],
+        "acceptance": "Toggling twice restores the initial status."
+      },
+      {
+        "id": "TASK-03",
+        "text": "Filter tasks by status and title substring.",
+        "depends_on": [
+          "TASK-02"
+        ],
+        "acceptance": "Completed filter excludes active tasks and combines with text search."
+      },
+      {
+        "id": "TASK-04",
+        "text": "Persist tasks across reloads using local storage.",
+        "depends_on": [
+          "TASK-01"
+        ],
+        "acceptance": "Reload restores titles and completion state."
+      },
+      {
+        "id": "TASK-05",
+        "text": "Provide keyboard-accessible labeled controls and an empty state.",
+        "depends_on": [
+          "TASK-03"
+        ],
+        "acceptance": "All task actions are reachable by Tab and empty filters explain the state."
+      }
+    ]
+  },
+  "events": [
+    {
+      "id": "load",
+      "parent_id": null,
+      "type": "context",
+      "label": "Load external specification",
+      "status": "completed",
+      "details": {
+        "sha256": "ef4ae7dc8f859e6aeb096e7302a2ee975fc74c2e5d3f65adf5fe04bcb2ae6f68",
+        "bytes": 1051
+      }
+    },
+    {
+      "id": "validate",
+      "parent_id": "load",
+      "type": "validation",
+      "label": "Validate requirements and dependencies",
+      "status": "completed",
+      "details": {
+        "requirement_order": [
+          "TASK-01",
+          "TASK-02",
+          "TASK-04",
+          "TASK-03",
+          "TASK-05"
+        ],
+        "spec_sha256": "ef4ae7dc8f859e6aeb096e7302a2ee975fc74c2e5d3f65adf5fe04bcb2ae6f68",
+        "checks": {
+          "unique_ids": true,
+          "dependency_references": true,
+          "acyclic": true
+        },
+        "limitation": "Specification validation only; no application generation or model inference."
+      }
+    },
+    {
+      "id": "export",
+      "parent_id": "validate",
+      "type": "artifact",
+      "label": "Export validation report",
+      "status": "completed",
+      "details": {
+        "path": "validation.json"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "validation.json",
+      "content": "{\n  \"requirement_order\": [\n    \"TASK-01\",\n    \"TASK-02\",\n    \"TASK-04\",\n    \"TASK-03\",\n    \"TASK-05\"\n  ],\n  \"spec_sha256\": \"ef4ae7dc8f859e6aeb096e7302a2ee975fc74c2e5d3f65adf5fe04bcb2ae6f68\",\n  \"checks\": {\n    \"unique_ids\": true,\n    \"dependency_references\": true,\n    \"acyclic\": true\n  },\n  \"limitation\": \"Specification validation only; no application generation or model inference.\"\n}",
+      "requirements": [
+        "TASK-01",
+        "TASK-02",
+        "TASK-04",
+        "TASK-03",
+        "TASK-05"
+      ]
+    }
+  ],
+  "metrics": {
+    "duration_ms": 0.209,
+    "model_calls": 0,
+    "cost_usd": 0,
+    "requirements": 5,
+    "functional_success": null,
+    "requirement_satisfaction": null
+  },
+  "provenance": {
+    "batch_fingerprint": "723b49beeca86479",
+    "trial": "trial-001"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "Task management",
+  "description": "A local productivity app with persistent tasks and deterministic acceptance criteria.",
+  "requirements": [
+    {"id": "TASK-01", "text": "Create a task with a required title. Reject blank titles.", "acceptance": "Submitting a blank title shows an error and does not add a task."},
+    {"id": "TASK-02", "text": "Toggle a task between active and complete.", "depends_on": ["TASK-01"], "acceptance": "Toggling twice restores the initial status."},
+    {"id": "TASK-03", "text": "Filter tasks by status and title substring.", "depends_on": ["TASK-02"], "acceptance": "Completed filter excludes active tasks and combines with text search."},
+    {"id": "TASK-04", "text": "Persist tasks across reloads using local storage.", "depends_on": ["TASK-01"], "acceptance": "Reload restores titles and completion state."},
+    {"id": "TASK-05", "text": "Provide keyboard-accessible labeled controls and an empty state.", "depends_on": ["TASK-03"], "acceptance": "All task actions are reachable by Tab and empty filters explain the state."}
+  ]
+}

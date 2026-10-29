@@ -1,0 +1,15 @@
+{
+  "name": "local-cpu-smoke",
+  "mode": "smoke",
+  "spec": "examples/specs/tasks.json",
+  "trials": 1,
+  "budget": {
+    "max_wall_seconds": 60,
+    "max_calls": 0,
+    "max_cost_usd": 0,
+    "max_output_tokens": 0,
+    "max_depth": 0,
+    "max_concurrency": 1,
+    "max_repairs": 0
+  }
+}
