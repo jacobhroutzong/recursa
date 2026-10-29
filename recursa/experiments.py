@@ -49,7 +49,7 @@ def fingerprint(config: dict, spec: dict) -> str:
     """Source digest invalidates checkpoints even for uncommitted code changes."""
     digest = hashlib.sha256(json.dumps([config, spec], sort_keys=True).encode())
     digest.update(sys.version.encode())
-    for name in ("pyproject.toml", "requirements-live.lock"):
+    for name in ("pyproject.toml", "requirements-live.lock", "tooling/typecheck/package.json", "tooling/typecheck/package-lock.json"):
         path = ROOT / name
         if path.exists():
             digest.update(name.encode())

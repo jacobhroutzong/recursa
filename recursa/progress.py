@@ -12,7 +12,7 @@ def source_digest():
     files = []
     for folder in ("recursa", "tests", "scripts", "apps/studio"):
         files.extend(p for p in (ROOT / folder).rglob("*") if p.is_file() and p.suffix in {".py", ".html", ".ps1"} and "__pycache__" not in p.parts)
-    files.extend(ROOT / name for name in ("requirements-live.lock", "pyproject.toml"))
+    files.extend(ROOT / name for name in ("requirements-live.lock", "pyproject.toml", "tooling/typecheck/package.json", "tooling/typecheck/package-lock.json"))
     for path in sorted(files):
         if path.exists():
             digest.update(path.relative_to(ROOT).as_posix().encode())

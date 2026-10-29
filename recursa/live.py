@@ -200,7 +200,8 @@ def run_live(spec, output_dir, config, authorize_live=False):
             remaining = config["budget"]["max_wall_seconds"] - (time.perf_counter() - started)
             if remaining <= 0:
                 budget._stop("Wall time exhausted before source checks")
-            run["verification"] = check_sources(run["artifacts"], max_seconds=min(15, remaining))
+            run["verification"] = check_sources(run["artifacts"], max_seconds=min(15, remaining),
+                typescript_directory=config.get("typescript_compiler_directory"), scratch_directory=directory / "private/typecheck")
             run["coverage"] = declared_coverage(index.spec, run["artifacts"])
             atomic_json(directory / "reports/verification.json", run["verification"])
             atomic_json(directory / "reports/coverage.json", run["coverage"])
@@ -211,7 +212,7 @@ def run_live(spec, output_dir, config, authorize_live=False):
             has_read = any(e["type"] == "context" for e in run["events"])
             has_subcall = any(e["type"] == "subcall" and e["status"] == "completed" for e in run["events"])
             complete_plan = bool(graph.tasks) and all(t["status"] == "produced" for t in graph.tasks.values())
-            run["status"] = ("verification-failed" if run["verification"]["status"] == "syntax-failed" else
+            run["status"] = ("verification-failed" if any(c["status"] in {"failed", "timeout"} for c in run["verification"]["checks"]) else
                              "completed" if has_read and has_subcall and complete_plan else "incomplete-evidence")
             record("artifact", "Validate source manifest", {"paths": [a["path"] for a in run["artifacts"]],
                    "indexed_inspection": has_read, "subcall_observed": has_subcall,

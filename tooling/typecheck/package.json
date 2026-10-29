@@ -1,0 +1,7 @@
+{
+  "name": "recursa-offline-typecheck",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pinned optional compiler for non-executing source verification",
+  "dependencies": {"typescript": "5.9.3"}
+}

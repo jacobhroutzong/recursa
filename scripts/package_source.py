@@ -11,7 +11,7 @@ def package(target):
             for path in sorted((ROOT / folder).rglob("*")):
                 if path.is_file() and path.suffix in {".py", ".ps1", ".json", ".html", ".md", ".ipynb"} and "__pycache__" not in path.parts:
                     archive.write(path, "recursa/" + path.relative_to(ROOT).as_posix())
-        for name in ("pyproject.toml", "requirements-live.lock", "README.md", "AGENTS.md"):
+        for name in ("pyproject.toml", "requirements-live.lock", "README.md", "AGENTS.md", "tooling/typecheck/package.json", "tooling/typecheck/package-lock.json"):
             path = ROOT / name
             if path.exists():
                 archive.write(path, "recursa/" + name)

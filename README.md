@@ -15,7 +15,7 @@ Implementation follows the [ordered 1–21 progress record](docs/implementation-
 
 ![Recursa Studio showing a recorded CPU validation](docs/screenshots/studio.png)
 
-Development preview: [Recursa Studio on Hugging Face](https://huggingface.co/spaces/jacobroutzong/recursa) · [Portfolio project](https://jacobroutzong.dev/projects/recursa/) · [Source](https://github.com/jacobhroutzong/recursa). Publication is being verified; the ordered progress record states the exact deployment status. The public demo is replay-only. Build progress refreshes every 15 seconds and changes after a release is published, not with each private engineering action.
+Published development preview: [Recursa Studio on Hugging Face](https://huggingface.co/spaces/jacobroutzong/recursa) · [Portfolio project](https://jacobroutzong.dev/projects/recursa/) · [Source](https://github.com/jacobhroutzong/recursa). Production page, embed, fallback and internal portfolio links were verified in the browser. The public demo is replay-only. Build progress refreshes every 15 seconds and changes after a release is published, not with each private engineering action.
 
 ## Run locally
 
@@ -55,6 +55,8 @@ python -m unittest discover -s tests -v
 Tests cover dependency errors, actual CPU execution/export/resume, fingerprint invalidation, timeout checkpoint handling, invalid budgets and path traversal. The HTTP service exposes replay data only. Imported source is displayed as inert text, never executed. `--host 0.0.0.0` is intended only for replay deployment.
 
 For optional official-runtime offline tests, create an isolated Python 3.11+ environment and install `requirements-live.lock`, then run the same test command from that environment. These tests intercept model HTTP traffic with scripted responses and contact no inference provider. See [runtime verification](docs/runtime-verification.md). Without these dependencies, runtime integration cases are skipped. On Windows, `.venv/Scripts/python.exe -m unittest discover -s tests -v` uses the prepared environment. Node.js enables non-executing JavaScript syntax checks; TypeScript/build/browser tests are reported unmeasured until configured. The batch CLI continues to reject genuine live inference under the owner's offline-first instruction.
+
+Optional TypeScript verification uses `npm ci --ignore-scripts --prefix tooling/typecheck` and the pinned TypeScript 5.9.3 package. Pass its `node_modules/typescript` directory to `check_sources(..., typescript_directory=...)`, or set the local adapter's `typescript_compiler_directory`. See [the verification boundaries](docs/typechecking.md). The latest release suite passed 33 offline tests with no skips. Full production-app build and functional browser tests remain unmeasured.
 
 ## Deployment preparation
 

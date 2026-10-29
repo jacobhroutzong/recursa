@@ -1,4 +1,4 @@
-# Portfolio integration brief — not published
+# Portfolio integration — development preview
 
 **Project:** Recursa — Recursive Application Synthesis  
 **Category:** AI Systems / Inference Research
@@ -7,6 +7,8 @@ Current truthful summary: A CPU-first experiment and replay workbench for applic
 
 Target summary after genuine inference is verified: An experimental Recursive Language Model system that programmatically explores large specifications, generates typed web applications, and visualizes recursive inference and validation.
 
-Add a dedicated Astro page at `/projects/recursa/` using the existing portfolio repository's conventions. Link it from the homepage Selected projects and Projects listing. Embed the approved CPU replay Space with a full-screen fallback, and include verified source/demo URLs only after creation. Capture a real Studio screenshot and explain the distinction between deterministic validation and model-backed execution. Do not advertise benchmark superiority or generated apps without evidence.
+The dedicated Astro page at `/projects/recursa/` follows the existing Markdown project-content convention. The shared Selected projects list puts Recursa on the homepage and Projects listing. The page embeds the CPU replay Space, includes a full-screen fallback and actual Studio capture, and explicitly separates deterministic checks and scripted integration fixtures from genuine model evidence. It makes no benchmark-superiority claims.
 
-Prepared assets: Studio, replay-only Dockerfile, CPU validation capture and reproducible Colab notebook. No existing portfolio repository files were modified, and no hosting was provisioned.
+Portfolio change: https://github.com/jacobhroutzong/portfolio-website/pull/6, merged October 29, 2026. The latest main activity snapshot was incorporated without force-pushing. Local lint, Astro validation, 97 Node tests, 20 Vitest tests, 319 Python reference checks, 150 randomized comparisons, production build/link checking and Worker function compilation passed. GitHub verification and Docker checks passed, as did Cloudflare Pages preview. The separate pre-existing Workers build failed on both unchanged main and this branch; its infrastructure was not modified.
+
+The owner authorized publication. Source: https://github.com/jacobhroutzong/recursa. Space: https://huggingface.co/spaces/jacobroutzong/recursa. The production page, actual embedded Studio, full-screen fallback and Recursa links on both the homepage and Projects listing were verified in the in-app browser on October 29. A direct scripted HTTP request received 403, while normal browser navigation displayed the deployed content. Colab remains prepared but untested in an authenticated session.

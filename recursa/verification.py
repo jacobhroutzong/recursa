@@ -50,7 +50,7 @@ def _reject_constant(value):
     raise ValueError("Nonstandard JSON constant")
 
 
-def check_sources(artifacts, max_seconds=15, node_executable=None):
+def check_sources(artifacts, max_seconds=15, node_executable=None, typescript_directory=None, scratch_directory=None):
     if type(max_seconds) not in (int, float) or not 0 < max_seconds <= 300:
         raise ValueError("Static verification needs a finite timeout up to 300 seconds")
     started = time.monotonic()
@@ -109,14 +109,27 @@ def check_sources(artifacts, max_seconds=15, node_executable=None):
                     js_check(label, script["source"], module=script["type"] == "module")
             if not collector.scripts:
                 checks.append({"path": path, "kind": "html-functional-validation", "status": "not-run"})
+        elif suffix in {".ts", ".tsx"} and typescript_directory is not None:
+            pass
         else:
             checks.append({"path": path, "kind": "source-validation", "status": "not-run",
                            "diagnostic": "No pinned typechecker/linter configured for this source type"})
+    type_result = None
+    if typescript_directory is not None and any(Path(a["path"]).suffix in {".ts", ".tsx"} for a in artifacts):
+        from recursa.typecheck import check_types
+        remaining = max_seconds - (time.monotonic() - started)
+        if remaining > 0:
+            type_result = check_types(artifacts, typescript_directory, max_seconds=remaining, scratch_directory=scratch_directory)
+            checks.extend(type_result["checks"])
+        else:
+            type_result = {"typecheck_success": False}
+            checks.extend({"path": a["path"], "kind": "typescript", "status": "timeout"} for a in artifacts if Path(a["path"]).suffix in {".ts", ".tsx"})
     failures = any(c["status"] in {"failed", "timeout"} for c in checks)
-    return {"status": "syntax-failed" if failures else "syntax-passed" if any(c["status"] == "passed" for c in checks) else "not-checked",
+    category = "static" if type_result is not None else "syntax"
+    return {"status": category + "-failed" if failures else category + "-passed" if any(c["status"] == "passed" for c in checks) else "not-checked",
             "checks": checks, "duration_ms": round((time.monotonic() - started) * 1000, 3),
             "tool": {"javascript": Path(node).name if node else None},
-            "build_success": None, "typecheck_success": None, "functional_success": None,
+            "build_success": None, "typecheck_success": type_result["typecheck_success"] if type_result else None, "functional_success": None,
             "unit_test_pass_rate": None, "end_to_end_pass_rate": None,
-            "limitations": ["Syntax only; no imports resolved, dependencies installed, build or generated application executed.",
+            "limitations": ["Static source checks only; no dependencies installed, production build or generated application executed.",
                             "HTML parsing is permissive; classic scripts use Node CommonJS syntax rules, which differ from browser script rules."]}

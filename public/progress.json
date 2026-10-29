@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-29T11:17:06.609163+00:00",
+  "updated_at": "2026-10-29T23:08:09.332887+00:00",
   "phase": "Section 5 \u00b7 offline synthesis and verification",
-  "source_digest": "c4f67d74576a145e289dbdb742f9a2b6b34bef17d48aaa97e436bc30dff0cf9d",
+  "source_digest": "755703add11faf6df46e6edcb726a54f663bdddb9280604b67a0f19c40e846ed",
   "tests": {
-    "total": 30,
-    "passed": 30,
+    "total": 33,
+    "passed": 33,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-10-29T11:16:12.019375+00:00",
-    "source_digest": "c4f67d74576a145e289dbdb742f9a2b6b34bef17d48aaa97e436bc30dff0cf9d",
+    "verified_at": "2026-10-29T23:07:14.217514+00:00",
+    "source_digest": "755703add11faf6df46e6edcb726a54f663bdddb9280604b67a0f19c40e846ed",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -17,7 +17,7 @@
       "number": 1,
       "name": "1. Project identity",
       "status": "Defined; deliverables open",
-      "evidence": "`project-identity.md`; remote repository, hosted demo and research remain pending"
+      "evidence": "Dedicated GitHub source and CPU replay Space published; genuine applications and research remain pending"
     },
     {
       "number": 2,
@@ -41,7 +41,7 @@
       "number": 5,
       "name": "5. Application synthesis",
       "status": "Offline core in progress",
-      "evidence": "Task graph, durable artifacts, source checks, provenance coverage and a tested bounded-repair coordinator implemented; full compilation, functional tests and model-backed repair remain open"
+      "evidence": "Task graph, durable artifacts, optional pinned TypeScript checks and bounded repair tested; production builds, functional app tests and model-backed repair remain open"
     },
     {
       "number": 6,
@@ -100,8 +100,8 @@
     {
       "number": 15,
       "name": "15. Deployment/portfolio",
-      "status": "Publishing development preview",
-      "evidence": "Owner authorized publication October 29; CPU replay Space and portfolio integration are being validated"
+      "status": "Development preview published and verified",
+      "evidence": "GitHub source, CPU Basic Space, production project page, embedded Studio, full-screen fallback and homepage/Projects links verified; full research demonstration remains unfinished"
     },
     {
       "number": 16,

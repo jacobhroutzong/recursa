@@ -4,11 +4,11 @@ Process correction: earlier work implemented portions of sections 6, 9 and 21 be
 
 | Section | Status | Evidence / remaining gate |
 | --- | --- | --- |
-| 1. Project identity | Defined; deliverables open | `project-identity.md`; remote repository, hosted demo and research remain pending |
+| 1. Project identity | Defined; deliverables open | Dedicated GitHub source and CPU replay Space published; genuine applications and research remain pending |
 | 2. Research foundation | Reviewed | `research-foundation.md`; no reproduced research claims |
 | 3. Technical architecture | Decided; modules in progress | `architecture.md`; official package installed and inspected |
 | 4. Real RLM engine | Offline integration verified; real-model gate open | Indexed context, artifact protocol, pre-dispatch reservations and official runtime tested with scripted HTTP responses; owner selected offline implementation/testing |
-| 5. Application synthesis | Offline core in progress | Task graph, durable artifacts, source checks, provenance coverage and a tested bounded-repair coordinator implemented; full compilation, functional tests and model-backed repair remain open |
+| 5. Application synthesis | Offline core in progress | Task graph, durable artifacts, optional pinned TypeScript checks and bounded repair tested; production builds, functional app tests and model-backed repair remain open |
 | 6. Studio | Partial prior work | CPU replay UI only; full requested pages and generated app preview remain open |
 | 7. Live/replay modes | Partial prior work | Replay works; genuine live run pending |
 | 8. Evaluation harness | Pending | No baseline implementations or model measurements |
@@ -18,7 +18,7 @@ Process correction: earlier work implemented portions of sections 6, 9 and 21 be
 | 12. Repository structure | Partial | Existing useful modules only; final organization/license/CI pending |
 | 13. Engineering strategy | Partial | AGENTS exists; real-model vertical slice pending |
 | 14. Priority gates | P0 open | Do not expand frontend or large benchmarks yet |
-| 15. Deployment/portfolio | Publishing development preview | Owner authorized publication October 29; CPU replay Space and portfolio integration are being validated |
+| 15. Deployment/portfolio | Development preview published and verified | GitHub source, CPU Basic Space, production project page, embedded Studio, full-screen fallback and homepage/Projects links verified; full research demonstration remains unfinished |
 | 16. Documentation | Partial | Honest README and setup; final complete guide pending |
 | 17. Definition of done | Not satisfied | Genuine RLM and research evidence missing |
 | 18. Final handoff | Pending | Only interim evidence may be reported |
