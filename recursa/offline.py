@@ -25,11 +25,15 @@ def main():
     if args.output.exists():
         parser.error('Use a fresh output directory to preserve earlier evidence')
     spec, artifacts, scenarios = fixture()
+    unit_cases = json.loads((ROOT / 'examples/fixtures/task-app/unit-cases.json').read_text(encoding='utf-8'))
     result = verify_application(spec, artifacts, args.output, scenarios=scenarios,
-                               typescript_directory=ROOT / 'tooling/typecheck/node_modules/typescript')
+                               typescript_directory=ROOT / 'tooling/typecheck/node_modules/typescript', unit_cases=unit_cases)
     print(json.dumps({'provenance': 'human-authored engineering fixture; no model inference',
                       'status': result['status'], 'build_success': result['verification']['build_success'],
                       'functional_success': result['verification']['functional_success'],
+                      'lint_success': result['verification']['lint_success'],
+                      'unit_test_pass_rate': result['verification']['unit_test_pass_rate'],
+                      'accessibility_success': result['verification']['accessibility_success'],
                       'report': str(args.output.resolve() / 'application-report.json')}, indent=2))
     return 0 if result['status'] == 'passed' else 1
 

@@ -3,6 +3,7 @@ import {createServer} from 'node:http';
 import {readFile, realpath, stat} from 'node:fs/promises';
 import path from 'node:path';
 import {createRequire} from 'node:module';
+import {auditAccessibility} from './audit_accessibility.mjs';
 const require = createRequire(import.meta.url);
 let input='';
 for await (const chunk of process.stdin) {
@@ -61,6 +62,12 @@ try {
       for(const step of scenario.steps) {
         if(timedOut)throw Error('DeadlineExceeded');
         if(step.action==='reload')await page.reload({waitUntil:'load'});
+        else if(step.action==='audit_accessibility') {
+          const audit=await page.evaluate(auditAccessibility);
+          row.accessibility_audits ||= [];
+          row.accessibility_audits.push(audit);
+          if(!audit.passed)throw Error('BasicAccessibilityAuditFailed');
+        }
         else {
           const target=step.target;
           const locator=target.test_id!==undefined?page.getByTestId(target.test_id):page.getByRole(target.role,target.name!==undefined?{name:target.name,exact:true}:{});

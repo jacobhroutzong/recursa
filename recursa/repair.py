@@ -143,9 +143,9 @@ def repair_artifacts(artifacts, requirement_ids, verification, repair_callback, 
             return finish("verification-error")
         if not _has_failures(next_report):
             # A missing checker cannot turn a failed check into a verified repair.
-            required = {(c.get("path"), c.get("kind")) for c in measured["checks"]
+            required = {(c.get("path"), c.get("kind"), c.get("scenario_id")) for c in measured["checks"]
                         if c.get("status") in FAILURES}
-            passed = {(c.get("path"), c.get("kind")) for c in next_report["checks"]
+            passed = {(c.get("path"), c.get("kind"), c.get("scenario_id")) for c in next_report["checks"]
                       if c.get("status") == "passed"}
             if not required.issubset(passed):
                 attempt["status"] = "verification-incomplete"

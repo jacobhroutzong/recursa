@@ -71,6 +71,17 @@ class RepairTests(unittest.TestCase):
         self.assertEqual(result["status"], "verification-error")
         self.assertNotIn("private diagnostics", str(result["attempts"]))
 
+    def test_each_failed_scenario_must_be_rechecked(self):
+        failure = {'status': 'failed', 'checks': [
+            {'path': 'main.js', 'kind': 'browser', 'scenario_id': key, 'status': 'failed'} for key in ('one', 'two')]}
+        artifacts = [{'path': 'main.js', 'content': 'const x = 1;', 'requirements': ['R1']}]
+        result = repair_artifacts(artifacts, {'R1'}, failure,
+            lambda _: {'artifacts': [dict(artifacts[0], content='const x = 2;')]},
+            lambda _: {'status': 'passed', 'checks': [
+                {'path': 'main.js', 'kind': 'browser', 'scenario_id': 'one', 'status': 'passed'}]})
+        self.assertEqual(result['status'], 'verification-incomplete')
+        self.assertEqual(result['artifacts'][0]['content'], 'const x = 1;')
+
     def test_context_budget_and_callback_failure_stop_safely(self):
         artifacts = [dict(self.artifacts[0], content="x" * 4000)]
         result = repair_artifacts(artifacts, {"R1"}, self.failure, lambda c: self.fail("must not call"), lambda a: self.failure, max_context_chars=1024)

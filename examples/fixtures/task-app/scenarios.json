@@ -1,45 +1,311 @@
 [
-  {"id":"required-title","requirements":["TASK-01"],"source_path":"src/main.ts","steps":[
-    {"action":"click","target":{"role":"button","name":"Add task"}},
-    {"action":"expect_text","target":{"role":"alert"},"value":"Enter a task title."},
-    {"action":"expect_count","target":{"role":"checkbox"},"count":0},
-    {"action":"fill","target":{"role":"textbox","name":"Task title"},"value":"Write notes"},
-    {"action":"click","target":{"role":"button","name":"Add task"}},
-    {"action":"expect_text","target":{"test_id":"task-list"},"value":"Write notes"}
-  ]},
-  {"id":"toggle-and-persist","requirements":["TASK-02","TASK-04"],"source_path":"src/main.ts","steps":[
-    {"action":"fill","target":{"role":"textbox","name":"Task title"},"value":"Persistent task"},
-    {"action":"click","target":{"role":"button","name":"Add task"}},
-    {"action":"click","target":{"role":"checkbox","name":"Complete Persistent task"}},
-    {"action":"expect_checked","target":{"role":"checkbox","name":"Complete Persistent task"},"checked":true},
-    {"action":"reload"},
-    {"action":"expect_checked","target":{"role":"checkbox","name":"Complete Persistent task"},"checked":true},
-    {"action":"click","target":{"role":"checkbox","name":"Complete Persistent task"}},
-    {"action":"expect_checked","target":{"role":"checkbox","name":"Complete Persistent task"},"checked":false}
-  ]},
-  {"id":"combined-filters","requirements":["TASK-03","TASK-05"],"source_path":"src/main.ts","steps":[
-    {"action":"fill","target":{"role":"textbox","name":"Task title"},"value":"Alpha"},
-    {"action":"click","target":{"role":"button","name":"Add task"}},
-    {"action":"click","target":{"role":"checkbox","name":"Complete Alpha"}},
-    {"action":"fill","target":{"role":"textbox","name":"Task title"},"value":"Beta"},
-    {"action":"click","target":{"role":"button","name":"Add task"}},
-    {"action":"select","target":{"role":"combobox","name":"Status filter"},"value":"completed"},
-    {"action":"expect_count","target":{"role":"checkbox"},"count":1},
-    {"action":"expect_visible","target":{"role":"checkbox","name":"Complete Alpha"}},
-    {"action":"fill","target":{"role":"searchbox","name":"Search tasks"},"value":"Beta"},
-    {"action":"expect_count","target":{"role":"checkbox"},"count":0},
-    {"action":"expect_text","target":{"test_id":"task-list"},"value":"No tasks match your filters."}
-  ]},
-  {"id":"keyboard-mobile-navigation","requirements":["TASK-05"],"source_path":"src/main.ts","viewport":{"width":390,"height":844},"steps":[
-    {"action":"fill","target":{"role":"textbox","name":"Task title"},"value":"Keyboard task"},
-    {"action":"press","target":{"role":"textbox","name":"Task title"},"value":"Tab"},
-    {"action":"press","target":{"role":"button","name":"Add task"},"value":"Enter"},
-    {"action":"expect_visible","target":{"role":"checkbox","name":"Complete Keyboard task"}},
-    {"action":"press","target":{"role":"checkbox","name":"Complete Keyboard task"},"value":"Space"},
-    {"action":"expect_checked","target":{"role":"checkbox","name":"Complete Keyboard task"},"checked":true},
-    {"action":"click","target":{"role":"button","name":"About fixture"}},
-    {"action":"expect_visible","target":{"role":"heading","name":"About this fixture"}},
-    {"action":"click","target":{"role":"button","name":"Tasks"}},
-    {"action":"expect_visible","target":{"role":"textbox","name":"Task title"}}
-  ]}
+  {
+    "id": "required-title",
+    "requirements": [
+      "TASK-01"
+    ],
+    "source_path": "src/main.ts",
+    "steps": [
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "Add task"
+        }
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "alert"
+        },
+        "value": "Enter a task title."
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "checkbox"
+        },
+        "count": 0
+      },
+      {
+        "action": "fill",
+        "target": {
+          "role": "textbox",
+          "name": "Task title"
+        },
+        "value": "Write notes"
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "Add task"
+        }
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "test_id": "task-list"
+        },
+        "value": "Write notes"
+      },
+      {
+        "action": "audit_accessibility"
+      }
+    ]
+  },
+  {
+    "id": "toggle-and-persist",
+    "requirements": [
+      "TASK-02",
+      "TASK-04"
+    ],
+    "source_path": "src/main.ts",
+    "steps": [
+      {
+        "action": "fill",
+        "target": {
+          "role": "textbox",
+          "name": "Task title"
+        },
+        "value": "Persistent task"
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "Add task"
+        }
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "checkbox",
+          "name": "Complete Persistent task"
+        }
+      },
+      {
+        "action": "expect_checked",
+        "target": {
+          "role": "checkbox",
+          "name": "Complete Persistent task"
+        },
+        "checked": true
+      },
+      {
+        "action": "reload"
+      },
+      {
+        "action": "expect_checked",
+        "target": {
+          "role": "checkbox",
+          "name": "Complete Persistent task"
+        },
+        "checked": true
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "checkbox",
+          "name": "Complete Persistent task"
+        }
+      },
+      {
+        "action": "expect_checked",
+        "target": {
+          "role": "checkbox",
+          "name": "Complete Persistent task"
+        },
+        "checked": false
+      },
+      {
+        "action": "audit_accessibility"
+      }
+    ]
+  },
+  {
+    "id": "combined-filters",
+    "requirements": [
+      "TASK-03",
+      "TASK-05"
+    ],
+    "source_path": "src/main.ts",
+    "steps": [
+      {
+        "action": "fill",
+        "target": {
+          "role": "textbox",
+          "name": "Task title"
+        },
+        "value": "Alpha"
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "Add task"
+        }
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "checkbox",
+          "name": "Complete Alpha"
+        }
+      },
+      {
+        "action": "fill",
+        "target": {
+          "role": "textbox",
+          "name": "Task title"
+        },
+        "value": "Beta"
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "Add task"
+        }
+      },
+      {
+        "action": "select",
+        "target": {
+          "role": "combobox",
+          "name": "Status filter"
+        },
+        "value": "completed"
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "checkbox"
+        },
+        "count": 1
+      },
+      {
+        "action": "expect_visible",
+        "target": {
+          "role": "checkbox",
+          "name": "Complete Alpha"
+        }
+      },
+      {
+        "action": "fill",
+        "target": {
+          "role": "searchbox",
+          "name": "Search tasks"
+        },
+        "value": "Beta"
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "checkbox"
+        },
+        "count": 0
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "test_id": "task-list"
+        },
+        "value": "No tasks match your filters."
+      },
+      {
+        "action": "audit_accessibility"
+      }
+    ]
+  },
+  {
+    "id": "keyboard-mobile-navigation",
+    "requirements": [
+      "TASK-05"
+    ],
+    "source_path": "src/main.ts",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "steps": [
+      {
+        "action": "fill",
+        "target": {
+          "role": "textbox",
+          "name": "Task title"
+        },
+        "value": "Keyboard task"
+      },
+      {
+        "action": "press",
+        "target": {
+          "role": "textbox",
+          "name": "Task title"
+        },
+        "value": "Tab"
+      },
+      {
+        "action": "press",
+        "target": {
+          "role": "button",
+          "name": "Add task"
+        },
+        "value": "Enter"
+      },
+      {
+        "action": "expect_visible",
+        "target": {
+          "role": "checkbox",
+          "name": "Complete Keyboard task"
+        }
+      },
+      {
+        "action": "press",
+        "target": {
+          "role": "checkbox",
+          "name": "Complete Keyboard task"
+        },
+        "value": "Space"
+      },
+      {
+        "action": "expect_checked",
+        "target": {
+          "role": "checkbox",
+          "name": "Complete Keyboard task"
+        },
+        "checked": true
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "About fixture"
+        }
+      },
+      {
+        "action": "expect_visible",
+        "target": {
+          "role": "heading",
+          "name": "About this fixture"
+        }
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "Tasks"
+        }
+      },
+      {
+        "action": "expect_visible",
+        "target": {
+          "role": "textbox",
+          "name": "Task title"
+        }
+      },
+      {
+        "action": "audit_accessibility"
+      }
+    ]
+  }
 ]

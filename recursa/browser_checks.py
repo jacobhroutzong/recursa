@@ -15,7 +15,7 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION = "1.64.1"
-ACTIONS = {"fill", "click", "select", "press", "reload", "expect_text", "expect_count", "expect_visible", "expect_value", "expect_checked"}
+ACTIONS = {"fill", "click", "select", "press", "reload", "audit_accessibility", "expect_text", "expect_count", "expect_visible", "expect_value", "expect_checked"}
 ROLES = {"button", "textbox", "searchbox", "combobox", "checkbox", "heading", "list", "listitem", "alert", "status", "link", "radio", "tab", "table", "cell", "row", "navigation", "form"}
 KEYS = {"Enter", "Tab", "Space", "Escape", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"}
 
@@ -52,7 +52,7 @@ def validate_scenarios(scenarios):
             if not isinstance(step, dict) or set(step) - {"action", "target", "value", "count", "checked"} or step.get("action") not in ACTIONS:
                 raise ValueError("Unsupported declarative action")
             action = step["action"]
-            if action == "reload":
+            if action in {"reload", "audit_accessibility"}:
                 if set(step) != {"action"}:
                     raise ValueError("Reload accepts no extra fields")
                 continue

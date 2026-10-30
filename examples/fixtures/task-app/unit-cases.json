@@ -1,0 +1,8 @@
+[
+  {"id":"blank-title","module":"src/model.ts","export":"validTitle","arguments":[" \t "],"expected":false,"requirements":["TASK-01"]},
+  {"id":"trimmed-title","module":"src/model.ts","export":"validTitle","arguments":["  Notes  "],"expected":true,"requirements":["TASK-01"]},
+  {"id":"case-insensitive-search","module":"src/model.ts","export":"matchingTasks","arguments":[[{"id":"a","title":"Alpha","completed":false},{"id":"b","title":"Beta","completed":true}]," ALP ","all"],"expected":[{"id":"a","title":"Alpha","completed":false}],"requirements":["TASK-03"]},
+  {"id":"completed-filter","module":"src/model.ts","export":"matchingTasks","arguments":[[{"id":"a","title":"Alpha","completed":false},{"id":"b","title":"Beta","completed":true}],"","completed"],"expected":[{"id":"b","title":"Beta","completed":true}],"requirements":["TASK-03"]},
+  {"id":"active-filter","module":"src/model.ts","export":"matchingTasks","arguments":[[{"id":"a","title":"Alpha","completed":false},{"id":"b","title":"Beta","completed":true}],"","active"],"expected":[{"id":"a","title":"Alpha","completed":false}],"requirements":["TASK-03"]},
+  {"id":"combined-empty","module":"src/model.ts","export":"matchingTasks","arguments":[[{"id":"a","title":"Alpha","completed":false},{"id":"b","title":"Beta","completed":true}],"Alpha","completed"],"expected":[],"requirements":["TASK-03"]}
+]

@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-30T10:52:14.137567+00:00",
+  "updated_at": "2026-10-30T11:00:37.664258+00:00",
   "phase": "Section 5 \u00b7 offline synthesis and verification",
-  "source_digest": "1dfba9b34751482ef48eb5f4c508ee9f7b57c8c5a4d1957148dba4b1c9b8af75",
+  "source_digest": "7e9a9b45f1fc89cafc6ac70d23ca353f48c4f726a167a24b9288b3e1c9d59650",
   "tests": {
-    "total": 45,
-    "passed": 45,
+    "total": 53,
+    "passed": 53,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-10-30T10:51:34.975243+00:00",
-    "source_digest": "1dfba9b34751482ef48eb5f4c508ee9f7b57c8c5a4d1957148dba4b1c9b8af75",
+    "verified_at": "2026-10-30T11:00:24.308548+00:00",
+    "source_digest": "7e9a9b45f1fc89cafc6ac70d23ca353f48c4f726a167a24b9288b3e1c9d59650",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -40,8 +40,8 @@
     {
       "number": 5,
       "name": "5. Application synthesis",
-      "status": "Offline build/browser/repair lane verified; incomplete",
-      "evidence": "Actual pinned TypeScript/esbuild/Chromium checks; four human-authored task-app scenarios and a failing-behavior/scripted-repair regression pass. Linting, app unit/a11y audits, provider integration and model generation/repair remain open"
+      "status": "Offline verification lane expanded; incomplete",
+      "evidence": "Actual TypeScript, fixed AST lint, esbuild, six browser unit cases, four interaction scenarios and basic accessibility audits pass on human-authored fixtures; scripted repair rechecked. Whole-pipeline/provider budgets, broader package support and genuine model generation/repair remain open"
     },
     {
       "number": 6,
