@@ -1,0 +1,7 @@
+{
+  "name": "recursa-production-build",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pinned optional bundler for controlled application assembly",
+  "dependencies": {"esbuild": "0.28.2"}
+}

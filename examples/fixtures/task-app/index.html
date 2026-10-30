@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Task Desk · Offline fixture</title><link rel="stylesheet" href="src/style.css"></head>
+<body><main><header><p class="eyebrow">RECURSA ENGINEERING FIXTURE</p><h1>Task Desk</h1><p>Human-authored application for offline pipeline tests.</p></header>
+<nav aria-label="Application views"><button id="show-tasks" type="button" aria-pressed="true">Tasks</button><button id="show-about" type="button" aria-pressed="false">About fixture</button></nav>
+<section id="tasks-panel" aria-label="Task workspace"><form id="task-form"><label for="task-title">Task title</label><div class="input-row"><input id="task-title" name="title" autocomplete="off" aria-describedby="task-error"><button type="submit">Add task</button></div><p id="task-error" role="alert"></p></form>
+<div class="filters"><div><label for="search">Search tasks</label><input id="search" type="search"></div><div><label for="status">Status filter</label><select id="status"><option value="all">All</option><option value="active">Active</option><option value="completed">Completed</option></select></div></div>
+<p id="task-count" role="status" aria-live="polite"></p><ul id="task-list" data-testid="task-list" aria-label="Tasks"></ul></section>
+<section id="about-panel" hidden><h2>About this fixture</h2><p>These files test typed contracts, application assembly, state changes, persistence and accessible controls. No language model generated this application.</p></section>
+<footer>Offline development fixture · no inference or research claim</footer></main><script type="module" src="src/main.ts"></script></body></html>

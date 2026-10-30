@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-29T23:08:09.332887+00:00",
+  "updated_at": "2026-10-30T10:52:14.137567+00:00",
   "phase": "Section 5 \u00b7 offline synthesis and verification",
-  "source_digest": "755703add11faf6df46e6edcb726a54f663bdddb9280604b67a0f19c40e846ed",
+  "source_digest": "1dfba9b34751482ef48eb5f4c508ee9f7b57c8c5a4d1957148dba4b1c9b8af75",
   "tests": {
-    "total": 33,
-    "passed": 33,
+    "total": 45,
+    "passed": 45,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-10-29T23:07:14.217514+00:00",
-    "source_digest": "755703add11faf6df46e6edcb726a54f663bdddb9280604b67a0f19c40e846ed",
+    "verified_at": "2026-10-30T10:51:34.975243+00:00",
+    "source_digest": "1dfba9b34751482ef48eb5f4c508ee9f7b57c8c5a4d1957148dba4b1c9b8af75",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -40,8 +40,8 @@
     {
       "number": 5,
       "name": "5. Application synthesis",
-      "status": "Offline core in progress",
-      "evidence": "Task graph, durable artifacts, optional pinned TypeScript checks and bounded repair tested; production builds, functional app tests and model-backed repair remain open"
+      "status": "Offline build/browser/repair lane verified; incomplete",
+      "evidence": "Actual pinned TypeScript/esbuild/Chromium checks; four human-authored task-app scenarios and a failing-behavior/scripted-repair regression pass. Linting, app unit/a11y audits, provider integration and model generation/repair remain open"
     },
     {
       "number": 6,

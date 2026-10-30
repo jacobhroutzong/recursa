@@ -8,7 +8,7 @@ Process correction: earlier work implemented portions of sections 6, 9 and 21 be
 | 2. Research foundation | Reviewed | `research-foundation.md`; no reproduced research claims |
 | 3. Technical architecture | Decided; modules in progress | `architecture.md`; official package installed and inspected |
 | 4. Real RLM engine | Offline integration verified; real-model gate open | Indexed context, artifact protocol, pre-dispatch reservations and official runtime tested with scripted HTTP responses; owner selected offline implementation/testing |
-| 5. Application synthesis | Offline core in progress | Task graph, durable artifacts, optional pinned TypeScript checks and bounded repair tested; production builds, functional app tests and model-backed repair remain open |
+| 5. Application synthesis | Offline build/browser/repair lane verified; incomplete | Actual pinned TypeScript/esbuild/Chromium checks; four human-authored task-app scenarios and a failing-behavior/scripted-repair regression pass. Linting, app unit/a11y audits, provider integration and model generation/repair remain open |
 | 6. Studio | Partial prior work | CPU replay UI only; full requested pages and generated app preview remain open |
 | 7. Live/replay modes | Partial prior work | Replay works; genuine live run pending |
 | 8. Evaluation harness | Pending | No baseline implementations or model measurements |
@@ -26,4 +26,4 @@ Process correction: earlier work implemented portions of sections 6, 9 and 21 be
 | 20. Implementation sequence | Step 1 verified; step 2 offline integration passes | Smallest real model-backed route remains current gate |
 | 21. Compute optimization | Partial prior work | CPU/Drive batch tooling; actual Colab and model/GPU resume unverified |
 
-No section is marked fully delivered solely because a document or stub exists. The owner selected offline implementation/testing, so work progressed in order from section 4's verified offline integration into section 5's synthesis foundation. Section 4's genuine-model gate remains open; section 5's real generation, functional verification and repair remain open. Later frontend expansion and expensive experiments stay deferred until P0 is demonstrated.
+No section is marked fully delivered solely because a document or stub exists. The owner selected offline implementation/testing, so work progressed in order from section 4's verified offline integration into section 5's synthesis foundation. Section 4's genuine-model gate remains open. Section 5 has actual local build/browser verification and bounded scripted-repair evidence, but no model-generated application or model-backed repair. See `application-verification.md`. Later frontend expansion and expensive experiments stay deferred until P0 is demonstrated.

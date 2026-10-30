@@ -10,8 +10,10 @@ ROOT = Path(__file__).resolve().parents[1]
 def source_digest():
     digest = hashlib.sha256()
     files = []
-    for folder in ("recursa", "tests", "scripts", "apps/studio"):
-        files.extend(p for p in (ROOT / folder).rglob("*") if p.is_file() and p.suffix in {".py", ".html", ".ps1"} and "__pycache__" not in p.parts)
+    for folder in ("recursa", "tests", "scripts", "apps/studio", "examples/fixtures"):
+        files.extend(p for p in (ROOT / folder).rglob("*") if p.is_file() and p.suffix in {".py", ".html", ".ps1", ".mjs", ".ts", ".css", ".json"} and "__pycache__" not in p.parts)
+    for name in ("frontend", "browser"):
+        files.extend(ROOT / 'tooling' / name / file for file in ('package.json', 'package-lock.json'))
     files.extend(ROOT / name for name in ("requirements-live.lock", "pyproject.toml", "tooling/typecheck/package.json", "tooling/typecheck/package-lock.json"))
     for path in sorted(files):
         if path.exists():
