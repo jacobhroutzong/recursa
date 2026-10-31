@@ -2,6 +2,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createRequire} from 'node:module';
+import {vendorResolver} from './react_vendor.mjs';
 
 const require = createRequire(import.meta.url);
 let text = '';
@@ -12,6 +13,7 @@ if (esbuild.version !== '0.28.2') throw Error('Expected pinned esbuild 0.28.2');
 const sources = new Map(input.artifacts.map(a => [a.path, a.content]));
 const extensions = ['.ts', '.tsx', '.js', '.jsx', '.json', '.css'];
 const outdir = path.resolve('recursa-output');
+const vendor = await vendorResolver(path.resolve(process.argv[2]));
 
 function resolve(request, importer, entry) {
   if (typeof request !== 'string' || request.includes('\\') || request.includes(':') || request.includes('\0') || request.startsWith('//')) return null;
@@ -27,10 +29,13 @@ function resolve(request, importer, entry) {
 }
 
 const plugin = {name: 'validated-artifacts-only', setup(build) {
-  build.onResolve({filter: /.*/}, args => {
+  build.onResolve({filter: /.*/}, async args => {
+    const dependency=await vendor.resolve(args);
+    if(dependency)return dependency;
     const found = resolve(args.path, args.importer, args.kind === 'entry-point');
     return found ? {path: found, namespace: 'recursa'} : {errors: [{text: 'Import is missing or outside the allowed artifact set: ' + args.path}]};
   });
+  build.onLoad({filter: /.*/, namespace: 'recursa-vendor'}, args=>vendor.load(args));
   build.onLoad({filter: /.*/, namespace: 'recursa'}, args => {
     if (!sources.has(args.path)) return {errors: [{text: 'Unknown artifact'}]};
     const suffix = path.posix.extname(args.path).slice(1);
@@ -43,15 +48,19 @@ try {
   const result = await esbuild.build({entryPoints: input.entries, outdir, bundle: true,
     write: false, metafile: true, minify: true, format: 'esm', platform: 'browser',
     target: ['es2022'], logLevel: 'silent', tsconfigRaw: {compilerOptions: {}},
-    plugins: [plugin], legalComments: 'none'});
+    plugins: [plugin], legalComments: 'none', jsx:'automatic', jsxImportSource:'react',
+    define:{'process.env.NODE_ENV':'"production"'}});
+  const usesVendor=Object.keys(result.metafile.inputs).some(name=>name.startsWith('recursa-vendor:'));
+  const outputs=result.outputFiles.map(file => ({path: path.relative(outdir, file.path).split(path.sep).join('/'), content_base64: Buffer.from(file.contents).toString('base64')}));
+  if(usesVendor)outputs.push({path:'THIRD_PARTY_LICENSES.txt',content_base64:Buffer.from(await vendor.licenses()).toString('base64')});
   process.stdout.write(JSON.stringify({status: 'passed', version: esbuild.version,
-    outputs: result.outputFiles.map(file => ({path: path.relative(outdir, file.path).split(path.sep).join('/'), content_base64: Buffer.from(file.contents).toString('base64')})),
-    metadata: result.metafile,
+    outputs, metadata: result.metafile, dependencies: usesVendor?vendor.versions:{},
     warnings: result.warnings.map(w => ({text:w.text, path:w.location?.file?.replace(/^recursa:/,'') ?? '<project>'}))}));
 } catch (error) {
   const errors = (error.errors ?? [{text:'Bundler failed'}]).map(e => ({text:e.text,
     path:e.location?.file?.replace(/^recursa:/,'') ?? '<project>', line:e.location?.line ?? null}));
-  process.stdout.write(JSON.stringify({status:'failed',version:esbuild.version,errors}));
+  const unavailable=errors.some(e=>e.text==='Pinned React toolchain unavailable');
+  process.stdout.write(JSON.stringify({status:unavailable?'unavailable':'failed',version:esbuild.version,errors}));
   process.exitCode = 1;
 } finally {
   esbuild.stop();

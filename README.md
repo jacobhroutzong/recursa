@@ -62,7 +62,9 @@ For the optional one-command application check, install the pinned frontend/brow
 
 Release test counts and source hashes appear in the published progress dashboard. CPU experiment execution and checkpoint reuse are verified alongside each release.
 
-An opt-in [local container policy](docs/container-sandbox.md) now validates a pinned cached image and constrained engine settings before any source dispatch. It has no host fallback, automatic image pull or public execution route. Policy/failure tests pass; **actual container isolation is unverified because the local Linux Docker engine is not responding to readiness checks**. The verified Windows worker boundary remains a lifetime control, not a filesystem/network sandbox.
+The optional [controlled React lane](docs/react-builds.md) supports pinned React/React DOM with strict component-prop checks, a production bundle and browser hook-state tests. It parses trusted package files without running generated package scripts/configuration in Node. The counter fixture is human-authored, and its successful checks are not model-generation evidence. Built React outputs include third-party license notices.
+
+An opt-in [local container policy](docs/container-sandbox.md) validates a pinned cached image and constrained engine settings before source dispatch. It has no host fallback, automatic image pull or public execution route. After Docker became ready, five real-container probes verified narrow identity/filesystem/network controls, resource/output/time limits and cleanup. Sanitized measured evidence and immutable image identity are versioned. This is not universal sandbox assurance; the RLM adapter has not yet been integrated into this container lane.
 
 ## Deployment preparation
 

@@ -1,0 +1,8 @@
+{
+  "image_id": "sha256:ae4e8b7c575fabea88a029b6cae757f342ca2525e07f7c22272d5105c346b35e",
+  "repo_digests": [
+    "python@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159"
+  ],
+  "os": "linux",
+  "architecture": "amd64"
+}

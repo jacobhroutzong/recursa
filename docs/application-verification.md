@@ -29,7 +29,7 @@ Each interaction scenario ends with a fixed basic DOM accessibility audit: docum
 
 ## Boundaries
 
-`recursa.build.build_application` uses esbuild 0.28.2 with an in-memory source resolver. Only validated artifact-local modules and stylesheets resolve. It does not install application packages, read generated tsconfig files, execute package scripts or evaluate application JavaScript in Node. The current build lane does not support React/package dependencies or arbitrary asset pipelines. Build success is not type safety or functional success.
+`recursa.build.build_application` uses esbuild 0.28.2 with an in-memory application source resolver. Validated artifact-local modules/stylesheets and a fixed pinned React closure resolve. It does not install application packages, read generated tsconfig files, execute package scripts or evaluate application JavaScript in Node. See [controlled React builds](react-builds.md). Arbitrary packages and asset pipelines remain unsupported. Build success is not type safety or functional success.
 
 `recursa.browser_checks.check_application` uses Playwright 1.64.1 and Chromium's enabled sandbox with a new context per scenario. It serves an allowlisted build directory on an ephemeral loopback origin. External requests, writes, service workers, WebSockets, popups and downloads are blocked. Detected prohibited activity and runtime errors fail a scenario. No model-authored evaluation scripts or arbitrary selectors are accepted. This is browser isolation, not a VM: do not use it as a general hostile-code execution service. It is local only; the public replay server has no execution route.
 

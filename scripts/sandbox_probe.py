@@ -18,6 +18,10 @@ status = dict(line.split(':', 1) for line in Path('/proc/self/status').read_text
 checks['capabilities_dropped'] = int(status['CapEff'].strip(), 16) == 0
 checks['no_new_privileges'] = status['NoNewPrivs'].strip() == '1'
 checks['seccomp_filter'] = status['Seccomp'].strip() == '2'
+quota, period = Path('/sys/fs/cgroup/cpu.max').read_text().split()
+checks['cpu_quota_enforced'] = quota != 'max' and int(quota) <= int(period)
+checks['memory_limit_enforced'] = Path('/sys/fs/cgroup/memory.max').read_text().strip() == str(256 * 1024 * 1024)
+checks['pid_limit_enforced'] = Path('/sys/fs/cgroup/pids.max').read_text().strip() == '32'
 try:
     with socket.create_connection(('198.51.100.1', 80), timeout=0.25):
         checks['external_connection_blocked'] = False

@@ -64,12 +64,13 @@ def fingerprint(config: dict, spec: dict) -> str:
     """Source digest invalidates checkpoints even for uncommitted code changes."""
     digest = hashlib.sha256(json.dumps([config, spec], sort_keys=True).encode())
     digest.update(sys.version.encode())
-    for name in ("pyproject.toml", "requirements-live.lock", "tooling/typecheck/package.json", "tooling/typecheck/package-lock.json"):
+    for name in ("pyproject.toml", "requirements-live.lock", "tooling/typecheck/package.json", "tooling/typecheck/package-lock.json",
+                 "tooling/frontend/package.json", "tooling/frontend/package-lock.json", "tooling/browser/package.json", "tooling/browser/package-lock.json"):
         path = ROOT / name
         if path.exists():
             digest.update(name.encode())
             digest.update(path.read_bytes())
-    for directory in (ROOT / "recursa", ROOT / "prompts"):
+    for directory in (ROOT / "recursa", ROOT / "prompts", ROOT / "scripts", ROOT / "examples/fixtures"):
         if directory.exists():
             for path in sorted(directory.rglob("*")):
                 if path.is_file() and "__pycache__" not in path.parts and path.suffix != ".pyc":

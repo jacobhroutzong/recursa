@@ -9,6 +9,28 @@ from recursa.progress import build_progress
 
 
 class ReleaseProgressTests(unittest.TestCase):
+    def test_tsx_helpers_and_dependency_locks_invalidate_reproducibility_hashes(self):
+        from recursa.progress import source_digest
+        from recursa.experiments import fingerprint
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixtures = root / 'examples/fixtures/react'
+            fixtures.mkdir(parents=True)
+            component = fixtures / 'App.tsx'
+            component.write_text('export const App = () => <main/>')
+            tools = root / 'tooling/frontend'
+            tools.mkdir(parents=True)
+            lock = tools / 'package-lock.json'
+            lock.write_text('{}')
+            with patch('recursa.progress.ROOT', root), patch('recursa.experiments.ROOT', root):
+                first = (source_digest(), fingerprint({}, {}))
+                component.write_text('export const App = () => <button/>')
+                second = (source_digest(), fingerprint({}, {}))
+                self.assertTrue(all(a != b for a, b in zip(first, second)))
+                lock.write_text('{"version":2}')
+                third = (source_digest(), fingerprint({}, {}))
+                self.assertTrue(all(a != b for a, b in zip(second, third)))
+
     def test_release_requires_exact_ordered_ledger_and_current_evidence(self):
         (ROOT / ".cache").mkdir(exist_ok=True)
         with tempfile.TemporaryDirectory(dir=ROOT / ".cache") as tmp:

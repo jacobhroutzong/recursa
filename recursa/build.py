@@ -85,7 +85,7 @@ def build_application(artifacts, output_dir, *, tool_directory=DEFAULT_TOOLS, ma
               "typecheck_success": None, "checks": [], "outputs": [], "dist_directory": None, "dist_path": None,
               "tool": {"name": "esbuild", "required_version": "0.28.2"},
               "limitations": ["Bundling is not typechecking, application execution or functional success.",
-                              "Only artifact-local modules and CSS are supported; package dependencies are not installed or resolved."]}
+                              "Artifact-local modules/CSS and a fixed pinned React closure only; arbitrary packages are not installed or resolved."]}
 
     def finish():
         report["duration_ms"] = round((time.perf_counter() - started) * 1000, 3)
@@ -134,9 +134,13 @@ def build_application(artifacts, output_dir, *, tool_directory=DEFAULT_TOOLS, ma
         report["checks"].append({"path": "index.html", "kind": "production-build", "status": "unavailable", "diagnostic": "Bundler helper did not return valid evidence"})
         return finish()
     report["tool"]["version"] = response.get("version")
+    report['dependencies'] = response.get('dependencies')
     if result.returncode != 0 or response.get("status") != "passed":
+        unavailable = response.get('status') == 'unavailable'
+        if unavailable:
+            report.update(status='unavailable', build_success=None)
         for error in response.get("errors", [{"path": "<project>", "text": "Bundler failed"}]):
-            report["checks"].append({"path": error.get("path", "<project>"), "kind": "production-build", "status": "failed", "diagnostic": str(error.get("text", "Bundler failed"))[:2000], "line": error.get("line")})
+            report["checks"].append({"path": error.get("path", "<project>"), "kind": "production-build", "status": "unavailable" if unavailable else "failed", "diagnostic": str(error.get("text", "Bundler failed"))[:2000], "line": error.get("line")})
         return finish()
     dist.mkdir()
     outputs = list(response.get("outputs", []))

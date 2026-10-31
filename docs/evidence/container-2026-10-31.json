@@ -1,0 +1,95 @@
+{
+  "image_id": "sha256:ae4e8b7c575fabea88a029b6cae757f342ca2525e07f7c22272d5105c346b35e",
+  "cases": [
+    {
+      "name": "policy-probe",
+      "status": "completed",
+      "policy_verified": true,
+      "cleanup_verified": true,
+      "returncode": 0,
+      "oom_killed": false,
+      "source_sha256": "0730c92ea809d0653ae4896f534eab38974754e08dec8d02165f77a8af42a188",
+      "stdout_sha256": "a78efd461deb3f8bcb289813746e2e1fa2e05be5696e20d65070803dd5b95066",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 396,
+      "stderr_bytes": 0,
+      "checks": {
+        "nonroot_user": true,
+        "host_secret_absent": true,
+        "docker_socket_absent": true,
+        "root_write_blocked": true,
+        "scratch_writable": true,
+        "capabilities_dropped": true,
+        "no_new_privileges": true,
+        "seccomp_filter": true,
+        "cpu_quota_enforced": true,
+        "memory_limit_enforced": true,
+        "pid_limit_enforced": true,
+        "external_connection_blocked": true
+      }
+    },
+    {
+      "name": "timeout",
+      "status": "timeout",
+      "policy_verified": true,
+      "cleanup_verified": true,
+      "returncode": null,
+      "oom_killed": null,
+      "source_sha256": "8504b8d0d0a27b313d04cce8b19179c4fe785a1d1450261bb908b7629f4595e6",
+      "stdout_sha256": "eff64b343dcb2b1dc113648e7089b9ce9f8a7f6c7808a03a2cffb4ad7302f606",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 8,
+      "stderr_bytes": 0
+    },
+    {
+      "name": "output-limit",
+      "status": "output-limit",
+      "policy_verified": true,
+      "cleanup_verified": true,
+      "returncode": null,
+      "oom_killed": null,
+      "source_sha256": "d02651a8bb2c304acd270e2ecdeddce84f68a250090fc09ff9088585bd49e31f",
+      "stdout_sha256": "a2e659dacb4691e887ac0139f8893d04764ee197d70fb73d3190d56113d18e3e",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 4096,
+      "stderr_bytes": 0
+    },
+    {
+      "name": "memory-limit",
+      "status": "failed",
+      "policy_verified": true,
+      "cleanup_verified": true,
+      "returncode": 137,
+      "oom_killed": true,
+      "source_sha256": "119c0a8a3b85c174030ad573969c0d0afe40fbc7677ff697e5bdfe8abfea7581",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 0,
+      "stderr_bytes": 0
+    },
+    {
+      "name": "pid-limit",
+      "status": "completed",
+      "policy_verified": true,
+      "cleanup_verified": true,
+      "returncode": 0,
+      "oom_killed": false,
+      "source_sha256": "1933d9b52a0bf0e59d16c6238e99f14577c9f9ee41dd715ed058903e7dbca17b",
+      "stdout_sha256": "e7a226f8bf71a800e4448c32d7016b61f2fe24bd48c1383a7f013c8c0aeae6cc",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 32,
+      "stderr_bytes": 0
+    }
+  ],
+  "status": "passed",
+  "live_inference": false,
+  "scope": "Five reviewed local container probes; not model synthesis or universal sandbox assurance",
+  "verified_at": "2026-10-31T19:59:33.802510+00:00",
+  "image_repo_digests": [
+    "python@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159"
+  ],
+  "platform": "linux/amd64",
+  "docker_server_version": "29.9.2",
+  "runner_source_sha256": "a24da363dc0892ca53a91e5cc427b9cdcb06a86e0eb1e4d829c94f70a011ba4f",
+  "verifier_source_sha256": "3168852ce804162f0192aca649c732c864845dbe1cb0bfdcf3f1d1e09ff12028"
+}

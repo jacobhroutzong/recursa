@@ -1,4 +1,4 @@
-# Local container execution policy — runtime verification pending
+# Local container execution — narrow runtime checks verified
 
 The existing Windows job boundary terminates workers and descendants but does not restrict filesystem/network access. `recursa.sandbox` adds an opt-in Linux-container runner with no host-execution fallback. It is separate from the public replay service and is not yet connected to genuine model inference.
 
@@ -25,8 +25,19 @@ python -m recursa.sandbox --image sha256:REPLACE_WITH_REVIEWED_LOCAL_ID --output
 
 The second command runs `scripts/sandbox_probe.py`, which checks non-root identity, root-write denial, scratch writes, capability/privilege/seccomp state, absent Docker socket and host sentinel environment variable, and a blocked external connection attempt. The report and bounded private probe output must be reviewed together. These narrow checks cannot prove comprehensive sandbox security.
 
-## Actual evidence and current blocker
+## Actual evidence and remaining gate
 
 Policy tests reject mutable/malicious image arguments, weakened engine metadata, host mounts/devices, injected environment, missing engine and timed-out preflight. A policy-rejected mocked container is removed before source dispatch. Mocked Docker metadata is **not** evidence of runtime isolation.
 
-On October 31, 2026, Docker Desktop was installed and was started with its supported CLI. Its backend processes appeared, but bounded Linux-engine readiness requests continued to time out. A restart attempt also timed out; its lingering CLI helper was identified and stopped without terminating the engine or other containers. No container was executed, no image was pulled, and no runtime probe passed. Runtime isolation remains **unverified**. The real RLM REPL remains restricted to trusted offline fixtures, live batching remains disabled, and the public site remains CPU replay-only. The next runtime gate requires the local engine to finish startup, a reviewed cached image, the measured probe, and container timeout/resource/output cleanup tests.
+Initial readiness and restart attempts timed out. Later on October 31, 2026, the owner confirmed Desktop showed Running; the local Linux endpoint then responded with Docker 29.9.2. The official `python:3.12-slim` image was explicitly downloaded and pinned to the immutable image ID and registry digest recorded in `configs/container-image.json`. The runner itself still never pulls images.
+
+Five real-container cases passed, with sanitized evidence in [container-2026-10-31.json](evidence/container-2026-10-31.json): the reviewed identity/filesystem/network/privilege probe, a 5-second timeout, 4 KiB combined-output enforcement, a 512 MiB allocation stopped by the 256 MiB memory cap (exit 137, OOM killed), and process creation denied at the configured PID cap. Every case verified policy settings before dispatch and confirmed container cleanup. The probe additionally checked actual cgroup CPU, memory and PID controls. These are observed narrow controls on this Linux/amd64 image, not comprehensive kernel exploit protection or model-generation evidence.
+
+Reproduce the explicit measured suite after the pinned image is cached:
+
+```powershell
+$recursaImage = (Get-Content configs/container-image.json | ConvertFrom-Json).image_id
+python scripts/verify_container.py --image $recursaImage --output runs/container-verify-001
+```
+
+The RLM adapter still runs its Python REPL only in trusted offline fixtures. It has not been integrated into this container lane, which contains no inference credentials or provider gateway. Containerized RLM execution, mediated model requests and genuine authorized inference remain open. Live batching remains disabled; the public site remains CPU replay-only.
