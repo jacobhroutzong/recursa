@@ -3,8 +3,6 @@ import argparse
 import json
 from pathlib import Path
 
-from recursa.pipeline import verify_application
-from recursa.budget import BudgetExceeded
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -26,23 +24,21 @@ def main():
     args = parser.parse_args()
     if args.output.exists():
         parser.error('Use a fresh output directory to preserve earlier evidence')
-    spec, artifacts, scenarios = fixture()
-    unit_cases = json.loads((ROOT / 'examples/fixtures/task-app/unit-cases.json').read_text(encoding='utf-8'))
-    try:
-        result = verify_application(spec, artifacts, args.output, scenarios=scenarios,
-                                   typescript_directory=ROOT / 'tooling/typecheck/node_modules/typescript',
-                                   unit_cases=unit_cases, max_wall_seconds=args.max_wall_seconds)
-    except BudgetExceeded:
-        print(json.dumps({'status': 'budget-exhausted', 'report': str(args.output.resolve() / 'application-report.json')}))
-        return 1
+    from recursa.worker import run_offline_application
+    worker = run_offline_application(args.output, max_wall_seconds=args.max_wall_seconds)
+    report_path = args.output.resolve() / 'application/application-report.json'
+    result = json.loads(report_path.read_text(encoding='utf-8')) if report_path.exists() else {}
+    measured = result.get('verification', {})
     print(json.dumps({'provenance': 'human-authored engineering fixture; no model inference',
-                      'status': result['status'], 'build_success': result['verification']['build_success'],
-                      'functional_success': result['verification']['functional_success'],
-                      'lint_success': result['verification']['lint_success'],
-                      'unit_test_pass_rate': result['verification']['unit_test_pass_rate'],
-                      'accessibility_success': result['verification']['accessibility_success'],
-                      'report': str(args.output.resolve() / 'application-report.json')}, indent=2))
-    return 0 if result['status'] == 'passed' else 1
+                      'status': result.get('status', 'failed') if worker['status'] == 'complete' else worker['status'], 'worker_status': worker['status'],
+                      'build_success': measured.get('build_success'),
+                      'functional_success': measured.get('functional_success'),
+                      'lint_success': measured.get('lint_success'),
+                      'unit_test_pass_rate': measured.get('unit_test_pass_rate'),
+                      'accessibility_success': measured.get('accessibility_success'),
+                      'worker_report': str(args.output.resolve() / 'worker-report.json'),
+                      'report': str(report_path) if report_path.exists() else None}, indent=2))
+    return 0 if worker['status'] == 'complete' and result.get('status') == 'passed' else 1
 
 
 if __name__ == '__main__':
