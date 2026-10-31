@@ -76,3 +76,77 @@ class OfficialRuntimeIntegrationTests(unittest.TestCase):
         config["trusted_local_execution"] = False
         with self.assertRaises(ValueError):
             validate_live_config(config)
+        config = self.config()
+        config['budget']['max_repairs'] = 1
+        with self.assertRaises(ValueError):
+            validate_live_config(config)
+        config['application_verification'] = {'scenarios': [], 'arbitrary_code': 'forbidden'}
+        with self.assertRaises(ValueError):
+            validate_live_config(config)
+
+    def test_application_verification_and_repair_share_offline_transport_budget(self):
+        import httpx
+        import openai
+        from copy import deepcopy
+        from recursa.live import run_live
+        from recursa.offline import fixture
+        original_client = openai.OpenAI
+        spec, artifacts, scenarios = fixture()
+        broken = deepcopy(artifacts)
+        main = next(a for a in artifacts if a['path'] == 'src/main.ts')
+        next(a for a in broken if a['path'] == 'src/main.ts')['content'] = main['content'].replace('completed: false', 'completed: true')
+        refs = [r['id'] for r in spec['requirements']]
+        requests = []
+
+        def transport(request):
+            body = json.loads(request.content)
+            requests.append(body)
+            if body['model'] == 'scripted-root':
+                code = '\n'.join([
+                    'import json', 'rows = read_requirements(' + json.dumps(refs) + ')',
+                    'set_task_plan(' + json.dumps([{'id': 'app', 'label': 'Offline fixture only', 'kind': 'assembly', 'requirements': refs}]) + ')',
+                    'begin_task("app")', 'drafted = llm_query("Return the scripted fixture artifacts")',
+                    'submitted = submit_task_output("app", json.loads(drafted))',
+                    'answer["content"] = json.dumps({"artifact_paths": submitted["artifact_paths"]})',
+                    'answer["ready"] = True'])
+                content = '```repl\n' + code + '\n```'
+            elif 'allowed_paths' in body['messages'][-1]['content']:
+                context = json.loads(body['messages'][-1]['content'])
+                self.assertEqual(context['allowed_paths'], ['src/main.ts'])
+                self.assertTrue(context['declared_dependency_contracts'])
+                content = json.dumps({'artifacts': [main]})
+            else:
+                content = json.dumps({'artifacts': broken})
+            return httpx.Response(200, json={'id': 'offline-only', 'object': 'chat.completion', 'created': 0,
+                'model': body['model'], 'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': content}, 'finish_reason': 'stop'}],
+                'usage': {'prompt_tokens': 20, 'completion_tokens': 30, 'total_tokens': 50}})
+
+        def client_factory(**kwargs):
+            return original_client(**kwargs, http_client=httpx.Client(transport=httpx.MockTransport(transport)))
+
+        config = self.config()
+        config['budget'].update(max_calls=3, max_output_tokens=30000, max_input_bytes=500000, max_wall_seconds=90, max_repairs=1)
+        config['per_call_output_tokens'] = 10000
+        config['application_verification'] = {'scenarios': scenarios}
+        config['typescript_compiler_directory'] = str(ROOT / 'tooling/typecheck/node_modules/typescript')
+        with tempfile.TemporaryDirectory(dir=ROOT / '.cache') as tmp, patch.dict(os.environ, {'RECURSA_TEST_KEY': 'offline-placeholder'}), patch('openai.OpenAI', side_effect=client_factory):
+            run = run_live(spec, Path(tmp) / 'verified', config, authorize_live=True)
+            self.assertEqual(run['status'], 'completed', run['events'])
+            self.assertEqual(run['repair_attempts'], 1)
+            self.assertEqual(run['repair_status'], 'rechecked')
+            self.assertTrue(run['metrics']['functional_success'])
+            self.assertTrue(run['metrics']['build_success'])
+            self.assertEqual(run['metrics']['model_calls'], 3)
+            self.assertEqual(len(requests), 3)
+            self.assertEqual((Path(tmp) / 'verified/artifacts/src/main.ts').read_text(encoding='utf-8'), main['content'])
+            self.assertTrue(any(e['label'] == 'repair model request' for e in run['events']))
+            self.assertEqual(sum(e['type'] == 'subcall' for e in run['events']), 1)
+            self.assertEqual(sum(e['type'] == 'repair-model' for e in run['events']), 1)
+            limited = deepcopy(config)
+            limited['budget']['max_calls'] = 2
+            run = run_live(spec, Path(tmp) / 'limited', limited, authorize_live=True)
+            self.assertEqual(run['status'], 'budget-exhausted', run['events'])
+            self.assertEqual(run['metrics']['repair_attempts'], 1)
+            self.assertEqual(len(requests), 5, 'Denied repair must not dispatch HTTP')
+            self.assertTrue((Path(tmp) / 'limited/application/verification-000/verification.json').exists())
+            self.assertTrue((Path(tmp) / 'limited/private/trajectory.json').exists())

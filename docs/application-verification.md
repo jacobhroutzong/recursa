@@ -1,6 +1,6 @@
 # Offline application verification
 
-Section 5 now has an executable local verification lane: validated source → pinned TypeScript and fixed AST lint checks → production bundling → independently authored Chromium interaction/unit cases and basic accessibility audits → optional bounded repair → complete recheck. The provider adapter does not yet invoke this lane automatically. No genuine inference has been run.
+Section 5 now has an executable local verification lane: validated source → pinned TypeScript and fixed AST lint checks → production bundling → independently authored Chromium interaction/unit cases and basic accessibility audits → optional bounded repair → complete recheck. The RLM adapter can invoke this lane when configured with reviewed acceptance scenarios. No genuine inference has been run.
 
 Install optional tooling once (Node.js required):
 
@@ -35,4 +35,16 @@ Each interaction scenario ends with a fixed basic DOM accessibility audit: docum
 
 `recursa.pipeline.verify_application` combines the stages and `repair_artifacts`. Repairs are limited to diagnosed existing files, preserve requirement provenance, retain attempt/hash history and rerun verification. Callbacks must use the caller's shared inference budget. The offline CLI supplies no callback and makes no model calls. An automated regression deliberately changes task creation to start completed; measured browser failures trigger one scripted correction, and the complete pipeline then passes. That scripted correction proves repair wiring only.
 
-Each source/lint/build/browser stage has a hard deadline of 15/15/30/45 seconds, respectively; unit checks add a separately bounded build and browser pass. At most ten repair attempts are allowed (zero by default). There is no whole-pipeline process budget yet. Missing tools/browser are unmeasured, not successful. Provider-budget integration, broader framework/package support, genuine model-backed generation/repair and full accessibility assurance remain open work. The public replay container installs none of these optional execution tools.
+Each source/lint/build/browser stage has a timeout cap of 15/15/30/45 seconds, respectively; unit checks add a build and browser pass. All stages and repairs share one monotonic deadline, and subprocess timeout values shrink to the remaining time. The offline command defaults to 180 seconds; use `--max-wall-seconds` to set a smaller finite budget. A late stage is not dispatched after exhaustion; measured stage JSON and source artifacts remain on disk. Reviewed scenario/unit inputs and artifact hashes are saved in `verification-inputs.json`.
+
+Atomic JSON writes use unique sibling staging files. Brief Windows replacement locks receive up to five bounded backoffs (0.62 seconds total); a permanent error is raised and the prior checkpoint remains intact. Regression tests cover both outcomes. This handles observed workspace file locks without treating a failed checkpoint write as success.
+
+At most ten repair attempts are allowed (zero by default). The adapter uses the same `CallBudget` for root, recursive subcall and repair requests, including pre-dispatch reservations for tokens, request bytes and estimated cost. Failed dispatch reservations are retained. Each HTTP request receives the remaining timeout and disables retries. Repair calls are distinct `repair-model` events and cannot satisfy the required upstream RLM subcall evidence.
+
+The shared deadline is a cooperative elapsed-time gate, not universal process preemption. It cannot interrupt arbitrary Python callbacks or code inside the trusted local upstream REPL. That still requires a verified outer process/OS boundary; the live batch CLI remains disabled. Missing tools/browser are unmeasured, not successful. Broader framework/package support, genuine model-backed generation/repair and full accessibility assurance remain open work. The public replay container installs none of these optional execution tools.
+
+## Adapter configuration and offline evidence
+
+The programmatic adapter accepts `application_verification` with `scenarios` and optional `unit_cases`, using the declarative schemas above. Tests must be independently authored/reviewed; they are never created by the model being evaluated. The scenario list is required when enabling repairs. Compiler configuration uses the existing `typescript_compiler_directory`; pinned build/browser packages use the local tooling directories. No public execution route or live CLI was enabled by this integration.
+
+The scripted official-runtime regression performs an indexed requirement read, an actual upstream `llm_query` with intercepted HTTP transport, validated task submission, source/build/browser checks, one focused scripted repair and a full recheck. A second run caps calls at two: root and generation dispatch, the repair is denied before HTTP, and private trajectory, measured stages and partial trace persist. Neither run is genuine inference, a benchmark result or proof of model reasoning.

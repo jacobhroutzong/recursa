@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from recursa.pipeline import verify_application
+from recursa.budget import BudgetExceeded
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -21,13 +22,19 @@ def fixture():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True, help='Fresh output directory')
+    parser.add_argument('--max-wall-seconds', type=float, default=180, help='Shared verification deadline (default: 180 seconds)')
     args = parser.parse_args()
     if args.output.exists():
         parser.error('Use a fresh output directory to preserve earlier evidence')
     spec, artifacts, scenarios = fixture()
     unit_cases = json.loads((ROOT / 'examples/fixtures/task-app/unit-cases.json').read_text(encoding='utf-8'))
-    result = verify_application(spec, artifacts, args.output, scenarios=scenarios,
-                               typescript_directory=ROOT / 'tooling/typecheck/node_modules/typescript', unit_cases=unit_cases)
+    try:
+        result = verify_application(spec, artifacts, args.output, scenarios=scenarios,
+                                   typescript_directory=ROOT / 'tooling/typecheck/node_modules/typescript',
+                                   unit_cases=unit_cases, max_wall_seconds=args.max_wall_seconds)
+    except BudgetExceeded:
+        print(json.dumps({'status': 'budget-exhausted', 'report': str(args.output.resolve() / 'application-report.json')}))
+        return 1
     print(json.dumps({'provenance': 'human-authored engineering fixture; no model inference',
                       'status': result['status'], 'build_success': result['verification']['build_success'],
                       'functional_success': result['verification']['functional_success'],

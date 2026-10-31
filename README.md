@@ -60,7 +60,7 @@ Optional TypeScript verification uses `npm ci --ignore-scripts --prefix tooling/
 
 For the optional one-command application check, install the pinned frontend/browser dependencies once, then run `python -m recursa.offline --output runs/task-fixture-001`. It validates/lints TypeScript, bundles the task app and runs six authored unit cases plus four interaction scenarios with basic accessibility audits. See [application verification](docs/application-verification.md) for setup, boundaries, durable reports and remaining section-5 work. The public demo continues to serve recorded evidence only.
 
-The latest release suite passed 53 offline tests with no skips. CPU experiment execution and checkpoint reuse were also verified.
+Release test counts and source hashes appear in the published progress dashboard. CPU experiment execution and checkpoint reuse are verified alongside each release.
 
 ## Deployment preparation
 
@@ -76,4 +76,4 @@ To publish an updated Space release after authorization, run `python scripts/ver
 
 The target research runtime is the official [RLM project](https://github.com/alexzhang13/rlm), based on [Recursive Language Models](https://arxiv.org/abs/2512.24601) by Alex L. Zhang, Tim Kraska and Omar Khattab. External context and real model-backed subcalls remain the required next vertical slice. The default CPU validator is deterministic orchestration, not RLM inference. The local upstream REPL must not be exposed publicly or considered a sandbox.
 
-Next: complete synthesis planning, functional verification and bounded repair, then verify isolated execution and a genuine authorized inspection/subcall/artifact run using the installed, pinned runtime. Fair direct/structured baselines follow the working core. Open-weight model loading, GPU checkpoint continuation, fine-tuning, baselines, genuine model replays and statistical evaluation remain outstanding. Current resume is **between trials**, not inside an interrupted model/training process.
+The adapter now supports reviewed application verification and focused repair under shared call/token/cost reservations and an elapsed-time deadline; an intercepted-transport regression proves the wiring without genuine inference. The offline fixture command accepts `--max-wall-seconds` and retains measured partial stages on exhaustion. Next: verify the outer process/OS boundary and a genuine authorized inspection/subcall/artifact run using the installed, pinned runtime. Fair direct/structured baselines follow the working core. Open-weight model loading, GPU checkpoint continuation, fine-tuning, baselines, genuine model replays and statistical evaluation remain outstanding. Current resume is **between trials**, not inside an interrupted model/training process.

@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-30T11:00:37.664258+00:00",
+  "updated_at": "2026-10-31T13:57:42.599779+00:00",
   "phase": "Section 5 \u00b7 offline synthesis and verification",
-  "source_digest": "7e9a9b45f1fc89cafc6ac70d23ca353f48c4f726a167a24b9288b3e1c9d59650",
+  "source_digest": "df80f5bf8e03ff10140fc0b075f40c2bcca0b462db866135cdf3287c1b718a96",
   "tests": {
-    "total": 53,
-    "passed": 53,
+    "total": 59,
+    "passed": 59,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-10-30T11:00:24.308548+00:00",
-    "source_digest": "7e9a9b45f1fc89cafc6ac70d23ca353f48c4f726a167a24b9288b3e1c9d59650",
+    "verified_at": "2026-10-31T13:57:33.977289+00:00",
+    "source_digest": "df80f5bf8e03ff10140fc0b075f40c2bcca0b462db866135cdf3287c1b718a96",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -40,8 +40,8 @@
     {
       "number": 5,
       "name": "5. Application synthesis",
-      "status": "Offline verification lane expanded; incomplete",
-      "evidence": "Actual TypeScript, fixed AST lint, esbuild, six browser unit cases, four interaction scenarios and basic accessibility audits pass on human-authored fixtures; scripted repair rechecked. Whole-pipeline/provider budgets, broader package support and genuine model generation/repair remain open"
+      "status": "Adapter/verification/repair integrated offline; incomplete",
+      "evidence": "TypeScript, lint, build, browser unit/interaction and basic a11y checks; scripted official-runtime repair/recheck and pre-HTTP budget denial verified. Shared elapsed-time/provider reservations implemented; hard REPL process isolation, broader packages and genuine model generation/repair remain open"
     },
     {
       "number": 6,

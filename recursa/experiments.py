@@ -11,6 +11,7 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,9 +19,23 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def atomic_json(path: Path, value: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_text(json.dumps(value, indent=2, ensure_ascii=False), encoding="utf-8")
-    os.replace(temporary, path)
+    # Unique siblings avoid concurrent writers sharing a staging file. Windows
+    # sync/indexing readers can briefly prevent replacement even after close.
+    with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', dir=path.parent,
+                                     prefix=path.name + '.', suffix='.tmp', delete=False) as handle:
+        temporary = Path(handle.name)
+        handle.write(json.dumps(value, indent=2, ensure_ascii=False))
+    try:
+        for attempt in range(6):
+            try:
+                os.replace(temporary, path)
+                return
+            except PermissionError:
+                if attempt == 5:
+                    raise
+                time.sleep(0.02 * 2 ** attempt)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 def load_config(path: Path) -> tuple[dict, dict]:

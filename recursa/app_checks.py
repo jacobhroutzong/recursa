@@ -9,11 +9,14 @@ import os
 from recursa.artifacts import validate_artifacts
 from recursa.browser_checks import check_application
 from recursa.build import build_application
+from recursa.budget import Deadline
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def lint_sources(artifacts, compiler_directory=None):
+def lint_sources(artifacts, compiler_directory=None, *, max_seconds=15):
+    if type(max_seconds) not in (int, float) or not 0 < max_seconds <= 15:
+        raise ValueError('Lint timeout must be positive and at most 15 seconds')
     ids = {r for a in artifacts for r in a.get('requirements', [])}
     artifacts = validate_artifacts({'artifacts': artifacts}, ids)
     compiler = Path(compiler_directory or ROOT / 'tooling/typecheck/node_modules/typescript')
@@ -30,7 +33,7 @@ def lint_sources(artifacts, compiler_directory=None):
     try:
         result = subprocess.run([node, str(ROOT / 'scripts/lint_sources.mjs')],
             input=json.dumps({'artifacts': artifacts, 'compiler': str(compiler.resolve())}),
-            capture_output=True, text=True, timeout=15, env=environment)
+            capture_output=True, text=True, timeout=max_seconds, env=environment)
         if result.returncode:
             return empty
         return json.loads(result.stdout)
@@ -61,7 +64,8 @@ def validate_unit_cases(cases, artifacts, ids):
     return cases
 
 
-def check_units(artifacts, cases, output_dir, *, frontend_tools=None, browser_tools=None):
+def check_units(artifacts, cases, output_dir, *, frontend_tools=None, browser_tools=None, deadline=None):
+    deadline = deadline or Deadline(75)
     ids = {r for a in artifacts for r in a['requirements']}
     artifacts = validate_artifacts({'artifacts': artifacts}, ids)
     validate_unit_cases(cases, artifacts, ids)
@@ -89,14 +93,14 @@ def check_units(artifacts, cases, output_dir, *, frontend_tools=None, browser_to
     inputs = [a for a in artifacts if a['path'] != 'index.html'] + [
         {'path': 'index.html', 'content': f'<!doctype html><html lang="en"><head><title>Unit checks</title></head><body><script type="module" src="{prefix}/main.ts"></script></body></html>', 'requirements': refs},
         {'path': prefix + '/main.ts', 'content': source, 'requirements': refs}]
-    build = build_application(inputs, output_dir, **({'tool_directory': frontend_tools} if frontend_tools is not None else {}))
+    build = build_application(inputs, output_dir, max_seconds=deadline.remaining(30), **({'tool_directory': frontend_tools} if frontend_tools is not None else {}))
     if build['build_success'] is not True:
         return {'status': build['status'], 'checks': build['checks'], 'unit_test_pass_rate': None, 'build': build}
     scenarios = [{'id': c['id'], 'source_path': c['module'], 'requirements': c['requirements'],
                   'steps': [{'action': 'expect_text', 'target': {'test_id': c['id']}, 'value': 'PASS'}]} for c in cases]
     # A fresh browser context per case also reruns the entire module fixture;
     # declared cases must be pure and independent of order/shared state.
-    report = check_application(build['dist_path'], scenarios, tool_directory=browser_tools)
+    report = check_application(build['dist_path'], scenarios, tool_directory=browser_tools, max_seconds=deadline.remaining(45, minimum=1))
     for check in report['checks']:
         check['kind'] = 'unit'
     return {'status': report['status'], 'checks': report['checks'],

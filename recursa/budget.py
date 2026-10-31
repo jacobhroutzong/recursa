@@ -10,7 +10,35 @@ class BudgetExceeded(RuntimeError):
     pass
 
 
-class CallBudget:
+class Deadline:
+    """Shared elapsed-time gate; subprocesses receive the remaining duration.
+
+    This cannot preempt arbitrary Python callbacks or the trusted local REPL.
+    Untrusted host execution still requires a separate process/OS boundary.
+    """
+    def __init__(self, seconds):
+        if type(seconds) not in (int, float) or not math.isfinite(seconds) or seconds <= 0:
+            raise ValueError('Deadline must be finite and positive')
+        self.seconds = seconds
+        self.started = time.monotonic()
+        self.stop_reason = None
+        self.lock = threading.RLock()
+
+    def _stop(self, reason):
+        self.stop_reason = reason
+        raise BudgetExceeded(reason)
+
+    def remaining(self, cap=None, *, minimum=0.001):
+        with self.lock:
+            if self.stop_reason:
+                raise BudgetExceeded(self.stop_reason)
+            duration = self.seconds - (time.monotonic() - self.started)
+            if duration < minimum:
+                self._stop('Wall time exhausted')
+            return min(duration, cap) if cap is not None else duration
+
+
+class CallBudget(Deadline):
     def __init__(self, limits, rates):
         if not isinstance(limits, dict):
             raise ValueError("Budget limits must be an object")
@@ -22,8 +50,8 @@ class CallBudget:
             if type(limits.get(key)) not in (int, float) or not math.isfinite(limits[key]) or limits[key] < 0:
                 raise ValueError(f"{key} must be finite and nonnegative")
         if (limits["max_wall_seconds"] <= 0 or any(type(limits.get(k)) is not int for k in ("max_concurrency", "max_depth", "max_repairs")) or
-                limits.get("max_concurrency") != 1 or limits.get("max_depth") != 1 or limits.get("max_repairs") != 0):
-            raise ValueError("Initial adapter requires positive wall time, concurrency/depth=1 and repairs=0")
+                limits.get("max_concurrency") != 1 or limits.get("max_depth") != 1 or not 0 <= limits.get("max_repairs") <= 10):
+            raise ValueError("Adapter requires positive wall time, concurrency/depth=1 and repairs from 0 to 10")
         self.rates = deepcopy(rates)
         if not isinstance(rates, dict) or not rates:
             raise ValueError("Explicit model pricing estimates are required")
@@ -34,9 +62,7 @@ class CallBudget:
                 value = pricing.get(field)
                 if type(value) not in (int, float) or not math.isfinite(value) or value < 0:
                     raise ValueError("Pricing rates must be finite and nonnegative")
-        self.lock = threading.RLock()
-        self.stop_reason = None
-        self.started = time.monotonic()
+        super().__init__(limits['max_wall_seconds'])
         self.calls = self.output_reserved = self.input_bytes = 0
         self.cost_reserved = 0.0
 
