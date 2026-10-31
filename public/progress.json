@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-31T14:09:53.332344+00:00",
+  "updated_at": "2026-10-31T19:22:48.904431+00:00",
   "phase": "Section 5 \u00b7 offline synthesis and verification",
-  "source_digest": "f93d92427b6e74e3331d41001c5a91cd4917f871d75a29b1bfd915e7774f6ddb",
+  "source_digest": "cb7f22fa4a92e75dcb0b906abdebe45765f29ca81ef4a849219b297335c21f25",
   "tests": {
-    "total": 67,
-    "passed": 67,
+    "total": 72,
+    "passed": 72,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-10-31T14:09:47.297200+00:00",
-    "source_digest": "f93d92427b6e74e3331d41001c5a91cd4917f871d75a29b1bfd915e7774f6ddb",
+    "verified_at": "2026-10-31T14:26:23.863640+00:00",
+    "source_digest": "cb7f22fa4a92e75dcb0b906abdebe45765f29ca81ef4a849219b297335c21f25",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -40,8 +40,8 @@
     {
       "number": 5,
       "name": "5. Application synthesis",
-      "status": "Offline worker lifetime boundary verified; incomplete",
-      "evidence": "Adapter verification/repair and shared budgets; Windows job cleanup on normal exit/cancellation and actual scripted blocked REPL timeout tested. Offline CLI uses a parent deadline. Filesystem/network sandboxing, broader packages and genuine model generation/repair remain open"
+      "status": "Worker boundary verified; Docker runtime gate open",
+      "evidence": "Offline adapter/repair/shared budgets and Windows lifetime cleanup tested. Fail-closed local container policy implemented and tested with mocked metadata; actual Linux engine readiness times out, so filesystem/network isolation remains unverified. Broader packages and genuine model synthesis remain open"
     },
     {
       "number": 6,

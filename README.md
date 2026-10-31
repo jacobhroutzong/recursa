@@ -62,6 +62,8 @@ For the optional one-command application check, install the pinned frontend/brow
 
 Release test counts and source hashes appear in the published progress dashboard. CPU experiment execution and checkpoint reuse are verified alongside each release.
 
+An opt-in [local container policy](docs/container-sandbox.md) now validates a pinned cached image and constrained engine settings before any source dispatch. It has no host fallback, automatic image pull or public execution route. Policy/failure tests pass; **actual container isolation is unverified because the local Linux Docker engine is not responding to readiness checks**. The verified Windows worker boundary remains a lifetime control, not a filesystem/network sandbox.
+
 ## Deployment preparation
 
 `Dockerfile` serves Studio, release progress and allowlisted public captures under `traces/public` on port 7860 without inference dependencies. The owner authorized publication on October 29, 2026. Both GitHub and Hugging Face logins were verified against the intended owners. Never include provider logs, credentials or private specifications in a public bundle. This container is a replay viewer, not an execution sandbox.
