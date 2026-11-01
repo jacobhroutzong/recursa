@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-01T02:04:32.567650+00:00",
+  "updated_at": "2026-11-01T18:30:30.727466+00:00",
   "phase": "Section 5 \u00b7 offline synthesis and verification",
-  "source_digest": "947b07a8a2fa00c82899325990e1f48f1c2813e92cdee3ff9fc957c3ba94a5fb",
+  "source_digest": "11654c8b463bc38f63e68c8a01d3fd49f4d6a30235a052caf7fa578200934deb",
   "tests": {
-    "total": 87,
-    "passed": 87,
+    "total": 96,
+    "passed": 96,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-01T02:03:09.796966+00:00",
-    "source_digest": "947b07a8a2fa00c82899325990e1f48f1c2813e92cdee3ff9fc957c3ba94a5fb",
+    "verified_at": "2026-11-01T18:30:27.595176+00:00",
+    "source_digest": "11654c8b463bc38f63e68c8a01d3fd49f4d6a30235a052caf7fa578200934deb",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -40,8 +40,8 @@
     {
       "number": 5,
       "name": "5. Application synthesis",
-      "status": "Offline host mediation verified; incomplete",
-      "evidence": "Host-owned model allowlist, reservations and bounded pipe protocol tested with three actual container cases: normal flow, host budget denial and URL rejection. Prior five isolation probes and two contained-RLM checks rerun. Live provider adapter/authorization, private trace export, broader packages and genuine synthesis remain open"
+      "status": "Offline provider adapter tested; incomplete",
+      "evidence": "Host mediation verified with actual scripted container cases. Separate provider transport passes intercepted HTTP checks for explicit authorization, fixed settings, budget denial, retained reservations, usage validation and sanitized errors. It is not connected to the runner. Supervised provider execution/integration, private trace export, broader packages and genuine synthesis remain open"
     },
     {
       "number": 6,

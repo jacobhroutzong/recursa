@@ -8,7 +8,7 @@ Process correction: earlier work implemented portions of sections 6, 9 and 21 be
 | 2. Research foundation | Reviewed | `research-foundation.md`; no reproduced research claims |
 | 3. Technical architecture | Decided; modules in progress | `architecture.md`; official package installed and inspected |
 | 4. Real RLM engine | Offline integration verified; real-model gate open | Indexed context, artifact protocol, pre-dispatch reservations and official runtime tested with scripted HTTP responses; owner selected offline implementation/testing |
-| 5. Application synthesis | Offline host mediation verified; incomplete | Host-owned model allowlist, reservations and bounded pipe protocol tested with three actual container cases: normal flow, host budget denial and URL rejection. Prior five isolation probes and two contained-RLM checks rerun. Live provider adapter/authorization, private trace export, broader packages and genuine synthesis remain open |
+| 5. Application synthesis | Offline provider adapter tested; incomplete | Host mediation verified with actual scripted container cases. Separate provider transport passes intercepted HTTP checks for explicit authorization, fixed settings, budget denial, retained reservations, usage validation and sanitized errors. It is not connected to the runner. Supervised provider execution/integration, private trace export, broader packages and genuine synthesis remain open |
 | 6. Studio | Partial prior work | CPU replay UI only; full requested pages and generated app preview remain open |
 | 7. Live/replay modes | Partial prior work | Replay works; genuine live run pending |
 | 8. Evaluation harness | Pending | No baseline implementations or model measurements |

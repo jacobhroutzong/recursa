@@ -1,0 +1,19 @@
+# Host provider adapter preparation
+
+`recursa.provider.ProviderAdapter` implements a host-only, non-streaming Chat Completions transport. It is **not connected to the container runner, batch CLI or public server**. The runner still accepts only the concrete `OfflineBroker`. No genuine request has been executed. Focused tests replace the HTTP transport with `httpx.MockTransport` and use a fake credential.
+
+Construction requires `authorize_live=True` and exactly five owner-controlled configuration fields: `base_url`, `api_key_env`, `rates`, `budget`, and `output_tokens`. Rates map allowlisted model names to input/output USD-per-million estimates. The budget uses the existing `CallBudget` schema. Remote rates must be positive. Endpoints permit HTTPS or loopback HTTP, without embedded credentials, queries or fragments. Configuration is copied, and construction performs no credential lookup or network I/O.
+
+At completion time, only an allowlisted model and bounded text messages are accepted. The credential is read from the named host environment variable; missing credentials fail before reservation or dispatch. Each request reserves calls, input bytes, output allowance and estimated cost before opening the transport. The transport disables retries, redirects and environment proxies/certificate overrides. It sends fixed `max_completion_tokens`, `stream=false` and `store=false` fields. These fields follow the [official Chat Completions reference](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create); compatibility with any particular provider/model remains unverified.
+
+Responses are limited to 128 KiB, uncompressed, with one completed assistant text choice of at most 64 KiB. Tool calls, refusals, truncated completions, missing/invalid token usage and overruns close the adapter. HTTP/transport errors also close it, retaining the reservation; there is no automatic retry after an uncertain charge. Provider-reported usage remains distinct from independently measured usage. A higher reported cost estimate consumes additional future headroom; lower reported estimates never refund reservations. Actual billing remains null. These estimates cannot guarantee a provider's invoice or prevent a provider from exceeding its requested output cap.
+
+Sanitized summaries contain prompt/response hashes, reservations, usage counts and classification codes. They exclude credentials, endpoint URLs, raw messages, raw response text and error bodies. Adapter state is serialized under a lock, and returned summaries are copied. Replay imports need no optional HTTP dependency.
+
+The elapsed deadline is checked around dispatch and between response chunks, with each HTTP operation capped at the remaining time or 30 seconds. This is not a hard process deadline: a blocked operation can finish after the shared deadline, and a trusted host caller still needs a supervised worker. This adapter is not a sandbox.
+
+## Remaining gate
+
+Verification: run `python -m unittest discover -s tests -p test_provider.py -v` for the nine intercepted adapter checks. The three existing actual-container mediation checks were also rerun against the rebuilt source-matched image on November 1, 2026; [the retained record](evidence/mediated-container-2026-11-01.json) confirms scripted responses, policy inspection and cleanup. This does not exercise the provider adapter inside a live broker.
+
+The next integration must connect host request validation to this adapter, preserve the existing concrete offline path, add a supervised provider worker, test cancellation/partial records, and export private traces safely. An actual run additionally requires explicit owner authorization, a selected endpoint/model, configured credentials and a spending cap. Generic “continue” messages authorize continued offline engineering only. No model-backed P0 or research claim follows from these intercepted tests.

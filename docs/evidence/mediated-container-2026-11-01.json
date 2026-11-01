@@ -1,0 +1,226 @@
+{
+  "status": "passed",
+  "runtime_image": {
+    "image_id": "sha256:12d4b088a521ea52e4368d7d98a8fa6b6f739310fea4126214aa96eded0bd5aa",
+    "base_image_repo_digest": "python@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159",
+    "platform": "linux/amd64",
+    "runtime_source_sha256": "7ec13bb95c97e8aefe8c1ea2e2cb47beb09aafeac0eccf55537c97422209e37e",
+    "requirements_sha256": "35a5c43acbd902920529e5eda43ef85e570ab80dbebda37cb929d20e4974c76a",
+    "scope": "Local pinned SDK image for offline container fixtures; no provider gateway"
+  },
+  "cases": [
+    {
+      "name": "host-completion-path",
+      "status": "completed",
+      "mode": "offline-brokered-container",
+      "live_inference": false,
+      "artifact_count": 1,
+      "broker": {
+        "mode": "offline-scripted-broker",
+        "live_inference": false,
+        "reserved_calls": 2,
+        "scripted_dispatches": 2,
+        "output_tokens_reserved": 4096,
+        "estimated_cost_reserved_usd": 0.0,
+        "stop_reason": null,
+        "events": [
+          {
+            "status": "completed",
+            "id": 1,
+            "model": "scripted-root",
+            "prompt_sha256": "0160f1484f18cdfcb881bcc4a58cc5ddffcdaae1cab0d1516269fdff5b3301ef",
+            "estimated_cost_reserved_usd": 0.0,
+            "response_sha256": "852f2ecc01c46fc3fc9b69d75d7c10509f7e105ff07b2318a7665facab1a72a4"
+          },
+          {
+            "status": "completed",
+            "id": 2,
+            "model": "scripted-sub",
+            "prompt_sha256": "cc8647f1c4f4458122843b191f4a9aef7647753ebd1a17719205ae1d63bcd19a",
+            "estimated_cost_reserved_usd": 0.0,
+            "response_sha256": "9a6f27d512695f82d50869c5b4f2edcb23819263ea212ff985c3c195903dadef"
+          }
+        ],
+        "scope": "Host-observed scripted requests; no real provider or measured inference tokens"
+      },
+      "container": {
+        "status": "completed",
+        "image_id": "sha256:12d4b088a521ea52e4368d7d98a8fa6b6f739310fea4126214aa96eded0bd5aa",
+        "source_sha256": "9e63aff9443631bfb47b8127bf37f44bfc9e0c14526ec0ac3613d5bd181d1e58",
+        "live_inference": false,
+        "policy_verified": true,
+        "cleanup_verified": true,
+        "returncode": 0,
+        "functional_success": null,
+        "max_wall_seconds": 60,
+        "scope": "Local container process result only; untrusted output is not research evidence",
+        "container_id": "b7508aa7aa51c24b04fb11d21fe756bfd35b7a34a9e9a65db7266465ce5413d2",
+        "oom_killed": false,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "7d27a000fc4bf9640364fec3632d0c5bbed0a77b8fff8bc135d1fed2b2ae3946",
+        "broker": {
+          "mode": "offline-scripted-broker",
+          "live_inference": false,
+          "reserved_calls": 2,
+          "scripted_dispatches": 2,
+          "output_tokens_reserved": 4096,
+          "estimated_cost_reserved_usd": 0.0,
+          "stop_reason": null,
+          "events": [
+            {
+              "status": "completed",
+              "id": 1,
+              "model": "scripted-root",
+              "prompt_sha256": "0160f1484f18cdfcb881bcc4a58cc5ddffcdaae1cab0d1516269fdff5b3301ef",
+              "estimated_cost_reserved_usd": 0.0,
+              "response_sha256": "852f2ecc01c46fc3fc9b69d75d7c10509f7e105ff07b2318a7665facab1a72a4"
+            },
+            {
+              "status": "completed",
+              "id": 2,
+              "model": "scripted-sub",
+              "prompt_sha256": "cc8647f1c4f4458122843b191f4a9aef7647753ebd1a17719205ae1d63bcd19a",
+              "estimated_cost_reserved_usd": 0.0,
+              "response_sha256": "9a6f27d512695f82d50869c5b4f2edcb23819263ea212ff985c3c195903dadef"
+            }
+          ],
+          "scope": "Host-observed scripted requests; no real provider or measured inference tokens"
+        }
+      },
+      "scope": "Host-observed scripted completions through bounded pipes; no real provider inference"
+    },
+    {
+      "name": "host-budget-denial",
+      "status": "budget-exhausted",
+      "mode": "offline-brokered-container",
+      "live_inference": false,
+      "artifact_count": 0,
+      "broker": {
+        "mode": "offline-scripted-broker",
+        "live_inference": false,
+        "reserved_calls": 1,
+        "scripted_dispatches": 1,
+        "output_tokens_reserved": 2048,
+        "estimated_cost_reserved_usd": 0.0,
+        "stop_reason": "BudgetExceeded",
+        "events": [
+          {
+            "status": "completed",
+            "id": 1,
+            "model": "scripted-root",
+            "prompt_sha256": "0160f1484f18cdfcb881bcc4a58cc5ddffcdaae1cab0d1516269fdff5b3301ef",
+            "estimated_cost_reserved_usd": 0.0,
+            "response_sha256": "852f2ecc01c46fc3fc9b69d75d7c10509f7e105ff07b2318a7665facab1a72a4"
+          },
+          {
+            "status": "denied",
+            "id": 2,
+            "model": "scripted-sub",
+            "prompt_sha256": "cc8647f1c4f4458122843b191f4a9aef7647753ebd1a17719205ae1d63bcd19a",
+            "error_classification": "BudgetExceeded"
+          }
+        ],
+        "scope": "Host-observed scripted requests; no real provider or measured inference tokens"
+      },
+      "container": {
+        "status": "completed",
+        "image_id": "sha256:12d4b088a521ea52e4368d7d98a8fa6b6f739310fea4126214aa96eded0bd5aa",
+        "source_sha256": "9e63aff9443631bfb47b8127bf37f44bfc9e0c14526ec0ac3613d5bd181d1e58",
+        "live_inference": false,
+        "policy_verified": true,
+        "cleanup_verified": true,
+        "returncode": 0,
+        "functional_success": null,
+        "max_wall_seconds": 60,
+        "scope": "Local container process result only; untrusted output is not research evidence",
+        "container_id": "d73d5a8e8fe0dbaaca083a30bb4042dae33d41376e83576b00a9484e4e5d6cc1",
+        "oom_killed": false,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "c5c2974042d42813f96ca7a6171c18dbd3b11219b244cc14ddccd5cb15955baa",
+        "broker": {
+          "mode": "offline-scripted-broker",
+          "live_inference": false,
+          "reserved_calls": 1,
+          "scripted_dispatches": 1,
+          "output_tokens_reserved": 2048,
+          "estimated_cost_reserved_usd": 0.0,
+          "stop_reason": "BudgetExceeded",
+          "events": [
+            {
+              "status": "completed",
+              "id": 1,
+              "model": "scripted-root",
+              "prompt_sha256": "0160f1484f18cdfcb881bcc4a58cc5ddffcdaae1cab0d1516269fdff5b3301ef",
+              "estimated_cost_reserved_usd": 0.0,
+              "response_sha256": "852f2ecc01c46fc3fc9b69d75d7c10509f7e105ff07b2318a7665facab1a72a4"
+            },
+            {
+              "status": "denied",
+              "id": 2,
+              "model": "scripted-sub",
+              "prompt_sha256": "cc8647f1c4f4458122843b191f4a9aef7647753ebd1a17719205ae1d63bcd19a",
+              "error_classification": "BudgetExceeded"
+            }
+          ],
+          "scope": "Host-observed scripted requests; no real provider or measured inference tokens"
+        }
+      },
+      "scope": "Host-observed scripted completions through bounded pipes; no real provider inference"
+    },
+    {
+      "name": "invalid-request",
+      "container": {
+        "status": "completed",
+        "image_id": "sha256:12d4b088a521ea52e4368d7d98a8fa6b6f739310fea4126214aa96eded0bd5aa",
+        "source_sha256": "6902b7ab105a7e8cebdbb81213709bb62d26a282fde9c9d3958fc852cb6416c2",
+        "live_inference": false,
+        "policy_verified": true,
+        "cleanup_verified": true,
+        "returncode": 0,
+        "functional_success": null,
+        "max_wall_seconds": 30,
+        "scope": "Local container process result only; untrusted output is not research evidence",
+        "container_id": "98c2c025d5b6a1e752ced3e46cd8f97a0109f685874db24c44d9d95ac2eb6c5c",
+        "oom_killed": false,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "9644db8d6f03a5b2a7221ec4fc87ea4fc1fe55a4e629f1ba97aef4af82dd9e30",
+        "broker": {
+          "mode": "offline-scripted-broker",
+          "live_inference": false,
+          "reserved_calls": 0,
+          "scripted_dispatches": 0,
+          "output_tokens_reserved": 0,
+          "estimated_cost_reserved_usd": 0.0,
+          "stop_reason": "ProtocolError",
+          "events": [
+            {
+              "status": "denied",
+              "error_classification": "ProtocolError"
+            }
+          ],
+          "scope": "Host-observed scripted requests; no real provider or measured inference tokens"
+        }
+      },
+      "broker": {
+        "mode": "offline-scripted-broker",
+        "live_inference": false,
+        "reserved_calls": 0,
+        "scripted_dispatches": 0,
+        "output_tokens_reserved": 0,
+        "estimated_cost_reserved_usd": 0.0,
+        "stop_reason": "ProtocolError",
+        "events": [
+          {
+            "status": "denied",
+            "error_classification": "ProtocolError"
+          }
+        ],
+        "scope": "Host-observed scripted requests; no real provider or measured inference tokens"
+      }
+    }
+  ],
+  "live_inference": false,
+  "host_sentinel_set_for_verification": true,
+  "verified_at": "2026-11-01T18:29:10.475370+00:00",
+  "scope": "Three actual container IPC fixtures; host dispatches are scripted, not inference"
+}
