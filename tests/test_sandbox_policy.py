@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from recursa.sandbox import create_arguments, policy_matches, run_python
+from recursa.sandbox import create_arguments, policy_matches, run_python, BOOTSTRAP
 
 IMAGE = 'sha256:' + 'a' * 64
 NAME = 'recursa-' + 'b' * 32
@@ -15,7 +15,8 @@ CID = 'c' * 64
 
 
 def metadata(name=NAME):
-    return {'Id': CID, 'Image': IMAGE, 'Config': {'User': '65532:65532', 'Labels': {'recursa.sandbox': name},
+    return {'Id': CID, 'Image': IMAGE, 'State': {'Status': 'created'}, 'Config': {'User': '65532:65532', 'Labels': {'recursa.sandbox': name},
+            'Entrypoint': ['python'], 'Cmd': ['-I', '-c', BOOTSTRAP], 'WorkingDir': '/work', 'OpenStdin': True, 'Tty': False,
             'Env': ['PATH=/usr/local/bin', 'HOME=/tmp', 'PYTHONDONTWRITEBYTECODE=1']},
             'Mounts': [], 'HostConfig': {'NetworkMode': 'none', 'ReadonlyRootfs': True, 'CapDrop': ['ALL'],
             'SecurityOpt': ['no-new-privileges=true'], 'Memory': 268435456, 'MemorySwap': 268435456,
@@ -44,6 +45,10 @@ class SandboxPolicyTests(unittest.TestCase):
         changed = metadata()
         changed['Config']['Env'].append('HTTPS_PROXY=private-proxy-placeholder')
         self.assertFalse(policy_matches(changed, IMAGE, NAME, ['PATH=/usr/local/bin']))
+        for field, value in [('Entrypoint', ['sh']), ('WorkingDir', '/'), ('Tty', True)]:
+            changed = metadata()
+            changed['Config'][field] = value
+            self.assertFalse(policy_matches(changed, IMAGE, NAME, ['PATH=/usr/local/bin']))
 
     def test_unavailable_engine_never_falls_back_to_host(self):
         with tempfile.TemporaryDirectory() as tmp, patch('recursa.sandbox.shutil.which', return_value=None), patch('recursa.sandbox.subprocess.Popen') as start:

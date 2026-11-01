@@ -1,9 +1,9 @@
 {
   "runtime_image": {
-    "image_id": "sha256:fea56377fde08957dd27b81adc1523feeab9169503df2eb9407e535237834bc5",
+    "image_id": "sha256:3ed373e3e830a12bc23387e6a2d7fdc90d1d55985be4f47d9e43f71d148804d9",
     "base_image_repo_digest": "python@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159",
     "platform": "linux/amd64",
-    "runtime_source_sha256": "65115a761c4411d973c86c9a9152714735c20edfa57addb70c48fc5a57a6a505",
+    "runtime_source_sha256": "7e61d86734327b940074994af17ae85701420b6f6c9c92470ec252e1a661e811",
     "requirements_sha256": "35a5c43acbd902920529e5eda43ef85e570ab80dbebda37cb929d20e4974c76a",
     "scope": "Local pinned SDK image for offline container fixtures; no provider gateway"
   },
@@ -23,7 +23,7 @@
       "subcall_observed": true,
       "container": {
         "status": "completed",
-        "image_id": "sha256:fea56377fde08957dd27b81adc1523feeab9169503df2eb9407e535237834bc5",
+        "image_id": "sha256:3ed373e3e830a12bc23387e6a2d7fdc90d1d55985be4f47d9e43f71d148804d9",
         "source_sha256": "29963f513c5eb93cffefb210fecd52bed3f1ef119169f6656ce6cb0dbfab9aab",
         "live_inference": false,
         "policy_verified": true,
@@ -32,10 +32,10 @@
         "functional_success": null,
         "max_wall_seconds": 60,
         "scope": "Local container process result only; untrusted output is not research evidence",
-        "container_id": "18d686353ba6b002ad534701f940eea8ad697f8e8ddcc5dfe1724994b43b3373",
+        "container_id": "b279dad5e585730330fbc542e80ce2eb2cc35561dd69b8871fa439fd89c60b41",
         "oom_killed": false,
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "stdout_sha256": "379b813929c617b8ed02b9c1a1a228d01db7a322aa71f3aed0b5641f9728f515"
+        "stdout_sha256": "17e88b140971372429b35c287b948f733e6f7364cf3c51e9261733724686124f"
       },
       "scope": "Scripted integration only; token usage is fixture data, not research evidence"
     },
@@ -53,7 +53,7 @@
       "subcall_observed": false,
       "container": {
         "status": "completed",
-        "image_id": "sha256:fea56377fde08957dd27b81adc1523feeab9169503df2eb9407e535237834bc5",
+        "image_id": "sha256:3ed373e3e830a12bc23387e6a2d7fdc90d1d55985be4f47d9e43f71d148804d9",
         "source_sha256": "29963f513c5eb93cffefb210fecd52bed3f1ef119169f6656ce6cb0dbfab9aab",
         "live_inference": false,
         "policy_verified": true,
@@ -62,18 +62,19 @@
         "functional_success": null,
         "max_wall_seconds": 60,
         "scope": "Local container process result only; untrusted output is not research evidence",
-        "container_id": "8f5cd6fcd4045499234b2e69e1e809f07d68addcada79539cb3bd2ff5f403a98",
+        "container_id": "8f796339835904e41097e5a30906e35e5a88f17c4762c5b9c17cb35038433a28",
         "oom_killed": false,
         "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "stdout_sha256": "1aff6735c35b1ba18a794b52c4eb66828928d4abef95945025a69516997637bf"
+        "stdout_sha256": "13fbdeea6b78892e6d8cfdf6cd6d0fdf1ad13f3d6c3ee95476d39be93d01fcd4"
       },
       "scope": "Scripted integration only; token usage is fixture data, not research evidence"
     }
   ],
   "status": "passed",
   "live_inference": false,
-  "verified_at": "2026-10-31T21:01:02.562664+00:00",
+  "verified_at": "2026-11-01T02:01:33.537494+00:00",
   "scope": "Two actual official-RLM container fixtures with scripted HTTP responses, not genuine inference",
+  "fixture_module_sha256": "4b064dbc2788bc870ad52aab8c987ab459b39ced07778b3dbdad09da1b5837fa",
   "returned_artifact_manifest": [
     {
       "path": "src/title.ts",
@@ -85,6 +86,5 @@
       "assumptions": [],
       "sha256": "c6a28d85224e5fca64117909cfffc63f64b39d7a2a550dc2c9759891b03d864f"
     }
-  ],
-  "fixture_module_sha256": "d1f94b71420cca8ceb6cdb005efb6d8e0cb67d8c1238d405c142d43041d35e2c"
+  ]
 }

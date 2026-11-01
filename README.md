@@ -66,6 +66,8 @@ The optional [controlled React lane](docs/react-builds.md) supports pinned React
 
 An opt-in [local container policy](docs/container-sandbox.md) validates a pinned cached image and constrained engine settings before source dispatch. It has no host fallback, automatic image pull or public execution route. Five real-container probes verified narrow identity/filesystem/network controls, resource/output/time limits and cleanup. Two additional [contained official-RLM fixtures](docs/contained-rlm.md) verify inspection/subcall/artifact return and budget exhaustion with scripted HTTP responses. Source-matched image checks and parent-side artifact validation protect the boundary. Genuine provider mediation remains open; no real model inference was run.
 
+An [offline host broker](docs/host-broker.md) now receives bounded completion requests over private pipes, enforces an owner-controlled model allowlist and reserves budget before dispatch. Three actual container cases verify normal flow, host budget denial and URL-override rejection. It returns scripted text only; the live-provider adapter and genuine inference remain unfinished.
+
 ## Deployment preparation
 
 `Dockerfile` serves Studio, release progress and allowlisted public captures under `traces/public` on port 7860 without inference dependencies. The owner authorized publication on October 29, 2026. Both GitHub and Hugging Face logins were verified against the intended owners. Never include provider logs, credentials or private specifications in a public bundle. This container is a replay viewer, not an execution sandbox.

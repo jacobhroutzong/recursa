@@ -1,6 +1,6 @@
 # Official RLM inside the offline container lane
 
-The official `rlms==0.1.3` adapter now runs inside the constrained Python container for fixed scripted integration fixtures. This is actual container/REPL execution with intercepted HTTP transport, **not genuine model inference**. The generic provider-enabled adapter still requires trusted local execution; a host-side provider gateway has not been implemented.
+The official `rlms==0.1.3` adapter runs inside the constrained Python container for fixed scripted integration fixtures. This is actual container/REPL execution, **not genuine model inference**. In addition to intercepted HTTP transport inside the image, an [offline host broker](host-broker.md) now mediates completion requests over bounded pipes. The generic provider-enabled adapter still requires trusted local execution; no live host-side provider adapter exists.
 
 ## Build once, then verify
 
@@ -24,4 +24,4 @@ The source response and token-usage values are controlled fixture data. The pare
 
 ## Remaining gate
 
-Only this fixed scripted fixture mode exists. Model request mediation outside the container, shared host-side provider budgets/credentials, complete private trace export and genuinely authorized model-backed application generation remain unfinished. The public service remains read-only CPU replay, with no container-launch or live-inference endpoint. These controls are narrow measured isolation evidence, not universal kernel exploit protection or benchmark results.
+Fixed scripted fixture modes exist, including host-side mediation and reservations. A live provider backend, real credential handling, complete private trace export and genuinely authorized model-backed application generation remain unfinished. The public service remains read-only CPU replay, with no container-launch or live-inference endpoint. These controls are narrow measured isolation evidence, not universal kernel exploit protection or benchmark results.

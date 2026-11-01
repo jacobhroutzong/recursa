@@ -84,12 +84,11 @@
   "status": "passed",
   "live_inference": false,
   "scope": "Five reviewed local container probes; not model synthesis or universal sandbox assurance",
-  "verified_at": "2026-10-31T19:59:33.802510+00:00",
+  "verified_at": "2026-11-01T02:03:33.384019+00:00",
   "image_repo_digests": [
     "python@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159"
   ],
   "platform": "linux/amd64",
-  "docker_server_version": "29.9.2",
-  "runner_source_sha256": "a24da363dc0892ca53a91e5cc427b9cdcb06a86e0eb1e4d829c94f70a011ba4f",
+  "runner_source_sha256": "a76dc06dd98798aa828b7e7f651d63776dc73b1be88c55f33e3d78c4d4a641c6",
   "verifier_source_sha256": "3168852ce804162f0192aca649c732c864845dbe1cb0bfdcf3f1d1e09ff12028"
 }

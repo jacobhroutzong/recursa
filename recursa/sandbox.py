@@ -14,13 +14,15 @@ import uuid
 
 from recursa.budget import BudgetExceeded, Deadline
 from recursa.experiments import atomic_json
+from recursa.broker import OfflineBroker, PREFIX, FRAME_LIMIT
 
 ROOT = Path(__file__).resolve().parents[1]
 BOOTSTRAP = "import json,sys; p=json.load(sys.stdin); exec(compile(p['source'],'<recursa-sandbox>','exec'),{'__name__':'__main__','context':p.get('context')})"
+RPC_BOOTSTRAP = "import json,sys; p=json.loads(sys.stdin.readline(500001)); exec(compile(p['source'],'<recursa-sandbox>','exec'),{'__name__':'__main__','context':p.get('context')})"
 ENDPOINT = 'npipe:////./pipe/dockerDesktopLinuxEngine' if os.name == 'nt' else 'unix:///var/run/docker.sock'
 
 
-def create_arguments(image, name):
+def create_arguments(image, name, *, mediated=False):
     if not isinstance(image, str) or not re.fullmatch(r'sha256:[0-9a-f]{64}', image):
         raise ValueError('Use an explicit, locally reviewed immutable image ID')
     if not re.fullmatch(r'recursa-[0-9a-f]{32}', name):
@@ -33,10 +35,10 @@ def create_arguments(image, name):
             '--tmpfs=/tmp:rw,nosuid,nodev,noexec,size=16m,mode=1777',
             '--tmpfs=/work:rw,nosuid,nodev,noexec,size=64m,uid=65532,gid=65532,mode=700',
             '--workdir=/work', '--env=HOME=/tmp', '--env=PYTHONDONTWRITEBYTECODE=1',
-            '--entrypoint=python', image, '-I', '-c', BOOTSTRAP]
+            '--entrypoint=python', image, '-I', '-c', RPC_BOOTSTRAP if mediated else BOOTSTRAP]
 
 
-def policy_matches(container, image, name, image_environment):
+def policy_matches(container, image, name, image_environment, *, mediated=False):
     """Verify observed engine configuration before releasing any source bytes."""
     h, c = container.get('HostConfig', {}), container.get('Config', {})
     security = set(h.get('SecurityOpt') or [])
@@ -45,6 +47,9 @@ def policy_matches(container, image, name, image_environment):
     expected_environment.update(HOME='/tmp', PYTHONDONTWRITEBYTECODE='1')
     observed_environment = dict(item.split('=', 1) for item in c.get('Env', []))
     return (container.get('Image') == image and c.get('User') == '65532:65532'
+        and c.get('Entrypoint') == ['python'] and c.get('Cmd') == ['-I', '-c', RPC_BOOTSTRAP if mediated else BOOTSTRAP]
+        and c.get('WorkingDir') == '/work' and c.get('OpenStdin') is True and not c.get('Tty')
+        and container.get('State', {}).get('Status') == 'created'
         and observed_environment == expected_environment
         and c.get('Labels', {}).get('recursa.sandbox') == name
         and h.get('NetworkMode') == 'none' and h.get('ReadonlyRootfs') is True
@@ -63,14 +68,16 @@ def policy_matches(container, image, name, image_environment):
         and all(flag in tmp['/tmp'].split(',') for flag in ('noexec', 'nosuid', 'nodev', 'size=16m')))
 
 
-def run_python(source, image, output_dir, *, context=None, max_wall_seconds=30, max_output_bytes=1048576):
+def run_python(source, image, output_dir, *, context=None, max_wall_seconds=30, max_output_bytes=1048576, broker=None):
     """Execute Python only after a local engine and hardened policy are verified.
 
     Container output is untrusted, bounded, and private. Exit zero does not prove
     task correctness. Docker containers share a kernel; this is not a VM claim.
     """
     name = 'recursa-' + uuid.uuid4().hex
-    arguments = create_arguments(image, name)
+    if broker is not None and type(broker) is not OfflineBroker:
+        raise ValueError('Only the offline scripted host broker is implemented')
+    arguments = create_arguments(image, name, mediated=broker is not None)
     if not isinstance(source, str) or len(source.encode()) > 100000:
         raise ValueError('Source must be bounded text')
     payload = json.dumps({'source': source, 'context': context}, allow_nan=False).encode()
@@ -94,6 +101,7 @@ def run_python(source, image, output_dir, *, context=None, max_wall_seconds=30, 
     overflow = threading.Event()
     create_attempted = False
     readers = []
+    input_lock = threading.Lock()
     environment = {k: v for k, v in os.environ.items() if not k.upper().startswith('DOCKER_')}
 
     def command(args, timeout):
@@ -121,7 +129,7 @@ def run_python(source, image, output_dir, *, context=None, max_wall_seconds=30, 
             raise RuntimeError('Container creation unavailable')
         container_id = candidate
         observed = decoded(['container', 'inspect', container_id])[0]
-        if not policy_matches(observed, image, name, inspected.get('Config', {}).get('Env', [])):
+        if not policy_matches(observed, image, name, inspected.get('Config', {}).get('Env', []), mediated=broker is not None):
             report['status'] = 'policy-rejected'
             return report
         report['policy_verified'] = True
@@ -137,19 +145,41 @@ def run_python(source, image, output_dir, *, context=None, max_wall_seconds=30, 
 
         def drain(stream, target):
             nonlocal total
+            pending = b''
             with target.open('wb') as output:
-                while chunk := stream.read(4096):
+                while chunk := stream.read1(4096):
                     with output_lock:
                         keep = max(0, min(len(chunk), max_output_bytes - total))
                         total += keep
                         output.write(chunk[:keep])
                         if keep < len(chunk):
                             overflow.set()
+                    if broker is not None and target.name == 'stdout.bin' and not overflow.is_set():
+                        pending += chunk
+                        while b'\n' in pending:
+                            line, pending = pending.split(b'\n', 1)
+                            if len(line) > FRAME_LIMIT + len(PREFIX):
+                                overflow.set()
+                                break
+                            if line.startswith(PREFIX):
+                                response = broker.respond(line[len(PREFIX):])
+                                atomic_json(directory / 'broker-report.json', broker.summary())
+                                try:
+                                    with input_lock:
+                                        process.stdin.write(json.dumps(response).encode() + b'\n')
+                                        process.stdin.flush()
+                                except (OSError, ValueError):
+                                    return
+                        if len(pending) > FRAME_LIMIT + len(PREFIX):
+                            overflow.set()
 
         def send():
             try:
-                process.stdin.write(payload)
-                process.stdin.close()
+                with input_lock:
+                    process.stdin.write(payload + (b'\n' if broker is not None else b''))
+                    process.stdin.flush()
+                    if broker is None:
+                        process.stdin.close()
             except (OSError, ValueError):
                 pass
 
@@ -215,6 +245,9 @@ def run_python(source, image, output_dir, *, context=None, max_wall_seconds=30, 
                 report['status'] = 'output-limit'
         for path in (directory / 'private').glob('*.bin'):
             report[path.stem + '_sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+        if broker is not None:
+            report['broker'] = broker.summary()
+            atomic_json(directory / 'broker-report.json', report['broker'])
         atomic_json(directory / 'sandbox-report.json', report)
     return report
 
