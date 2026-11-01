@@ -64,7 +64,7 @@ Release test counts and source hashes appear in the published progress dashboard
 
 The optional [controlled React lane](docs/react-builds.md) supports pinned React/React DOM with strict component-prop checks, a production bundle and browser hook-state tests. It parses trusted package files without running generated package scripts/configuration in Node. The counter fixture is human-authored, and its successful checks are not model-generation evidence. Built React outputs include third-party license notices.
 
-An opt-in [local container policy](docs/container-sandbox.md) validates a pinned cached image and constrained engine settings before source dispatch. It has no host fallback, automatic image pull or public execution route. After Docker became ready, five real-container probes verified narrow identity/filesystem/network controls, resource/output/time limits and cleanup. Sanitized measured evidence and immutable image identity are versioned. This is not universal sandbox assurance; the RLM adapter has not yet been integrated into this container lane.
+An opt-in [local container policy](docs/container-sandbox.md) validates a pinned cached image and constrained engine settings before source dispatch. It has no host fallback, automatic image pull or public execution route. Five real-container probes verified narrow identity/filesystem/network controls, resource/output/time limits and cleanup. Two additional [contained official-RLM fixtures](docs/contained-rlm.md) verify inspection/subcall/artifact return and budget exhaustion with scripted HTTP responses. Source-matched image checks and parent-side artifact validation protect the boundary. Genuine provider mediation remains open; no real model inference was run.
 
 ## Deployment preparation
 

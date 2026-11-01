@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-31T20:01:39.573178+00:00",
+  "updated_at": "2026-11-01T01:21:07.891329+00:00",
   "phase": "Section 5 \u00b7 offline synthesis and verification",
-  "source_digest": "883def9239ed2e9cbc49477cd9484c0796e16758a8b76cf3ef659a509e3e3099",
+  "source_digest": "af57eef6375a2fc85249e70197fa3b7c141f09d75b84b93588b2c0fa688db379",
   "tests": {
-    "total": 77,
-    "passed": 77,
+    "total": 81,
+    "passed": 81,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-10-31T20:01:14.639877+00:00",
-    "source_digest": "883def9239ed2e9cbc49477cd9484c0796e16758a8b76cf3ef659a509e3e3099",
+    "verified_at": "2026-10-31T21:02:52.081209+00:00",
+    "source_digest": "af57eef6375a2fc85249e70197fa3b7c141f09d75b84b93588b2c0fa688db379",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -40,8 +40,8 @@
     {
       "number": 5,
       "name": "5. Application synthesis",
-      "status": "React and narrow container controls verified; incomplete",
-      "evidence": "Typed React props/build/hooks/license fixture passes. Five actual pinned-image container probes verify policy, timeout, output, memory/PID limits and cleanup; sanitized evidence committed. Containerized RLM integration, mediated provider access, broader packages and genuine synthesis remain open"
+      "status": "Contained official-RLM fixture verified offline; incomplete",
+      "evidence": "React path plus five actual container-control probes retained. Two actual SDK-container fixtures verify indexed inspection/subcall/artifact return and budget denial using scripted HTTP; parent rejects stale images and unsafe returned paths. Real-provider mediation, full private trace export, broader packages and genuine synthesis remain open"
     },
     {
       "number": 6,

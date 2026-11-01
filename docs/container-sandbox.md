@@ -40,4 +40,4 @@ $recursaImage = (Get-Content configs/container-image.json | ConvertFrom-Json).im
 python scripts/verify_container.py --image $recursaImage --output runs/container-verify-001
 ```
 
-The RLM adapter still runs its Python REPL only in trusted offline fixtures. It has not been integrated into this container lane, which contains no inference credentials or provider gateway. Containerized RLM execution, mediated model requests and genuine authorized inference remain open. Live batching remains disabled; the public site remains CPU replay-only.
+The official RLM adapter now also runs inside a pinned SDK image for fixed [offline scripted fixtures](contained-rlm.md), without real credentials or provider access. Genuine model requests still need a mediated host-side gateway and explicit authorization. Live batching remains disabled; the public site remains CPU replay-only.

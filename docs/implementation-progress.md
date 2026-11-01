@@ -8,7 +8,7 @@ Process correction: earlier work implemented portions of sections 6, 9 and 21 be
 | 2. Research foundation | Reviewed | `research-foundation.md`; no reproduced research claims |
 | 3. Technical architecture | Decided; modules in progress | `architecture.md`; official package installed and inspected |
 | 4. Real RLM engine | Offline integration verified; real-model gate open | Indexed context, artifact protocol, pre-dispatch reservations and official runtime tested with scripted HTTP responses; owner selected offline implementation/testing |
-| 5. Application synthesis | React and narrow container controls verified; incomplete | Typed React props/build/hooks/license fixture passes. Five actual pinned-image container probes verify policy, timeout, output, memory/PID limits and cleanup; sanitized evidence committed. Containerized RLM integration, mediated provider access, broader packages and genuine synthesis remain open |
+| 5. Application synthesis | Contained official-RLM fixture verified offline; incomplete | React path plus five actual container-control probes retained. Two actual SDK-container fixtures verify indexed inspection/subcall/artifact return and budget denial using scripted HTTP; parent rejects stale images and unsafe returned paths. Real-provider mediation, full private trace export, broader packages and genuine synthesis remain open |
 | 6. Studio | Partial prior work | CPU replay UI only; full requested pages and generated app preview remain open |
 | 7. Live/replay modes | Partial prior work | Replay works; genuine live run pending |
 | 8. Evaluation harness | Pending | No baseline implementations or model measurements |

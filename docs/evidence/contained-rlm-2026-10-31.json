@@ -1,0 +1,90 @@
+{
+  "runtime_image": {
+    "image_id": "sha256:fea56377fde08957dd27b81adc1523feeab9169503df2eb9407e535237834bc5",
+    "base_image_repo_digest": "python@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159",
+    "platform": "linux/amd64",
+    "runtime_source_sha256": "65115a761c4411d973c86c9a9152714735c20edfa57addb70c48fc5a57a6a505",
+    "requirements_sha256": "35a5c43acbd902920529e5eda43ef85e570ab80dbebda37cb929d20e4974c76a",
+    "scope": "Local pinned SDK image for offline container fixtures; no provider gateway"
+  },
+  "cases": [
+    {
+      "name": "inspection-subcall-artifact",
+      "status": "completed",
+      "live_inference": false,
+      "mode": "offline-scripted-container",
+      "artifact_count": 1,
+      "transport_models": [
+        "scripted-root",
+        "scripted-sub"
+      ],
+      "model_calls": 2,
+      "context_observed": true,
+      "subcall_observed": true,
+      "container": {
+        "status": "completed",
+        "image_id": "sha256:fea56377fde08957dd27b81adc1523feeab9169503df2eb9407e535237834bc5",
+        "source_sha256": "29963f513c5eb93cffefb210fecd52bed3f1ef119169f6656ce6cb0dbfab9aab",
+        "live_inference": false,
+        "policy_verified": true,
+        "cleanup_verified": true,
+        "returncode": 0,
+        "functional_success": null,
+        "max_wall_seconds": 60,
+        "scope": "Local container process result only; untrusted output is not research evidence",
+        "container_id": "18d686353ba6b002ad534701f940eea8ad697f8e8ddcc5dfe1724994b43b3373",
+        "oom_killed": false,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "379b813929c617b8ed02b9c1a1a228d01db7a322aa71f3aed0b5641f9728f515"
+      },
+      "scope": "Scripted integration only; token usage is fixture data, not research evidence"
+    },
+    {
+      "name": "budget-exhaustion",
+      "status": "budget-exhausted",
+      "live_inference": false,
+      "mode": "offline-scripted-container",
+      "artifact_count": 0,
+      "transport_models": [
+        "scripted-root"
+      ],
+      "model_calls": 1,
+      "context_observed": true,
+      "subcall_observed": false,
+      "container": {
+        "status": "completed",
+        "image_id": "sha256:fea56377fde08957dd27b81adc1523feeab9169503df2eb9407e535237834bc5",
+        "source_sha256": "29963f513c5eb93cffefb210fecd52bed3f1ef119169f6656ce6cb0dbfab9aab",
+        "live_inference": false,
+        "policy_verified": true,
+        "cleanup_verified": true,
+        "returncode": 0,
+        "functional_success": null,
+        "max_wall_seconds": 60,
+        "scope": "Local container process result only; untrusted output is not research evidence",
+        "container_id": "8f5cd6fcd4045499234b2e69e1e809f07d68addcada79539cb3bd2ff5f403a98",
+        "oom_killed": false,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "1aff6735c35b1ba18a794b52c4eb66828928d4abef95945025a69516997637bf"
+      },
+      "scope": "Scripted integration only; token usage is fixture data, not research evidence"
+    }
+  ],
+  "status": "passed",
+  "live_inference": false,
+  "verified_at": "2026-10-31T21:01:02.562664+00:00",
+  "scope": "Two actual official-RLM container fixtures with scripted HTTP responses, not genuine inference",
+  "returned_artifact_manifest": [
+    {
+      "path": "src/title.ts",
+      "requirements": [
+        "R1"
+      ],
+      "imports": [],
+      "exports": [],
+      "assumptions": [],
+      "sha256": "c6a28d85224e5fca64117909cfffc63f64b39d7a2a550dc2c9759891b03d864f"
+    }
+  ],
+  "fixture_module_sha256": "d1f94b71420cca8ceb6cdb005efb6d8e0cb67d8c1238d405c142d43041d35e2c"
+}
