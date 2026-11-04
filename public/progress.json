@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-01T18:30:30.727466+00:00",
+  "updated_at": "2026-11-04T12:03:23.403236+00:00",
   "phase": "Section 5 \u00b7 offline synthesis and verification",
-  "source_digest": "11654c8b463bc38f63e68c8a01d3fd49f4d6a30235a052caf7fa578200934deb",
+  "source_digest": "960ba40338dba99c857428cb901b1cb3a7d88cbd403a98de089d3b47b004bb54",
   "tests": {
-    "total": 96,
-    "passed": 96,
+    "total": 103,
+    "passed": 103,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-01T18:30:27.595176+00:00",
-    "source_digest": "11654c8b463bc38f63e68c8a01d3fd49f4d6a30235a052caf7fa578200934deb",
+    "verified_at": "2026-11-04T12:03:18.991293+00:00",
+    "source_digest": "960ba40338dba99c857428cb901b1cb3a7d88cbd403a98de089d3b47b004bb54",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -40,8 +40,8 @@
     {
       "number": 5,
       "name": "5. Application synthesis",
-      "status": "Offline provider adapter tested; incomplete",
-      "evidence": "Host mediation verified with actual scripted container cases. Separate provider transport passes intercepted HTTP checks for explicit authorization, fixed settings, budget denial, retained reservations, usage validation and sanitized errors. It is not connected to the runner. Supervised provider execution/integration, private trace export, broader packages and genuine synthesis remain open"
+      "status": "Offline provider supervision tested; incomplete",
+      "evidence": "Host mediation verified with actual scripted container cases. Separate supervised provider transport passes intercepted worker checks for parent-owned budgets, whole-request timeout, descendant cleanup, durable cancellation, corrupt results and sanitized errors. It is not connected to the container runner. Broker integration, private trace export, broader packages and genuine synthesis remain open"
     },
     {
       "number": 6,

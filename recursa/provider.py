@@ -49,6 +49,7 @@ class ProviderAdapter:
         if parts.hostname not in {'localhost', '127.0.0.1', '::1'} and any(
                 r[k] <= 0 for r in budget.rates.values() for k in ('input_per_million', 'output_per_million')):
             raise ValueError('Remote rates must be positive')
+        self._config = config
         self._url = url.rstrip('/') + '/chat/completions'
         self._key_env = config['api_key_env']
         self._cap = cap
@@ -77,30 +78,10 @@ class ProviderAdapter:
                 key = os.environ.get(self._key_env, '')
                 if not key or any(ord(c) < 33 or ord(c) > 126 for c in key):
                     raise ProviderFailure('CredentialUnavailable')
-                # Lazy optional dependency: replay-only installations need no httpx.
-                import httpx
                 reserved = self._budget.reserve(model, messages, self._cap)
                 event.update(model=model, prompt_sha256=hashlib.sha256(encoded).hexdigest(),
                              estimated_cost_reserved_usd=reserved)
-                with httpx.Client(trust_env=False, follow_redirects=False,
-                                  transport=httpx.HTTPTransport(retries=0, trust_env=False)) as client:
-                    with client.stream('POST', self._url,
-                                       headers={'Authorization': 'Bearer ' + key, 'Accept-Encoding': 'identity'},
-                                       json={'model': model, 'messages': messages,
-                                             'max_completion_tokens': self._cap, 'stream': False, 'store': False},
-                                       timeout=self._budget.remaining(cap=30)) as response:
-                        if response.status_code != 200:
-                            raise ProviderFailure('ProviderHTTPError')
-                        if response.headers.get('content-encoding', 'identity').lower() != 'identity':
-                            raise ProviderFailure('UnsupportedResponseEncoding')
-                        chunks, size = [], 0
-                        for chunk in response.iter_bytes(chunk_size=4096):
-                            self._budget.remaining()
-                            size += len(chunk)
-                            if size > 131072:
-                                raise ProviderFailure('ResponseTooLarge')
-                            chunks.append(chunk)
-                        data = json.loads(b''.join(chunks))
+                data = self._request(model, messages, key)
                 self._budget.remaining()
                 choices = data.get('choices')
                 if not isinstance(choices, list) or len(choices) != 1 or choices[0].get('finish_reason') != 'stop':
@@ -128,6 +109,10 @@ class ProviderAdapter:
                     raise ProviderFailure('UsageExceededReservation')
                 event.update(status='completed', response_sha256=hashlib.sha256(text.encode()).hexdigest())
                 return text
+            except KeyboardInterrupt:
+                self._closed = 'ProviderCancelled'
+                event['error_classification'] = 'ProviderCancelled'
+                raise
             except Exception as exc:
                 code = str(exc) if isinstance(exc, ProviderFailure) else (
                     'BudgetExceeded' if isinstance(exc, BudgetExceeded) else 'ProviderTransportOrResponseError')
@@ -137,6 +122,30 @@ class ProviderAdapter:
             finally:
                 if len(self._events) < 64:
                     self._events.append(event)
+
+    def _request(self, model, messages, key):
+        # Lazy dependency: replay imports require only the standard library.
+        import httpx
+        with httpx.Client(trust_env=False, follow_redirects=False,
+                          transport=httpx.HTTPTransport(retries=0, trust_env=False)) as client:
+            with client.stream('POST', self._url,
+                               headers={'Authorization': 'Bearer ' + key, 'Accept-Encoding': 'identity'},
+                               json={'model': model, 'messages': messages,
+                                     'max_completion_tokens': self._cap, 'stream': False, 'store': False},
+                               timeout=self._budget.remaining(cap=30)) as response:
+                if response.status_code != 200:
+                    raise ProviderFailure('ProviderHTTPError')
+                if response.headers.get('content-encoding', 'identity').lower() != 'identity':
+                    raise ProviderFailure('UnsupportedResponseEncoding')
+                chunks, size = [], 0
+                for chunk in response.iter_bytes(chunk_size=4096):
+                    self._budget.remaining()
+                    size += len(chunk)
+                    if size > 131072:
+                        raise ProviderFailure('ResponseTooLarge')
+                    chunks.append(chunk)
+                data = json.loads(b''.join(chunks))
+        return data
 
     def summary(self):
         with self._lock:
