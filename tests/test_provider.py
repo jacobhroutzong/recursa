@@ -64,7 +64,8 @@ class ProviderTransportTests(unittest.TestCase):
 
     def test_fixed_request_usage_privacy_and_no_refund(self):
         adapter = self.execute()
-        self.assertEqual(adapter.complete('fixture', MESSAGES), 'fixture reply')
+        with patch('recursa.provider.perf_counter', side_effect=[10, 10.25]):
+            self.assertEqual(adapter.complete('fixture', MESSAGES), 'fixture reply')
         request = self.requests[0]
         self.assertEqual(str(request.url), 'https://provider.invalid/v1/chat/completions')
         self.assertEqual(json.loads(request.content), {'model': 'fixture', 'messages': MESSAGES,
@@ -73,6 +74,7 @@ class ProviderTransportTests(unittest.TestCase):
         summary = adapter.summary()
         self.assertGreater(summary['estimated_cost_committed_usd'], 0.000011)
         self.assertEqual(summary['events'][0]['provider_reported_usage']['total_tokens'], 8)
+        self.assertEqual(summary['events'][0]['request_wall_ms'], 250)
         for private in ('private fixture prompt', 'fake-test-credential', 'fixture reply', 'provider.invalid'):
             self.assertNotIn(private, json.dumps(summary))
         summary['events'][0]['status'] = 'tampered'
@@ -96,6 +98,7 @@ class ProviderTransportTests(unittest.TestCase):
         with self.assertRaisesRegex(ProviderFailure, 'BudgetExceeded'):
             adapter.complete('fixture', MESSAGES)
         self.assertEqual(len(self.requests), 1)
+        self.assertNotIn('request_wall_ms', adapter.summary()['events'][-1])
 
     def test_invalid_input_and_missing_key_never_dispatch(self):
         for model, messages in [('other', MESSAGES), ('fixture', [{'role': [], 'content': 'x'}]),

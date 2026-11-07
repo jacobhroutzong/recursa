@@ -305,7 +305,7 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
         <tbody id="repair-trials"></tbody>
       </table>
     </div>
-    <div class="panel-body"><p class="intro">The same repair policy allows one model call on a source candidate with failed verification. An unmeasured value means the check did not produce an accepted measurement. Browser counts cover the declared scenarios.</p><a href="/api/repair-series" target="_blank" rel="noopener">Open paired measurements ↗</a></div>
+    <div class="panel-body"><p class="intro">The same repair policy allows one model call on a source candidate with failed verification. An unmeasured value means the check did not produce an accepted measurement. Open a phase trace and expand first-pass generation to inspect its recorded model calls.</p><a href="/api/repair-series" target="_blank" rel="noopener">Open paired measurements ↗</a></div>
   </div>
   <p class="intro" id="series-status" role="status">Loading repeated local trials…</p>
   <div id="series-results" hidden>
@@ -642,10 +642,19 @@ function openRepairTrace(selected,trial,model){
       details:{specification:selected.label,method:methodNames[trial.method],seed:trial.seed,model}},
     {id:'first-pass',parent_id:'trial',type:'validation',label:'First-pass generation and verification',
       status:trial.status,duration_ms:trial.wall_ms,details:{...trial.usage,build_success:trial.build_success,
-        end_to_end_pass_rate:trial.end_to_end_pass_rate,error_classification:trial.error_classification}},
+        end_to_end_pass_rate:trial.end_to_end_pass_rate,error_classification:trial.error_classification,
+        recorded_call_timings:trial.initial_calls?.length??null}},
     {id:'repair',parent_id:'trial',type:'repair',label:'Bounded repair and recheck',
       status:repair.status,duration_ms:repair.wall_ms,details:{attempts:repair.attempts,changed_files:repair.changed_files}}
   ];
+  for(const call of trial.initial_calls??[]){
+    const server=call.timing_source==='llama-server-evaluation';
+    events.push({id:'first-call-'+call.number,parent_id:'first-pass',type:'model_call',
+      label:'Initial model call '+call.number,status:call.status,duration_ms:call.duration_ms,
+      details:{timing_source:server?'llama-server prompt evaluation and token generation':'Host provider request wall time',
+        ...(server?{prompt_eval_ms:call.prompt_eval_ms,generation_ms:call.generation_ms}:{}),
+        tokens:call.tokens,error_classification:call.error_classification}});
+  }
   if(repair.inference_wall_ms!=null)events.push({id:'repair-call',parent_id:'repair',type:'model_call',
     label:'Repair model call',status:repair.usage.completed_calls?'completed':'no completed response',
     duration_ms:repair.inference_wall_ms,details:repair.usage});

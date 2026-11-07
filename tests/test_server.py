@@ -141,6 +141,16 @@ class ServerTests(unittest.TestCase):
                                               ["direct", "structured", "rlm"])
                         for trial in block["trials"]:
                             repair = trial["repair"]
+                            calls = trial["initial_calls"]
+                            self.assertEqual(len(calls), trial["usage"]["reserved_calls"])
+                            self.assertEqual([call["number"] for call in calls], list(range(1, len(calls) + 1)))
+                            self.assertEqual(sum(call["status"] == "completed" for call in calls),
+                                             trial["usage"]["completed_calls"])
+                            for call in calls:
+                                self.assertEqual(call["timing_source"], "llama-server-evaluation")
+                                self.assertGreater(call["duration_ms"], 0)
+                                self.assertAlmostEqual(call["duration_ms"],
+                                                       call["prompt_eval_ms"] + call["generation_ms"], places=1)
                             self.assertIn(repair["attempts"], (0, 1))
                             if repair["usage"] is not None:
                                 self.assertLessEqual(repair["usage"]["reserved_calls"], 1)

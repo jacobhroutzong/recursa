@@ -23,6 +23,16 @@ def reviewed_replay(report):
             'details': {key: event[key] for key in ('id', 'prompt_sha256', 'response_sha256',
                                                    'error_classification') if key in event},
         })
+    for index, event in enumerate(provider['events'], 1):
+        if 'request_wall_ms' in event:
+            events.append({
+                'id': f'provider-{index}', 'parent_id': 'root', 'type': 'model_call',
+                'label': f'Provider request {index}', 'status': event['status'],
+                'duration_ms': event['request_wall_ms'],
+                'details': {'timing_source': 'host-request-wall',
+                            'tokens': event.get('provider_reported_usage'),
+                            'error_classification': event.get('error_classification')},
+            })
     if report['context_reported'] is not None or report['subcall_reported'] is not None:
         events.append({
             'id': 'runtime-observations', 'parent_id': 'root', 'type': 'runtime',

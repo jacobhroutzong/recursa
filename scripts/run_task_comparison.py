@@ -199,6 +199,14 @@ def run_pilot(output, port, record, runtime_hash, *, case="tasks", seed=42, reve
             **measurement(verification),
             "wall_ms": round((time.monotonic() - started) * 1000), "usage": usage(provider_report),
             "rlm_observations": observations,
+            "initial_calls": [
+                {"number": index, "status": event["status"], "duration_ms": event["request_wall_ms"],
+                 "timing_source": "host-request-wall",
+                 "tokens": event.get("provider_reported_usage"),
+                 "error_classification": event.get("error_classification")}
+                for index, event in enumerate(
+                    (item for item in provider_report["events"] if "request_wall_ms" in item), 1)
+            ],
         }
         if repair:
             atomic_json(directory / "private/first-pass-measurement.json", trial)

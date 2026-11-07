@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T18:49:32.475401+00:00",
-  "phase": "Sections 8\u20139 \u00b7 Paired repair trials and phase traces",
-  "source_digest": "6732abe41878c224f670af9a77ecf5492b6870340920fc9a46adb63b5cf7afe6",
+  "updated_at": "2026-11-07T20:13:05.326094+00:00",
+  "phase": "Section 9 \u00b7 Initial synthesis call timing",
+  "source_digest": "27be83998d0ba71e2fff8ea4d1a074f87fdd1e532f78e70bc32ace89229d8adb",
   "tests": {
     "total": 109,
     "passed": 109,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T18:49:17.916810+00:00",
-    "source_digest": "6732abe41878c224f670af9a77ecf5492b6870340920fc9a46adb63b5cf7afe6",
+    "verified_at": "2026-11-07T20:12:50.691857+00:00",
+    "source_digest": "27be83998d0ba71e2fff8ea4d1a074f87fdd1e532f78e70bc32ace89229d8adb",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -64,8 +64,8 @@
     {
       "number": 9,
       "name": "9. Tracing",
-      "status": "Paired trial phase inspection started",
-      "evidence": "Studio opens first-pass, repair call, and recheck timing from the recorded measurements. Per-call timing inside the initial synthesis and full versioned benchmark traces remain open"
+      "status": "Initial synthesis call timing published",
+      "evidence": "Studio opens 22 measured first-pass model calls across the 12 paired trials. Historical times come from matched local server logs. New runs record host request wall time. Full versioned benchmark traces remain open"
     },
     {
       "number": 10,
