@@ -73,6 +73,29 @@ class ServerTests(unittest.TestCase):
                         with urlopen(replay_url + frame["file"]) as response:
                             self.assertEqual(response.headers["Content-Type"], "image/png")
                             self.assertEqual(hashlib.sha256(response.read()).hexdigest(), frame["sha256"])
+                with urlopen(base + "/api/task-comparison") as response:
+                    self.assertEqual(response.headers["Content-Type"], "application/json")
+                    comparison = json.load(response)
+                self.assertEqual(comparison["spec_sha256"], hashlib.sha256(
+                    json.dumps(generated["spec"], sort_keys=True).encode()).hexdigest())
+                self.assertEqual(comparison["original_scenarios_sha256"], hashlib.sha256(scenarios).hexdigest())
+                adapted = [{**scenario, "source_path": "index.html"} for scenario in json.loads(scenarios)]
+                self.assertEqual(comparison["scenarios_sha256"], hashlib.sha256(
+                    json.dumps(adapted, sort_keys=True).encode()).hexdigest())
+                self.assertEqual(comparison["paid_api_calls"], 0)
+                self.assertEqual(comparison["budget"]["max_repairs"], 0)
+                self.assertEqual([trial["method"] for trial in comparison["trials"]],
+                                 ["direct", "structured", "rlm"])
+                for trial in comparison["trials"]:
+                    checks = trial["scenarios"]
+                    self.assertIsNone(trial["requirement_satisfaction"])
+                    self.assertGreater(trial["usage"]["completed_calls"], 0)
+                    if checks:
+                        self.assertEqual([check["id"] for check in checks], [s["id"] for s in adapted])
+                        self.assertEqual(trial["end_to_end_pass_rate"],
+                                         sum(check["status"] == "passed" for check in checks) / len(checks))
+                    else:
+                        self.assertIsNone(trial["end_to_end_pass_rate"])
                 for route in ("/../README.md", "/api/execute", "/assets/unknown.png", "/assets/task-replay/../generated-task-preview.png", "/api/runs/missing", "/api/runs/private-copied", "/api/runs/generated-record-shaped-source"):
                     with self.assertRaises(HTTPError) as error:
                         urlopen(base + route)

@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
-from recursa.baseline import run_direct
+from recursa.baseline import run_direct, run_structured
 from recursa.experiments import ROOT
 from test_provider import config, result
 
@@ -38,3 +38,36 @@ class DirectBaselineTests(unittest.TestCase):
             self.assertIsNone(report["metrics"]["cost_usd"])
             self.assertEqual(report["visibility"], "private")
             self.assertEqual(json.loads((Path(directory) / "private/direct-report.json").read_bytes()), report)
+
+    def test_structured_assembly_receives_state_source_and_contract(self):
+        spec = {"requirements": [{"id": "B", "text": "Show the saved value.", "depends_on": ["A"]},
+                                 {"id": "A", "text": "Provide a value."}]}
+        scenarios = [{"id": "render", "requirements": ["B"], "steps": [
+            {"action": "expect_text", "target": {"role": "main"}, "value": "Saved"}
+        ]}]
+        state = {"path": "state.js", "content": "export const value = 'Saved';", "requirements": ["A"],
+                 "exports": ["value: string"]}
+        assembly = [
+            {"path": "index.html", "content": '<!doctype html><html lang="en"><head><title>Test</title></head>'
+             '<body><main></main><script type="module" src="app.js"></script></body></html>',
+             "requirements": ["B"]},
+            {"path": "app.js", "content": "import { value } from './state.js';\n"
+             "document.querySelector('main').textContent = value;", "requirements": ["B"]},
+        ]
+        requests = []
+
+        def intercepted_request(adapter, model, messages, key, *, deadline):
+            requests.append(json.loads(messages[-1]["content"]))
+            artifacts = [state] if len(requests) == 1 else assembly
+            return result(choices=[{"finish_reason": "stop", "message": {
+                "role": "assistant", "content": json.dumps({"artifacts": artifacts})}}])
+
+        with TemporaryDirectory(dir=ROOT / ".cache") as directory, \
+                patch.dict("os.environ", {"RECURSA_TEST_KEY": "offline-fixture"}), \
+                patch("recursa.baseline.SupervisedProviderAdapter._request", new=intercepted_request):
+            report = run_structured(spec, scenarios, directory, "fixture", config(), authorize_live=True)
+        self.assertEqual(report["status"], "passed")
+        self.assertEqual(report["metrics"]["model_calls"], 2)
+        self.assertEqual([item["id"] for item in requests[0]["requirements"]], ["A", "B"])
+        self.assertEqual(requests[1]["state_source"], state["content"])
+        self.assertEqual(requests[1]["state_contract"][0]["exports"], state["exports"])

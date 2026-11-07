@@ -18,7 +18,7 @@ if __name__ == "__main__":
     (public / "progress.json").write_text(json.dumps(progress, indent=2), encoding="utf-8")
     destination = ROOT / ".cache/space-releases" / progress["source_digest"][:16]
     paths = [ROOT / "Dockerfile", ROOT / "apps/studio/index.html", public / "progress.json"]
-    paths.extend(ROOT / "apps/studio" / name for name in ("playground.json", "generated-task.json", "assets/task-preview.png", "assets/generated-task-preview.png"))
+    paths.extend(ROOT / "apps/studio" / name for name in ("playground.json", "generated-task.json", "task-comparison.json", "assets/task-preview.png", "assets/generated-task-preview.png"))
     replay = ROOT / "apps/studio/assets/task-replay"
     paths.append(replay / "manifest.json")
     paths.extend(replay.glob("*.png"))

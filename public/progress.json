@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T17:48:38.001709+00:00",
-  "phase": "Sections 6\u20138 \u00b7 Verified workflow replay and baseline setup",
-  "source_digest": "bd5610a3f88884efc66d44131ae79f10726d02db643e91afeb34bb6219221575",
+  "updated_at": "2026-11-07T18:03:28.430243+00:00",
+  "phase": "Section 8 \u00b7 Matched local Task Management pilot",
+  "source_digest": "2c5a8c6f311e43052dfc742853a7f13ed980a7bdd8d88315985ea6c1b4cca304",
   "tests": {
-    "total": 107,
-    "passed": 107,
+    "total": 108,
+    "passed": 108,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T17:48:23.168011+00:00",
-    "source_digest": "bd5610a3f88884efc66d44131ae79f10726d02db643e91afeb34bb6219221575",
+    "verified_at": "2026-11-07T18:03:14.519212+00:00",
+    "source_digest": "2c5a8c6f311e43052dfc742853a7f13ed980a7bdd8d88315985ea6c1b4cca304",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -58,8 +58,8 @@
     {
       "number": 8,
       "name": "8. Evaluation harness",
-      "status": "Direct baseline wired and tested offline",
-      "evidence": "The full-spec direct runner uses supervised budgets and the common application verifier. A genuine matched trial and the structured baseline remain open"
+      "status": "Three-method local pilot measured",
+      "evidence": "Direct failed the build. Structured built and passed 0 of 4 Chromium scenarios. Contained RLM reached its six-call cap without returning source. Each method ran once under shared inputs, model settings and limits. Repeated trials and larger cases remain open"
     },
     {
       "number": 9,
@@ -94,8 +94,8 @@
     {
       "number": 14,
       "name": "14. Priority gates",
-      "status": "First model-backed slice verified",
-      "evidence": "Indexed inspection, a completed subcall, and one repaired verified build. Comparative evaluation remains open"
+      "status": "First model-backed slice and pilot measured",
+      "evidence": "Indexed inspection, a completed subcall, one repaired verified build and a matched first-pass pilot. Repeated comparative evaluation remains open"
     },
     {
       "number": 15,
@@ -130,8 +130,8 @@
     {
       "number": 20,
       "name": "20. Implementation sequence",
-      "status": "First real model-backed route verified",
-      "evidence": "Task Management generation, targeted repair, acceptance checks and preview are recorded"
+      "status": "Task Management pilot recorded",
+      "evidence": "The repaired app and workflow replay remain separate from the three first-pass comparison outcomes"
     },
     {
       "number": 21,

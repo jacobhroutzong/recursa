@@ -40,6 +40,12 @@ def make_handler(directory):
                 if generated.is_file():
                     catalog["generated"] = json.loads(generated.read_bytes())
                 self.send_data(200, catalog)
+            elif route == "/api/task-comparison":
+                comparison = ROOT / "apps/studio/task-comparison.json"
+                if comparison.is_file():
+                    self.send_data(200, comparison.read_bytes())
+                else:
+                    self.send_data(404, {"error": "Comparison not published"})
             elif route in ("/assets/task-preview.png", "/assets/generated-task-preview.png"):
                 asset = ROOT / "apps/studio" / route.lstrip("/")
                 if asset.is_file():

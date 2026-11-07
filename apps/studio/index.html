@@ -110,6 +110,9 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
 .metric-table th,.metric-table td { text-align:left; border-bottom:1px solid var(--line); padding:10px 14px }
 .metric-table th { color:var(--muted); font:10px var(--mono); letter-spacing:.5px; text-transform:uppercase }
 .metric-table tr:last-child td { border-bottom:0 }
+.pilot-scroll { overflow:auto }
+.pilot-scroll td:not(:first-child) { font-variant-numeric:tabular-nums }
+.pilot-scroll .tag { white-space:nowrap }
 .method-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px }
 .method { padding:16px; border:1px solid var(--line); border-radius:10px; background:var(--panel) }
 .method h3 { font-size:15px; margin:7px 0 }
@@ -287,7 +290,27 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
   <a id="app-preview-link" target="_blank" rel="noopener" aria-label="Open the screenshot at full size"><img id="app-preview-image" width="1000" alt="Task Management app showing three example tasks, one completed, and search and status filters"></a>
 </figure>
 </div></div></section>
-<section class="section" id="view-benchmarks" hidden><h2 class="section-title">Benchmarks</h2><p class="intro">Only values present in the selected run are shown. CPU smoke checks establish infrastructure behavior; they do not establish model quality or RLM superiority.</p><div class="panel"><div class="panel-head"><h2>Selected run measurements</h2><span class="tag amber">NO INFERRED RESULTS</span></div><div style="overflow:auto"><table class="metric-table"><thead><tr><th>Metric</th><th>Recorded value</th></tr></thead><tbody id="metrics-table"></tbody></table></div></div><div class="method-grid"><article class="method"><div class="method-number">A / DIRECT LLM</div><h3>Conventional generation</h3><p>Provide the specification to one model-driven workflow. Record context limits and actual validation outcomes.</p></article><article class="method"><div class="method-number">B / STRUCTURED WORKFLOW</div><h3>Nonrecursive decomposition</h3><p>Use dependency-aware generation and verification without a recursive RLM controller.</p></article><article class="method"><div class="method-number">C / RECURSIVE LANGUAGE MODEL</div><h3>Externalized context</h3><p>Measure adaptive inspection and model-backed recursive calls using the same inputs and explicit budgets.</p></article></div><div class="notice" style="margin-top:20px">Comparative conclusions require genuine completed runs, comparable models and budgets, independently checkable requirements, and repeated trials. No comparative improvement is claimed here.</div></section>
+<section class="section" id="view-benchmarks" hidden>
+  <h2 class="section-title">Benchmarks</h2>
+  <p class="intro" id="pilot-summary" role="status">Loading the recorded Task Management pilot…</p>
+  <div id="pilot-results" hidden>
+    <div class="panel">
+      <div class="panel-head"><h2>Task Management comparison</h2><span class="tag cyan">LOCAL MODEL PILOT</span></div>
+      <div class="pilot-scroll" tabindex="0" role="region" aria-label="Method results">
+        <table class="metric-table"><thead><tr><th scope="col">Method</th><th scope="col">Outcome</th><th scope="col">Build</th><th scope="col">Browser pass rate</th><th scope="col">Completed calls</th><th scope="col">Input / output tokens</th><th scope="col">Wall time</th></tr></thead><tbody id="pilot-methods"></tbody></table>
+      </div>
+      <div class="panel-body"><p class="intro" id="pilot-budget"></p><p class="intro" id="pilot-rlm-note" hidden></p><p class="intro">Tokens are provider-reported for completed calls. Wall time covers generation and verification, including container overhead for the RLM. Each method ran once. The results describe this case and do not establish a general advantage.</p><a href="/api/task-comparison" target="_blank" rel="noopener">Open measured record ↗</a> · <a href="https://github.com/jacobhroutzong/recursa/blob/main/docs/baseline-protocol.md" target="_blank" rel="noopener">Read the protocol ↗</a></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Acceptance scenarios</h2><span class="tag">FIRST PASS</span></div>
+      <div class="pilot-scroll" tabindex="0" role="region" aria-label="Acceptance scenario outcomes">
+        <table class="metric-table"><thead><tr><th scope="col">Scenario</th><th scope="col">Direct</th><th scope="col">Structured</th><th scope="col">RLM</th></tr></thead><tbody id="pilot-scenarios"></tbody></table>
+      </div>
+    </div>
+  </div>
+  <div class="method-grid"><article class="method"><div class="method-number">A / DIRECT LLM</div><h3>Full specification</h3><p>Generate the entire application from the reviewed spec in one completion.</p></article><article class="method"><div class="method-number">B / STRUCTURED WORKFLOW</div><h3>State, then interface</h3><p>Generate a state module, then give its source and contract to the interface assembly call.</p></article><article class="method"><div class="method-number">C / RECURSIVE LANGUAGE MODEL</div><h3>Externalized context</h3><p>Inspect requirements programmatically and delegate to a model subcall in the contained runtime.</p></article></div>
+  <div class="panel"><div class="panel-head"><h2>Selected replay measurements</h2><span class="tag">REPLAY ARCHIVE</span></div><div style="overflow:auto"><table class="metric-table"><thead><tr><th>Metric</th><th>Recorded value</th></tr></thead><tbody id="metrics-table"></tbody></table></div></div>
+</section>
 <section class="section" id="view-research" hidden><h2 class="section-title">Context is an environment.</h2><p class="intro">Recursa applies Recursive Language Models to application synthesis. The research question is whether programmatic inspection helps preserve connected requirements as specifications grow.</p><div class="flow"><div><b>SPECIFICATION</b>Stable requirement IDs<br>Typed dependencies</div><div><b>RLM CONTROLLER</b>Python inspection<br>Adaptive model calls</div><div><b>ARTIFACT REGISTRY</b>Source and provenance<br>Dependency contracts</div><div><b>VERIFICATION</b>Tests and diagnostics<br>Bounded repair</div><div><b>STUDIO</b>Recorded traces<br>Inspectable evidence</div></div><div class="panel"><div class="panel-body research-copy"><h3 style="margin-top:0">The original method</h3><p>Recursive Language Models, by Alex L. Zhang, Tim Kraska, and Omar Khattab, let a model interact programmatically with external context and invoke sub-models. Recursa builds an application synthesis workflow around that idea; it does not claim authorship of RLMs.</p><p><a href="https://arxiv.org/abs/2512.24601" target="_blank" rel="noopener">Read the research paper ↗</a> · <a href="https://github.com/alexzhang13/rlm" target="_blank" rel="noopener">Explore the upstream runtime ↗</a></p><h3>Architectural honesty</h3><p>Deterministic parsing, orchestration, and verification are distinct from model inference. A graph is evidence of RLM behavior only when it records genuine context inspection and model-backed calls. Local smoke runs are labeled accordingly.</p><h3>Compute strategy</h3><p>Develop locally on CPU whenever practical. Public demonstrations use recorded runs without visitor API keys. Optional live experiments require explicit budgets. Substantial accelerator workloads should use the owner's existing Colab allocation; Hugging Face Pro is not assumed to include dedicated GPU hardware.</p><h3>What remains to be established</h3><p>Compilation alone does not prove functional correctness. Requirement satisfaction, interaction tests, actual token usage, execution time, and comparable baseline results are needed before drawing research conclusions. The benefit of recursion is a hypothesis to evaluate.</p></div></div></section>
 <section class="section" id="view-progress" hidden><h2 class="section-title">Build progress</h2><p class="intro">The ordered 1–21 implementation record, updated with each published release. This view checks for updates every 15 seconds while visible. It does not stream private engineering sessions or live model inference.</p><div class="notice" id="progress-summary">Loading release evidence…</div><div class="panel"><div class="panel-head"><h2>Implementation and verification</h2><a href="https://github.com/jacobhroutzong/recursa" target="_blank" rel="noopener">View source ↗</a></div><div style="overflow:auto"><table class="metric-table"><thead><tr><th>Section</th><th>Status</th><th>Evidence and remaining work</th></tr></thead><tbody id="progress-rows"></tbody></table></div></div></section>
 <footer class="footer"><span>RECURSA STUDIO / Recursive Application Synthesis</span><span>Recorded evidence · CPU-first demonstration · No public inference endpoint</span></footer>
@@ -297,6 +320,7 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
 const $=id=>document.getElementById(id);let runs=[],run=null,selectedEvent=-1,selectedArtifact=null,zoom=1,loadVersion=0,previewKey=null,catalogPromise=null,selectedPreset=null,hasGenerated=false;
 const workflowPath='/assets/task-replay/';
 let workflowPromise=null,workflowChapters=[],workflowFrame=0,workflowTimer=null;
+let comparisonPromise=null;
 const collapsed=new Set();const titles={overview:'Overview',playground:'Specification playground',execution:'Execution explorer',artifacts:'Generated artifacts',benchmarks:'Benchmarks',research:'Research & architecture',progress:'Build progress'};
 function element(tag,text,className){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e}
 const progressButton=element('button','Build progress');progressButton.dataset.view='progress';document.querySelector('.nav').append(progressButton);
@@ -311,8 +335,10 @@ function showView(view){
   $('overview-hero').hidden=view!=='overview';
   document.querySelector('.content > .stats').hidden=!['overview','execution'].includes(view);
   $('release-notice').hidden=!['overview','progress'].includes(view);
+  $('evidence-notice').hidden=view==='benchmarks';
   $('breadcrumb').textContent=titles[view];
   if(view==='playground')loadPlayground();
+  if(view==='benchmarks')loadComparison();
   if(view==='artifacts')getCatalog().catch(()=>{});
   else stopWorkflow();
   if(location.hash!=='#'+view)location.hash=view;
@@ -530,6 +556,54 @@ function selectArtifact(index){selectedArtifact=run.artifacts[index];$('file-pat
 $('download-file').addEventListener('click',()=>{if(!selectedArtifact)return;const blob=new Blob([$('source-code').textContent],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=element('a');a.href=url;a.download=String(selectedArtifact.path||'artifact.txt').split(/[\\/]/).pop();a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
 function renderMetrics(){const body=$('metrics-table');clear(body);const metrics=Object.entries(run?.metrics||{});if(!metrics.length){const row=element('tr'),cell=element('td','No measurements recorded.');cell.colSpan=2;row.append(cell);body.append(row)}metrics.forEach(([key,value])=>{const row=element('tr');row.append(element('td',key.replaceAll('_',' ')),element('td',format(value)));body.append(row)})}
 async function fetchJSON(url){const response=await fetch(url,{headers:{Accept:'application/json'}});if(!response.ok)throw Error('Archive returned HTTP '+response.status);return response.json()}
+function loadComparison(){
+  if(comparisonPromise)return;
+  comparisonPromise=fetchJSON('/api/task-comparison').then(pilot=>{
+    const names={direct:'Direct LLM',structured:'Structured',rlm:'Contained RLM'};
+    const labels={
+      'required-title':'Required title and task creation',
+      'toggle-and-persist':'Toggle and persist after reload',
+      'combined-filters':'Combined status and search filters',
+      'keyboard-mobile-task-controls':'Mobile keyboard controls'
+    };
+    const count=value=>value==null?'Not measured':value.toLocaleString();
+    $('pilot-summary').textContent=pilot.case+' · '+pilot.model+' · same specification, model settings, acceptance checks, and limits.';
+    $('pilot-budget').textContent='Per method: up to '+pilot.budget.max_calls+' model calls, '+count(pilot.output_tokens_per_call)+
+      ' output tokens per call, '+count(pilot.budget.max_output_tokens)+' reserved output tokens total, and '+
+      pilot.budget.max_wall_seconds+' seconds. First-pass outputs, zero repairs, zero paid API calls.';
+    const rlm=pilot.trials.find(trial=>trial.method==='rlm');
+    if(rlm?.rlm_observations?.context_reported && rlm.rlm_observations.subcall_reported){
+      $('pilot-rlm-note').textContent='The contained RLM reported context inspection and a completed model subcall.';
+      $('pilot-rlm-note').hidden=false;
+    }
+    $('pilot-methods').replaceChildren(...pilot.trials.map(trial=>{
+      const row=element('tr');
+      const method=element('th',names[trial.method]);method.scope='row';
+      const tokens=trial.usage.input_tokens==null?'Not measured':count(trial.usage.input_tokens)+' / '+count(trial.usage.output_tokens);
+      const status=trial.build_success===true?'Passed':trial.build_success===false?'Failed':'Not measured';
+      const rate=trial.end_to_end_pass_rate==null?'Not measured':new Intl.NumberFormat(undefined,{style:'percent'}).format(trial.end_to_end_pass_rate);
+      const outcome=trial.status[0].toUpperCase()+trial.status.slice(1).replaceAll('-',' ');
+      const outcomeCell=element('td');
+      outcomeCell.append(element('span',outcome,'tag '+(trial.status==='passed'?'cyan':'amber')));
+      row.append(method,outcomeCell,element('td',status),element('td',rate),element('td',count(trial.usage.completed_calls)),
+        element('td',tokens),element('td',(trial.wall_ms/1000).toFixed(1)+' s'));
+      return row;
+    }));
+    $('pilot-scenarios').replaceChildren(...Object.entries(labels).map(([id,label])=>{
+      const row=element('tr');
+      const title=element('th',label);title.scope='row';row.append(title);
+      for(const trial of pilot.trials){
+        const status=trial.scenarios.find(check=>check.id===id)?.status;
+        row.append(element('td',status?status[0].toUpperCase()+status.slice(1):'Not measured'));
+      }
+      return row;
+    }));
+    $('pilot-results').hidden=false;
+  }).catch(()=>{
+    $('pilot-summary').textContent='The Task Management comparison record is unavailable.';
+    comparisonPromise=null;
+  });
+}
 function getCatalog(){
   if(!catalogPromise){
     catalogPromise=fetchJSON('/api/playground').then(catalog=>{

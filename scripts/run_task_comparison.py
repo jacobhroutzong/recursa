@@ -1,0 +1,182 @@
+"""Run the three-arm Task Management pilot with a local llama-server and no spend."""
+import argparse
+from hashlib import file_digest, sha256
+import json
+import os
+from pathlib import Path
+from secrets import token_urlsafe
+import socket
+import subprocess
+import sys
+import time
+from urllib.error import URLError
+from urllib.request import ProxyHandler, build_opener
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from recursa.baseline import run_direct, run_structured
+from recursa.budget import BudgetExceeded, Deadline
+from recursa.container_rlm import run_reviewed, runtime_source_hash
+from recursa.experiments import atomic_json
+from recursa.pipeline import verify_application
+
+MODEL = "qwen3-4b-local"
+KEY_ENV = "RECURSA_LOCAL_SESSION_KEY"
+SETTINGS = {"context_tokens": 8192, "temperature": 0.2, "seed": 42, "top_k": 40,
+            "top_p": 0.95, "min_p": 0.05, "reasoning": False, "prompt_cache": False}
+OUTPUT_PER_CALL = 2304
+BUDGET = {"max_wall_seconds": 120, "max_calls": 6, "max_output_tokens": 13824,
+          "max_input_bytes": 100000, "max_cost_usd": 0, "max_depth": 1,
+          "max_concurrency": 1, "max_repairs": 0}
+
+
+def usage(provider):
+    completions = [event["provider_reported_usage"] for event in provider["events"]
+                   if event["status"] == "completed"]
+    return {"reserved_calls": provider["reserved_calls"], "completed_calls": len(completions),
+            "input_tokens": sum(item["prompt_tokens"] for item in completions) if completions else None,
+            "output_tokens": sum(item["completion_tokens"] for item in completions) if completions else None}
+
+
+def verify_rlm(spec, scenarios, directory, config, record, deadline):
+    reviewed = run_reviewed(spec, config, record["image_id"], directory, authorize_live=True, runtime_record=record)
+    container = reviewed["container"]
+    observations = {key: reviewed[key] for key in ("context_reported", "subcall_reported")}
+    observations.update({key: container[key] for key in ("policy_verified", "cleanup_verified")})
+    if reviewed["status"] != "source-returned":
+        return reviewed["status"], reviewed["broker"]["provider"], None, observations
+    source = directory / "artifacts"
+    artifacts = json.loads((source / "artifact-manifest.json").read_bytes())
+    for artifact in artifacts:
+        content = (source / artifact["path"]).read_bytes()
+        if sha256(content).hexdigest() != artifact["sha256"]:
+            raise ValueError("RLM artifact hash mismatch")
+        artifact["content"] = content.decode()
+    try:
+        result = verify_application(spec, artifacts, directory / "private/application",
+                                    scenarios=scenarios, deadline=deadline)
+    except BudgetExceeded:
+        return "verification-budget-exhausted", reviewed["broker"]["provider"], None, observations
+    return result["status"], reviewed["broker"]["provider"], result["verification"], observations
+
+
+def run_pilot(output, port, record, runtime_hash):
+    known = json.loads((ROOT / "apps/studio/generated-task.json").read_bytes())
+    spec = known["spec"]
+    scenario_bytes = (ROOT / "examples/specs/tasks-local-acceptance.json").read_bytes()
+    # The original repair diagnostic points at app.js. The benchmark compares
+    # applications with arbitrary module names and uses the common entry point.
+    scenarios = [{**scenario, "source_path": "index.html"} for scenario in json.loads(scenario_bytes)]
+    provider = {"base_url": f"http://127.0.0.1:{port}/v1", "api_key_env": KEY_ENV}
+    rates = {MODEL: {"input_per_million": 0, "output_per_million": 0}}
+    baseline_config = {**provider, "rates": rates, "budget": BUDGET, "output_tokens": OUTPUT_PER_CALL}
+    rlm_config = {"provider": provider, "rates": rates, "budget": BUDGET, "models": {"root": MODEL, "sub": MODEL},
+                  "max_iterations": 5, "per_call_output_tokens": OUTPUT_PER_CALL}
+    report = {
+        "schema_version": 1, "kind": "matched-local-pilot", "case": "Task Management",
+        "model": known["provenance"]["model"], "revision": known["provenance"]["revision"],
+        "weights_sha256": known["provenance"]["model_file_sha256"], "runtime_binary_sha256": runtime_hash,
+        "rlm_runtime_source_sha256": record["runtime_source_sha256"], "settings": SETTINGS,
+        "budget": BUDGET, "output_tokens_per_call": OUTPUT_PER_CALL,
+        "spec_sha256": sha256(json.dumps(spec, sort_keys=True).encode()).hexdigest(),
+        "original_scenarios_sha256": sha256(scenario_bytes).hexdigest(),
+        "scenarios_sha256": sha256(json.dumps(scenarios, sort_keys=True).encode()).hexdigest(),
+        "diagnostic_source_path": "index.html", "paid_api_calls": 0,
+        "trials_per_method": 1, "trials": [],
+    }
+    for name, runner in (("direct", run_direct), ("structured", run_structured), ("rlm", None)):
+        directory = output / name
+        print(f"Running {name} on the local model", flush=True)
+        started = time.monotonic()
+        observations = None
+        classification = None
+        if runner is None:
+            status, provider_report, verification, observations = verify_rlm(
+                spec, scenarios, directory, rlm_config, record, Deadline(BUDGET["max_wall_seconds"]))
+        else:
+            result = runner(spec, scenarios, directory, MODEL, baseline_config, authorize_live=True)
+            status, provider_report = result["status"], result["provider"]
+            classification = result["error_classification"]
+            verified = directory / "private/application/application-report.json"
+            verification = json.loads(verified.read_bytes()).get("verification") if verified.is_file() else None
+        measured = verification or {}
+        checks = measured.get("stages", {}).get("browser", {}).get("checks", [])
+        report["trials"].append({
+            "method": name, "status": status, "error_classification": classification,
+            "build_success": measured.get("build_success"), "lint_success": measured.get("lint_success"),
+            "accessibility_success": measured.get("accessibility_success"),
+            "end_to_end_pass_rate": measured.get("end_to_end_pass_rate"),
+            "requirement_satisfaction": None, "billing_cost_usd": None,
+            "scenarios": [{"id": check["scenario_id"], "status": check["status"],
+                           "completed_steps": check.get("completed_steps")} for check in checks],
+            "wall_ms": round((time.monotonic() - started) * 1000), "usage": usage(provider_report),
+            "rlm_observations": observations,
+        })
+        atomic_json(output / "comparison-record.json", report)
+        print(f"{name}: {status}; {report['trials'][-1]['usage']['completed_calls']} completed calls; "
+              f"browser pass rate {measured.get('end_to_end_pass_rate')}", flush=True)
+
+
+def digest(path):
+    with path.open("rb") as stream:
+        return file_digest(stream, "sha256").hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    for flag in ("server", "weights", "output"):
+        parser.add_argument("--" + flag, type=Path, required=True)
+    parser.add_argument("--authorize-live", action="store_true")
+    args = parser.parse_args()
+    if not args.authorize_live:
+        parser.error("--authorize-live is required")
+    record = json.loads((ROOT / ".cache/rlm-runtime-image.json").read_bytes())
+    if record["runtime_source_sha256"] != runtime_source_hash():
+        parser.error("Build the current runtime first with scripts/build_rlm_image.py")
+    known = json.loads((ROOT / "apps/studio/generated-task.json").read_bytes())
+    if digest(args.weights) != known["provenance"]["model_file_sha256"]:
+        parser.error("Weights must match the published Qwen GGUF digest")
+    runtime_hash = digest(args.server)
+    args.output.mkdir(parents=True, exist_ok=False)
+    with socket.socket() as probe:
+        probe.bind(("127.0.0.1", 0))
+        port = probe.getsockname()[1]
+    # Protect the loopback server from other clients without writing a key to disk.
+    os.environ[KEY_ENV] = token_urlsafe(32)
+    environment = {key: value for key, value in os.environ.items() if not key.upper().startswith("LLAMA_")}
+    environment["LLAMA_API_KEY"] = environment.pop(KEY_ENV)
+    command = [str(args.server.resolve()), "-m", str(args.weights.resolve()), "--host", "127.0.0.1",
+               "--port", str(port), "--alias", MODEL, "-c", str(SETTINGS["context_tokens"]), "-ngl", "99",
+               "--parallel", "1", "--temp", str(SETTINGS["temperature"]), "--seed", str(SETTINGS["seed"]),
+               "--top-k", str(SETTINGS["top_k"]), "--top-p", str(SETTINGS["top_p"]), "--min-p", str(SETTINGS["min_p"]),
+               "--reasoning", "off", "--reasoning-budget", "0", "--no-cache-prompt", "--no-webui",
+               "--no-slots", "-n", str(OUTPUT_PER_CALL)]
+    with (args.output / "llama-server.log").open("wb") as log:
+        server = subprocess.Popen(command, env=environment, stdout=log, stderr=subprocess.STDOUT,
+                                  creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0)
+        try:
+            opener = build_opener(ProxyHandler({}))
+            until = time.monotonic() + 60
+            while time.monotonic() < until and server.poll() is None:
+                try:
+                    with opener.open(f"http://127.0.0.1:{port}/health", timeout=2) as response:
+                        if response.status == 200:
+                            break
+                except (URLError, TimeoutError):
+                    pass
+                time.sleep(0.5)
+            else:
+                raise RuntimeError("Local model did not start; see the private runtime log")
+            run_pilot(args.output, port, record, runtime_hash)
+        finally:
+            if server.poll() is None:
+                server.terminate()
+                try:
+                    server.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    server.kill()
+                    server.wait()
+
+
+if __name__ == "__main__":
+    main()

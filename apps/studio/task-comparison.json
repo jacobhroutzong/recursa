@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "kind": "matched-local-pilot",
+  "case": "Task Management",
+  "model": "Qwen/Qwen3-4B-GGUF",
+  "revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+  "weights_sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+  "runtime_binary_sha256": "7b0e5e30ef372f4eb237a0a09e0197909bdaf7e9c2867e8d02a15bdceaca840d",
+  "rlm_runtime_source_sha256": "4f3651a504c0a2c7cc5e4cc1eae52fae46e9e0363507904ed7084a87313b4642",
+  "settings": {
+    "context_tokens": 8192,
+    "temperature": 0.2,
+    "seed": 42,
+    "top_k": 40,
+    "top_p": 0.95,
+    "min_p": 0.05,
+    "reasoning": false,
+    "prompt_cache": false
+  },
+  "budget": {
+    "max_wall_seconds": 120,
+    "max_calls": 6,
+    "max_output_tokens": 13824,
+    "max_input_bytes": 100000,
+    "max_cost_usd": 0,
+    "max_depth": 1,
+    "max_concurrency": 1,
+    "max_repairs": 0
+  },
+  "output_tokens_per_call": 2304,
+  "spec_sha256": "782b821ee4cb333f377cf2c360799c4381a908f242f96374cfe9414e1204f88c",
+  "original_scenarios_sha256": "59beb608683d76af7c2357f898ad23dc45a357f4a014b512f2abade68170c794",
+  "scenarios_sha256": "038ca79c397a530c94ddccc5b45d250886d25e5aecdd9207226c60284e9bba94",
+  "diagnostic_source_path": "index.html",
+  "paid_api_calls": 0,
+  "trials_per_method": 1,
+  "trials": [
+    {
+      "method": "direct",
+      "status": "failed",
+      "error_classification": null,
+      "build_success": false,
+      "lint_success": true,
+      "accessibility_success": null,
+      "end_to_end_pass_rate": null,
+      "requirement_satisfaction": null,
+      "billing_cost_usd": null,
+      "scenarios": [],
+      "wall_ms": 16766,
+      "usage": {
+        "reserved_calls": 1,
+        "completed_calls": 1,
+        "input_tokens": 488,
+        "output_tokens": 1000
+      },
+      "rlm_observations": null
+    },
+    {
+      "method": "structured",
+      "status": "failed",
+      "error_classification": null,
+      "build_success": true,
+      "lint_success": true,
+      "accessibility_success": false,
+      "end_to_end_pass_rate": 0,
+      "requirement_satisfaction": null,
+      "billing_cost_usd": null,
+      "scenarios": [
+        {
+          "id": "required-title",
+          "status": "failed",
+          "completed_steps": 1
+        },
+        {
+          "id": "toggle-and-persist",
+          "status": "failed",
+          "completed_steps": 8
+        },
+        {
+          "id": "combined-filters",
+          "status": "failed",
+          "completed_steps": 8
+        },
+        {
+          "id": "keyboard-mobile-task-controls",
+          "status": "failed",
+          "completed_steps": 5
+        }
+      ],
+      "wall_ms": 26203,
+      "usage": {
+        "reserved_calls": 2,
+        "completed_calls": 2,
+        "input_tokens": 1198,
+        "output_tokens": 1057
+      },
+      "rlm_observations": null
+    },
+    {
+      "method": "rlm",
+      "status": "budget-exhausted",
+      "error_classification": null,
+      "build_success": null,
+      "lint_success": null,
+      "accessibility_success": null,
+      "end_to_end_pass_rate": null,
+      "requirement_satisfaction": null,
+      "billing_cost_usd": null,
+      "scenarios": [],
+      "wall_ms": 47703,
+      "usage": {
+        "reserved_calls": 6,
+        "completed_calls": 6,
+        "input_tokens": 6934,
+        "output_tokens": 2139
+      },
+      "rlm_observations": {
+        "context_reported": true,
+        "subcall_reported": true,
+        "policy_verified": true,
+        "cleanup_verified": true
+      }
+    }
+  ]
+}

@@ -9,7 +9,7 @@ app_port: 7860
 
 # Recursa — Recursive Application Synthesis
 
-A CPU-first research workbench for inspecting application specifications, execution traces, and artifacts. Studio shows the first contained local model synthesis, its repaired Task Management build, and recorded frames from four passing browser workflows. The direct baseline runner has offline integration coverage. Matched model comparisons remain open.
+A CPU-first research workbench for inspecting application specifications, execution traces, and artifacts. Studio shows the repaired Task Management build, recorded frames from four passing browser workflows, and a separate matched first-pass pilot with direct, structured, and contained RLM methods.
 
 Implementation follows the [ordered 1–21 progress record](docs/implementation-progress.md). Sections 1–3 have been reviewed; section 4 has offline integration evidence, and section 5's source-verification foundation is being implemented. Real-model verification remains open. Earlier frontend/compute work does not bypass P0.
 
@@ -88,7 +88,7 @@ The redesigned Studio has a dedicated overview and a replay workspace. Open the 
 
 In **Generated artifacts**, open the generated Task Management app and select **Watch verified workflows**. Choose a chapter, then play or step through actual Chromium frames captured during the published acceptance scenarios. Re-record the frames locally with `python scripts/capture_task_replay.py`. The public viewer serves static PNGs and captions.
 
-The [baseline protocol](docs/baseline-protocol.md) describes the direct runner and the conditions for a matched pilot.
+The [baseline protocol](docs/baseline-protocol.md) documents the first matched local pilot. Direct failed the build, structured built and passed 0 of 4 browser scenarios, and the contained RLM reached the call cap without returning source. Studio publishes the per-method results and retains nulls for unmeasured outcomes.
 
 
 The **Playground** offers three synthetic specifications, searchable requirements, JSON downloads, and recorded CPU validation. The artifact explorer shows actual source beside a captured screenshot of the verified human-authored Task Management reference app. Studio also shows a separate static preview of the Task Management build produced by a local Qwen run and verified after repair. [Local synthesis evidence](docs/evidence/task-management-local-model.md)
