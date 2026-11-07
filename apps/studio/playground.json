@@ -1,0 +1,651 @@
+{
+  "presets": [
+    {
+      "key": "tasks",
+      "size": "Small",
+      "replay": {
+        "schema_version": 1,
+        "id": "smoke-ef4ae7dc8f85",
+        "label": "Task management · CPU check",
+        "mode": "deterministic-smoke",
+        "status": "completed",
+        "created_at": "2026-11-07T16:15:45.805725+00:00",
+        "spec": {
+          "name": "Task management",
+          "description": "A local productivity app with persistent tasks and deterministic acceptance criteria.",
+          "requirements": [
+            {
+              "id": "TASK-01",
+              "text": "Create a task with a required title. Reject blank titles.",
+              "acceptance": "Submitting a blank title shows an error and does not add a task."
+            },
+            {
+              "id": "TASK-02",
+              "text": "Toggle a task between active and complete.",
+              "depends_on": [
+                "TASK-01"
+              ],
+              "acceptance": "Toggling twice restores the initial status."
+            },
+            {
+              "id": "TASK-03",
+              "text": "Filter tasks by status and title substring.",
+              "depends_on": [
+                "TASK-02"
+              ],
+              "acceptance": "Completed filter excludes active tasks and combines with text search."
+            },
+            {
+              "id": "TASK-04",
+              "text": "Persist tasks across reloads using local storage.",
+              "depends_on": [
+                "TASK-01"
+              ],
+              "acceptance": "Reload restores titles and completion state."
+            },
+            {
+              "id": "TASK-05",
+              "text": "Provide keyboard-accessible labeled controls and an empty state.",
+              "depends_on": [
+                "TASK-03"
+              ],
+              "acceptance": "All task actions are reachable by Tab and empty filters explain the state."
+            }
+          ]
+        },
+        "events": [
+          {
+            "id": "load",
+            "parent_id": null,
+            "type": "context",
+            "label": "Load external specification",
+            "status": "completed",
+            "details": {
+              "sha256": "ef4ae7dc8f859e6aeb096e7302a2ee975fc74c2e5d3f65adf5fe04bcb2ae6f68",
+              "bytes": 1051
+            }
+          },
+          {
+            "id": "validate",
+            "parent_id": "load",
+            "type": "validation",
+            "label": "Validate requirements and dependencies",
+            "status": "completed",
+            "details": {
+              "requirement_order": [
+                "TASK-01",
+                "TASK-02",
+                "TASK-04",
+                "TASK-03",
+                "TASK-05"
+              ],
+              "spec_sha256": "ef4ae7dc8f859e6aeb096e7302a2ee975fc74c2e5d3f65adf5fe04bcb2ae6f68",
+              "checks": {
+                "unique_ids": true,
+                "dependency_references": true,
+                "acyclic": true
+              },
+              "limitation": "Specification validation only; no application generation or model inference."
+            }
+          },
+          {
+            "id": "export",
+            "parent_id": "validate",
+            "type": "artifact",
+            "label": "Export validation report",
+            "status": "completed",
+            "details": {
+              "path": "validation.json"
+            }
+          }
+        ],
+        "artifacts": [
+          {
+            "path": "validation.json",
+            "content": "{\n  \"requirement_order\": [\n    \"TASK-01\",\n    \"TASK-02\",\n    \"TASK-04\",\n    \"TASK-03\",\n    \"TASK-05\"\n  ],\n  \"spec_sha256\": \"ef4ae7dc8f859e6aeb096e7302a2ee975fc74c2e5d3f65adf5fe04bcb2ae6f68\",\n  \"checks\": {\n    \"unique_ids\": true,\n    \"dependency_references\": true,\n    \"acyclic\": true\n  },\n  \"limitation\": \"Specification validation only; no application generation or model inference.\"\n}",
+            "requirements": [
+              "TASK-01",
+              "TASK-02",
+              "TASK-04",
+              "TASK-03",
+              "TASK-05"
+            ]
+          }
+        ],
+        "metrics": {
+          "duration_ms": 0.297,
+          "model_calls": 0,
+          "cost_usd": 0,
+          "requirements": 5,
+          "functional_success": null,
+          "requirement_satisfaction": null
+        }
+      }
+    },
+    {
+      "key": "operations",
+      "size": "Medium",
+      "replay": {
+        "schema_version": 1,
+        "id": "smoke-9ee62fc5985a",
+        "label": "Operations Analytics Dashboard · CPU check",
+        "mode": "deterministic-smoke",
+        "status": "completed",
+        "created_at": "2026-11-07T16:15:45.805725+00:00",
+        "spec": {
+          "name": "Operations Analytics Dashboard",
+          "description": "Compare synthetic fulfillment and staffing metrics across teams and reporting periods.",
+          "requirements": [
+            {
+              "id": "OPS-01",
+              "text": "Choose a date range and team for the dashboard.",
+              "acceptance": "Every panel uses the same date range and team."
+            },
+            {
+              "id": "OPS-02",
+              "text": "Validate records against the typed order and staffing contracts.",
+              "acceptance": "Rows with missing team IDs or negative durations are excluded and counted."
+            },
+            {
+              "id": "OPS-03",
+              "text": "Show volume, completion rate, and median turnaround cards.",
+              "acceptance": "Card totals match the filtered records and zero denominators show an empty value.",
+              "depends_on": [
+                "OPS-01",
+                "OPS-02"
+              ]
+            },
+            {
+              "id": "OPS-04",
+              "text": "Plot daily volume and completion rate.",
+              "acceptance": "Days without records appear as gaps or explicit zero volume.",
+              "depends_on": [
+                "OPS-01",
+                "OPS-02"
+              ]
+            },
+            {
+              "id": "OPS-05",
+              "text": "Compare staffing hours with completed work by team.",
+              "acceptance": "Changing the reporting period updates both axes and accessible table values.",
+              "depends_on": [
+                "OPS-01",
+                "OPS-02"
+              ]
+            },
+            {
+              "id": "OPS-06",
+              "text": "Open the underlying order table from a chart selection.",
+              "acceptance": "Selecting a day applies its date constraint and preserves the team filter.",
+              "depends_on": [
+                "OPS-04"
+              ]
+            },
+            {
+              "id": "OPS-07",
+              "text": "Sort and paginate order records.",
+              "acceptance": "Sorting applies before pagination and preserves the current filters.",
+              "depends_on": [
+                "OPS-06"
+              ]
+            },
+            {
+              "id": "OPS-08",
+              "text": "Save a dashboard view locally.",
+              "acceptance": "Reload restores the saved range, team, and table sort.",
+              "depends_on": [
+                "OPS-01",
+                "OPS-07"
+              ]
+            },
+            {
+              "id": "OPS-09",
+              "text": "Export the filtered table as CSV.",
+              "acceptance": "Exported rows match the active filters and have escaped cells.",
+              "depends_on": [
+                "OPS-07"
+              ]
+            },
+            {
+              "id": "OPS-10",
+              "text": "Explain empty and incomplete results.",
+              "acceptance": "Missing staffing values show a reason and leave order totals available.",
+              "depends_on": [
+                "OPS-03",
+                "OPS-05"
+              ]
+            }
+          ]
+        },
+        "events": [
+          {
+            "id": "load",
+            "parent_id": null,
+            "type": "context",
+            "label": "Load external specification",
+            "status": "completed",
+            "details": {
+              "sha256": "9ee62fc5985a4aaf27064fae98edd1a825d1c53aa2b19db68584b5c834116c9f",
+              "bytes": 2014
+            }
+          },
+          {
+            "id": "validate",
+            "parent_id": "load",
+            "type": "validation",
+            "label": "Validate requirements and dependencies",
+            "status": "completed",
+            "details": {
+              "requirement_order": [
+                "OPS-01",
+                "OPS-02",
+                "OPS-03",
+                "OPS-04",
+                "OPS-05",
+                "OPS-06",
+                "OPS-10",
+                "OPS-07",
+                "OPS-08",
+                "OPS-09"
+              ],
+              "spec_sha256": "9ee62fc5985a4aaf27064fae98edd1a825d1c53aa2b19db68584b5c834116c9f",
+              "checks": {
+                "unique_ids": true,
+                "dependency_references": true,
+                "acyclic": true
+              },
+              "limitation": "Specification validation only; no application generation or model inference."
+            }
+          },
+          {
+            "id": "export",
+            "parent_id": "validate",
+            "type": "artifact",
+            "label": "Export validation report",
+            "status": "completed",
+            "details": {
+              "path": "validation.json"
+            }
+          }
+        ],
+        "artifacts": [
+          {
+            "path": "validation.json",
+            "content": "{\n  \"requirement_order\": [\n    \"OPS-01\",\n    \"OPS-02\",\n    \"OPS-03\",\n    \"OPS-04\",\n    \"OPS-05\",\n    \"OPS-06\",\n    \"OPS-10\",\n    \"OPS-07\",\n    \"OPS-08\",\n    \"OPS-09\"\n  ],\n  \"spec_sha256\": \"9ee62fc5985a4aaf27064fae98edd1a825d1c53aa2b19db68584b5c834116c9f\",\n  \"checks\": {\n    \"unique_ids\": true,\n    \"dependency_references\": true,\n    \"acyclic\": true\n  },\n  \"limitation\": \"Specification validation only; no application generation or model inference.\"\n}",
+            "requirements": [
+              "OPS-01",
+              "OPS-02",
+              "OPS-03",
+              "OPS-04",
+              "OPS-05",
+              "OPS-06",
+              "OPS-10",
+              "OPS-07",
+              "OPS-08",
+              "OPS-09"
+            ]
+          }
+        ],
+        "metrics": {
+          "duration_ms": 0.194,
+          "model_calls": 0,
+          "cost_usd": 0,
+          "requirements": 10,
+          "functional_success": null,
+          "requirement_satisfaction": null
+        }
+      }
+    },
+    {
+      "key": "aviation",
+      "size": "Large",
+      "replay": {
+        "schema_version": 1,
+        "id": "smoke-94bf2bd51e6e",
+        "label": "Aviation Operations Console · CPU check",
+        "mode": "deterministic-smoke",
+        "status": "completed",
+        "created_at": "2026-11-07T16:15:45.806734+00:00",
+        "spec": {
+          "name": "Aviation Operations Console",
+          "description": "Explore a fictional airport operations exercise using entirely synthetic, non-operational data.",
+          "requirements": [
+            {
+              "id": "AV-01",
+              "text": "Load synthetic flights, stands, turnaround milestones, and simulated alerts.",
+              "acceptance": "Malformed records appear in a data quality summary."
+            },
+            {
+              "id": "AV-02",
+              "text": "Display the current exercise clock in UTC.",
+              "acceptance": "Pausing the exercise freezes all time-based views."
+            },
+            {
+              "id": "AV-03",
+              "text": "Filter the exercise by terminal, time range, and flight status.",
+              "acceptance": "The board, stand view, and alert list reflect the selected scope.",
+              "depends_on": [
+                "AV-01",
+                "AV-02"
+              ]
+            },
+            {
+              "id": "AV-04",
+              "text": "Show arrivals and departures on a sortable flight board.",
+              "acceptance": "Sort order uses scheduled UTC time with a stable flight ID tie-breaker.",
+              "depends_on": [
+                "AV-03"
+              ]
+            },
+            {
+              "id": "AV-05",
+              "text": "Open a flight detail panel from the board.",
+              "acceptance": "The panel shows synthetic movement, stand, milestone, and alert references.",
+              "depends_on": [
+                "AV-04"
+              ]
+            },
+            {
+              "id": "AV-06",
+              "text": "Visualize stand assignments across the selected period.",
+              "acceptance": "Overlapping assignments render as separate blocks and list the affected flight IDs.",
+              "depends_on": [
+                "AV-03"
+              ]
+            },
+            {
+              "id": "AV-07",
+              "text": "Flag conflicting stand assignments.",
+              "acceptance": "Two occupied intervals that overlap trigger a single conflict per flight pair.",
+              "depends_on": [
+                "AV-06"
+              ]
+            },
+            {
+              "id": "AV-08",
+              "text": "Track turnaround milestones and simulated delay reasons.",
+              "acceptance": "A missing milestone is labeled unknown and excluded from completion totals.",
+              "depends_on": [
+                "AV-05"
+              ]
+            },
+            {
+              "id": "AV-09",
+              "text": "Display simulated alert priorities and sources.",
+              "acceptance": "Alerts preserve their fictional event IDs and link to affected flight or stand records.",
+              "depends_on": [
+                "AV-03",
+                "AV-07",
+                "AV-08"
+              ]
+            },
+            {
+              "id": "AV-10",
+              "text": "Acknowledge an exercise alert locally.",
+              "acceptance": "Acknowledging one alert updates its state while retaining its original event and priority.",
+              "depends_on": [
+                "AV-09"
+              ]
+            },
+            {
+              "id": "AV-11",
+              "text": "Record local acknowledgement history.",
+              "acceptance": "Reload restores acknowledgements and the exercise timestamps.",
+              "depends_on": [
+                "AV-10"
+              ]
+            },
+            {
+              "id": "AV-12",
+              "text": "Show aggregate activity and stand utilization.",
+              "acceptance": "Totals match filtered exercise records and identify incomplete data.",
+              "depends_on": [
+                "AV-04",
+                "AV-06"
+              ]
+            },
+            {
+              "id": "AV-13",
+              "text": "Provide keyboard navigation and readable status labels.",
+              "acceptance": "Every view is reachable by keyboard and no status depends on color alone.",
+              "depends_on": [
+                "AV-04",
+                "AV-06",
+                "AV-09"
+              ]
+            },
+            {
+              "id": "AV-14",
+              "text": "Export a synthetic exercise summary.",
+              "acceptance": "The export includes filters, source IDs, alert counts, and the exercise-only label.",
+              "depends_on": [
+                "AV-11",
+                "AV-12"
+              ]
+            },
+            {
+              "id": "AV-15",
+              "text": "Reset the exercise and clear local adjustments.",
+              "acceptance": "Reset restores the initial synthetic snapshot and default scope.",
+              "depends_on": [
+                "AV-03",
+                "AV-11"
+              ]
+            },
+            {
+              "id": "AV-16",
+              "text": "Label every view as a synthetic exercise.",
+              "acceptance": "The label remains visible on narrow layouts and is included in exports.",
+              "depends_on": [
+                "AV-13",
+                "AV-14"
+              ]
+            }
+          ]
+        },
+        "events": [
+          {
+            "id": "load",
+            "parent_id": null,
+            "type": "context",
+            "label": "Load external specification",
+            "status": "completed",
+            "details": {
+              "sha256": "94bf2bd51e6e907974cef9970ad14825a1825659085c557a8edbcef3d234430d",
+              "bytes": 3271
+            }
+          },
+          {
+            "id": "validate",
+            "parent_id": "load",
+            "type": "validation",
+            "label": "Validate requirements and dependencies",
+            "status": "completed",
+            "details": {
+              "requirement_order": [
+                "AV-01",
+                "AV-02",
+                "AV-03",
+                "AV-04",
+                "AV-06",
+                "AV-05",
+                "AV-07",
+                "AV-12",
+                "AV-08",
+                "AV-09",
+                "AV-10",
+                "AV-13",
+                "AV-11",
+                "AV-14",
+                "AV-15",
+                "AV-16"
+              ],
+              "spec_sha256": "94bf2bd51e6e907974cef9970ad14825a1825659085c557a8edbcef3d234430d",
+              "checks": {
+                "unique_ids": true,
+                "dependency_references": true,
+                "acyclic": true
+              },
+              "limitation": "Specification validation only; no application generation or model inference."
+            }
+          },
+          {
+            "id": "export",
+            "parent_id": "validate",
+            "type": "artifact",
+            "label": "Export validation report",
+            "status": "completed",
+            "details": {
+              "path": "validation.json"
+            }
+          }
+        ],
+        "artifacts": [
+          {
+            "path": "validation.json",
+            "content": "{\n  \"requirement_order\": [\n    \"AV-01\",\n    \"AV-02\",\n    \"AV-03\",\n    \"AV-04\",\n    \"AV-06\",\n    \"AV-05\",\n    \"AV-07\",\n    \"AV-12\",\n    \"AV-08\",\n    \"AV-09\",\n    \"AV-10\",\n    \"AV-13\",\n    \"AV-11\",\n    \"AV-14\",\n    \"AV-15\",\n    \"AV-16\"\n  ],\n  \"spec_sha256\": \"94bf2bd51e6e907974cef9970ad14825a1825659085c557a8edbcef3d234430d\",\n  \"checks\": {\n    \"unique_ids\": true,\n    \"dependency_references\": true,\n    \"acyclic\": true\n  },\n  \"limitation\": \"Specification validation only; no application generation or model inference.\"\n}",
+            "requirements": [
+              "AV-01",
+              "AV-02",
+              "AV-03",
+              "AV-04",
+              "AV-06",
+              "AV-05",
+              "AV-07",
+              "AV-12",
+              "AV-08",
+              "AV-09",
+              "AV-10",
+              "AV-13",
+              "AV-11",
+              "AV-14",
+              "AV-15",
+              "AV-16"
+            ]
+          }
+        ],
+        "metrics": {
+          "duration_ms": 0.283,
+          "model_calls": 0,
+          "cost_usd": 0,
+          "requirements": 16,
+          "functional_success": null,
+          "requirement_satisfaction": null
+        }
+      }
+    }
+  ],
+  "reference": {
+    "schema_version": 1,
+    "id": "reference-task-management",
+    "label": "Task Management · Reference app",
+    "mode": "human-authored-reference",
+    "status": "verified",
+    "live_inference": false,
+    "events": [
+      {
+        "id": "fixture",
+        "type": "context",
+        "label": "Load the Task Management reference source",
+        "status": "completed",
+        "details": {
+          "provenance": "Human-authored reference application"
+        }
+      },
+      {
+        "id": "verification",
+        "parent_id": "fixture",
+        "type": "validation",
+        "label": "Verify the built application",
+        "status": "completed",
+        "details": {
+          "build_success": true,
+          "functional_success": true,
+          "lint_success": true,
+          "unit_test_pass_rate": 1,
+          "accessibility_success": true,
+          "end_to_end_pass_rate": 1,
+          "model_calls": 0,
+          "requirement_satisfaction": null
+        }
+      },
+      {
+        "id": "capture",
+        "parent_id": "verification",
+        "type": "artifact",
+        "label": "Capture the verified reference build",
+        "status": "completed",
+        "details": {
+          "screenshot_sha256": "2b8c15ee21ad521f0292a078c591ab668994332c93bc4b511692bd772caf0396"
+        }
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "index.html",
+        "content": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Task Desk · Offline fixture</title><link rel=\"stylesheet\" href=\"src/style.css\"></head>\n<body><main><header><p class=\"eyebrow\">RECURSA ENGINEERING FIXTURE</p><h1>Task Desk</h1><p>Human-authored application for offline pipeline tests.</p></header>\n<nav aria-label=\"Application views\"><button id=\"show-tasks\" type=\"button\" aria-pressed=\"true\">Tasks</button><button id=\"show-about\" type=\"button\" aria-pressed=\"false\">About fixture</button></nav>\n<section id=\"tasks-panel\" aria-label=\"Task workspace\"><form id=\"task-form\"><label for=\"task-title\">Task title</label><div class=\"input-row\"><input id=\"task-title\" name=\"title\" autocomplete=\"off\" aria-describedby=\"task-error\"><button type=\"submit\">Add task</button></div><p id=\"task-error\" role=\"alert\"></p></form>\n<div class=\"filters\"><div><label for=\"search\">Search tasks</label><input id=\"search\" type=\"search\"></div><div><label for=\"status\">Status filter</label><select id=\"status\"><option value=\"all\">All</option><option value=\"active\">Active</option><option value=\"completed\">Completed</option></select></div></div>\n<p id=\"task-count\" role=\"status\" aria-live=\"polite\"></p><ul id=\"task-list\" data-testid=\"task-list\" aria-label=\"Tasks\"></ul></section>\n<section id=\"about-panel\" hidden><h2>About this fixture</h2><p>These files test typed contracts, application assembly, state changes, persistence and accessible controls. No language model generated this application.</p></section>\n<footer>Offline development fixture · no inference or research claim</footer></main><script type=\"module\" src=\"src/main.ts\"></script></body></html>\n",
+        "requirements": [
+          "TASK-01",
+          "TASK-02",
+          "TASK-03",
+          "TASK-04",
+          "TASK-05"
+        ]
+      },
+      {
+        "path": "src/main.ts",
+        "content": "import { matchingTasks, validTitle, type Task, type StatusFilter } from './model';\nimport { readTasks, saveTasks } from './storage';\n\nfunction required<T extends HTMLElement>(selector: string): T {\n  const element = document.querySelector<T>(selector);\n  if (!element) throw new Error('Required fixture control is missing');\n  return element;\n}\n\nlet tasks: Task[] = readTasks();\nconst form = required<HTMLFormElement>('#task-form');\nconst title = required<HTMLInputElement>('#task-title');\nconst search = required<HTMLInputElement>('#search');\nconst status = required<HTMLSelectElement>('#status');\nconst list = required<HTMLUListElement>('#task-list');\nconst error = required<HTMLParagraphElement>('#task-error');\n\nfunction render(): void {\n  list.replaceChildren();\n  const visible = matchingTasks(tasks, search.value, status.value as StatusFilter);\n  required('#task-count').textContent = `${visible.length} of ${tasks.length} tasks shown`;\n  for (const task of visible) {\n    const item = document.createElement('li');\n    const label = document.createElement('label');\n    const toggle = document.createElement('input');\n    toggle.type = 'checkbox'; toggle.checked = task.completed;\n    toggle.setAttribute('aria-label', `Complete ${task.title}`);\n    toggle.addEventListener('change', () => {\n      tasks = tasks.map(current => current.id === task.id ? {...current, completed: toggle.checked} : current);\n      saveTasks(tasks); render();\n    });\n    const text = document.createElement('span'); text.textContent = task.title;\n    if (task.completed) text.className = 'completed';\n    label.append(toggle, text); item.append(label); list.append(item);\n  }\n  if (!visible.length) {\n    const empty = document.createElement('li'); empty.className = 'empty';\n    empty.textContent = 'No tasks match your filters.'; list.append(empty);\n  }\n}\n\nform.addEventListener('submit', event => {\n  event.preventDefault();\n  if (!validTitle(title.value)) { error.textContent = 'Enter a task title.'; title.focus(); return; }\n  tasks = [...tasks, {id: crypto.randomUUID(), title: title.value.trim(), completed: false}];\n  error.textContent = ''; title.value = ''; saveTasks(tasks); render(); title.focus();\n});\nsearch.addEventListener('input', render); status.addEventListener('change', render);\nfor (const view of ['tasks', 'about']) {\n  required<HTMLButtonElement>(`#show-${view}`).addEventListener('click', () => {\n    required('#tasks-panel').hidden = view !== 'tasks';\n    required('#about-panel').hidden = view !== 'about';\n    required('#show-tasks').setAttribute('aria-pressed', String(view === 'tasks'));\n    required('#show-about').setAttribute('aria-pressed', String(view === 'about'));\n  });\n}\nrender();\n",
+        "requirements": [
+          "TASK-01",
+          "TASK-02",
+          "TASK-03",
+          "TASK-04",
+          "TASK-05"
+        ]
+      },
+      {
+        "path": "src/model.ts",
+        "content": "export interface Task { id: string; title: string; completed: boolean }\nexport type StatusFilter = 'all' | 'active' | 'completed';\n\nexport function validTitle(value: string): boolean {\n  return value.trim().length > 0;\n}\n\nexport function matchingTasks(tasks: Task[], query: string, status: StatusFilter): Task[] {\n  const needle = query.trim().toLowerCase();\n  return tasks.filter(task => task.title.toLowerCase().includes(needle)\n    && (status === 'all' || (status === 'completed' ? task.completed : !task.completed)));\n}\n",
+        "requirements": [
+          "TASK-01",
+          "TASK-02",
+          "TASK-03",
+          "TASK-04",
+          "TASK-05"
+        ]
+      },
+      {
+        "path": "src/storage.ts",
+        "content": "import type { Task } from './model';\nconst KEY = 'recursa-task-fixture-v1';\n\nexport function readTasks(): Task[] {\n  try {\n    const value: unknown = JSON.parse(localStorage.getItem(KEY) || '[]');\n    if (!Array.isArray(value)) return [];\n    return value.filter((task): task is Task => Boolean(task) && typeof task.id === 'string'\n      && typeof task.title === 'string' && typeof task.completed === 'boolean');\n  } catch { return []; }\n}\n\nexport function saveTasks(tasks: Task[]): void {\n  localStorage.setItem(KEY, JSON.stringify(tasks));\n}\n",
+        "requirements": [
+          "TASK-01",
+          "TASK-02",
+          "TASK-03",
+          "TASK-04",
+          "TASK-05"
+        ]
+      },
+      {
+        "path": "src/style.css",
+        "content": ":root{font-family:system-ui,sans-serif;color:#15243a;background:#eef3f8}*{box-sizing:border-box}body{margin:0;padding:32px 16px}main{max-width:840px;margin:auto;background:#fff;border:1px solid #d6dfeb;border-radius:16px;padding:32px}h1{margin:4px 0;font-size:36px}header p,footer{color:#566881}.eyebrow{font-size:11px;letter-spacing:2px}nav{display:flex;gap:8px;padding:20px 0;border-bottom:1px solid #d6dfeb;margin-bottom:24px}button,input,select{font:inherit;border:1px solid #aebdd0;border-radius:7px;padding:10px}button{cursor:pointer;background:#163d58;color:white}button[aria-pressed=false]{background:white;color:#163d58}label{display:block;margin-bottom:6px}input,select{background:#fff;color:#15243a;min-width:0}.input-row{display:flex;gap:10px}.input-row input{flex:1}.filters{display:grid;grid-template-columns:1fr 180px;gap:16px}.filters input,.filters select{width:100%}ul{list-style:none;padding:0}li{padding:14px 0;border-bottom:1px solid #e4eaf1}li label{display:flex;align-items:center;gap:12px}.completed{text-decoration:line-through;color:#566881}.empty{color:#566881}#task-error{color:#9f203a;min-height:24px;font-size:14px}footer{font-size:11px;padding-top:28px}:focus-visible{outline:3px solid #159c9c;outline-offset:3px}[hidden]{display:none!important}@media(max-width:520px){main{padding:20px}.filters{grid-template-columns:1fr}.input-row{flex-direction:column}h1{font-size:30px}}\n",
+        "requirements": [
+          "TASK-01",
+          "TASK-02",
+          "TASK-03",
+          "TASK-04",
+          "TASK-05"
+        ]
+      }
+    ],
+    "metrics": {
+      "build_success": true,
+      "functional_success": true,
+      "lint_success": true,
+      "unit_test_pass_rate": 1,
+      "accessibility_success": true,
+      "end_to_end_pass_rate": 1,
+      "model_calls": 0,
+      "requirement_satisfaction": null
+    }
+  }
+}

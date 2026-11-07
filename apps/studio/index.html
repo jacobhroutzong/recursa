@@ -155,10 +155,37 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
   .trace-scroll { height:315px }
   .footer { flex-wrap:wrap }
 }
+
+.preset-list { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-bottom:16px }
+.preset-choice { display:grid; gap:6px; text-align:left; padding:14px; min-height:84px }
+.preset-choice[aria-pressed="true"] { border-color:var(--cyan); background:#193039 }
+.preset-choice span { color:var(--cyan); font:10px var(--mono); letter-spacing:1px; text-transform:uppercase }
+.preset-choice strong { font-size:14px; line-height:1.35 }
+.spec-metrics { margin:16px 0 }
+.spec-actions { display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 4px }
+.requirement-list { display:grid; gap:8px; padding:0; margin:0; list-style:none }
+.requirement-list li { background:#172130; border:1px solid var(--line); border-radius:8px; padding:11px 14px }
+.requirement-list strong { color:var(--cyan); font:11px var(--mono) }
+.requirement-list p { margin:4px 0; font-size:13px }
+.requirement-list small { display:block; color:var(--muted) }
+.requirement-search { width:min(220px,100%); color:var(--text); background:var(--panel2); border:1px solid #3b4a5d; border-radius:8px; padding:7px 9px }
+.artifact-layout.with-preview { grid-template-columns:minmax(115px,.75fr) minmax(200px,1.35fr) minmax(235px,1.6fr) }
+.preview-panel { margin:0; padding:12px; border-left:1px solid var(--line); background:#101824; min-width:0 }
+.preview-panel img { display:block; width:100%; height:auto; border:1px solid #405167; border-radius:8px }
+.preview-panel figcaption { margin:10px 0; color:#c0ccdd; font-size:12px }
+@media(max-width:1060px) {
+  .artifact-layout.with-preview { grid-template-columns:minmax(120px,200px) minmax(0,1fr) }
+  .preview-panel { grid-column:1/-1; border-left:0; border-top:1px solid var(--line) }
+  .preview-panel img { max-width:660px }
+}
+@media(max-width:720px) {
+  .preset-list,.artifact-layout.with-preview { grid-template-columns:minmax(0,1fr) }
+  .preset-choice { min-height:0 }
+}
 </style>
 </head>
 <body>
-<div class="shell"><aside class="sidebar"><a class="brand" href="#overview" aria-label="Recursa Studio overview"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 4v6m-7 5v-3h14v3"/><circle cx="12" cy="4" r="2"/><rect x="2" y="15" width="6" height="6" rx="1"/><rect x="16" y="15" width="6" height="6" rx="1"/></svg></span>recursa<span style="color:var(--cyan)">.</span></a><div class="brand-sub">SYNTHESIS STUDIO</div><nav class="nav" aria-label="Studio sections"><button class="active" data-view="overview"><span>◈</span>Overview</button><button data-view="execution"><span>⌘</span>Execution explorer</button><button data-view="artifacts"><span>▤</span>Generated artifacts</button><button data-view="benchmarks"><span>▥</span>Benchmarks</button><button data-view="research"><span>◇</span>Research & architecture</button></nav><div class="sidebar-note"><span class="status-dot"></span> CPU-first · local & replay<br><br>Evidence before claims.<br>Every graph begins with a saved trace.</div></aside>
+<div class="shell"><aside class="sidebar"><a class="brand" href="#overview" aria-label="Recursa Studio overview"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 4v6m-7 5v-3h14v3"/><circle cx="12" cy="4" r="2"/><rect x="2" y="15" width="6" height="6" rx="1"/><rect x="16" y="15" width="6" height="6" rx="1"/></svg></span>recursa<span style="color:var(--cyan)">.</span></a><div class="brand-sub">SYNTHESIS STUDIO</div><nav class="nav" aria-label="Studio sections"><button class="active" data-view="overview"><span>◈</span>Overview</button><button data-view="playground"><span>◇</span>Playground</button><button data-view="execution"><span>⌘</span>Execution explorer</button><button data-view="artifacts"><span>▤</span>Generated artifacts</button><button data-view="benchmarks"><span>▥</span>Benchmarks</button><button data-view="research"><span>◇</span>Research & architecture</button></nav><div class="sidebar-note"><span class="status-dot"></span> CPU-first · local & replay<br><br>Evidence before claims.<br>Every graph begins with a saved trace.</div></aside>
 <main class="main"><header class="topbar"><div>Workspace <span style="padding:0 10px;color:#43506a">/</span> <strong id="breadcrumb">Overview</strong></div><div class="topbar-right"><span class="tag">RESEARCH PREVIEW</span><button id="import-button" type="button">Import run</button><input id="import-run" type="file" accept="application/json,.json" hidden><a href="https://github.com/jacobhroutzong/recursa" target="_blank" rel="noopener">Source ↗</a></div></header>
 <div class="content">
 <section class="hero" id="overview-hero" aria-labelledby="hero-title">
@@ -168,7 +195,7 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
     <p>Recursa studies how models can inspect large specifications, delegate focused tasks, and leave a trace you can verify.</p>
     <div class="hero-actions">
       <button class="primary" id="explore">Explore an execution ↗</button>
-      <button data-view="artifacts">Inspect source</button>
+      <button data-view="playground">Browse specifications</button>
       <button data-view="benchmarks">Compare methods</button>
     </div>
   </div>
@@ -202,8 +229,35 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
 <div class="notice" id="release-notice" role="status">Loading published development progress…</div>
 <div class="stats"><div class="stat"><div class="stat-label"><span id="stat-calls-label">MODEL CALLS</span><span>↗</span></div><div class="stat-value" id="stat-calls">—</div><div class="stat-note">Recorded calls in selected run</div></div><div class="stat"><div class="stat-label">ARTIFACTS <span>▤</span></div><div class="stat-value" id="stat-artifacts">—</div><div class="stat-note" id="stat-artifacts-note">Inspectable source files</div></div><div class="stat"><div class="stat-label">DURATION <span>◷</span></div><div class="stat-value" id="stat-duration">—</div><div class="stat-note">Measured wall-clock time</div></div><div class="stat"><div class="stat-label">EXECUTION MODE <span>◇</span></div><div class="stat-value" id="stat-mode" style="font-size:18px">—</div><div class="stat-note">Always labeled by provenance</div></div></div>
 <section class="section" id="view-overview"><div class="grid"><div><div class="panel"><div class="panel-head"><h2>Execution archive</h2><span class="tag cyan">RECORDED RUNS</span></div><div class="panel-body"><p class="intro">Select a recorded run to inspect its execution relationships, artifacts, and measurements.</p><div id="run-cards" class="all-runs"><div class="loading">Loading saved runs…</div></div></div></div><div class="panel"><div class="panel-head"><h2>Designed for transparent research</h2><small>Three distinct comparison conditions</small></div><div class="panel-body"><div class="research-copy">Direct inference establishes a conventional baseline. A structured, nonrecursive workflow tests the value of decomposition. RLM execution adds programmatic inspection and actual model-backed recursion. Improvements must be measured under comparable budgets.</div></div></div></div><div class="panel"><div class="panel-head"><h2>The execution model</h2><span class="tag">RLM</span></div><div class="panel-body"><div class="flow" style="flex-direction:column;margin:0"><div><b>01 / EXTERNAL CONTEXT</b>Specifications stay outside the root conversation.</div><div><b>02 / PROGRAMMATIC INSPECTION</b>The controller selects relevant context using Python.</div><div><b>03 / FOCUSED INFERENCE</b>Real sub-model calls produce bounded outputs.</div><div><b>04 / VERIFIED ARTIFACTS</b>Saved code, diagnostics, and traces make results inspectable.</div></div></div></div></div></section>
+<section class="section" id="view-playground" hidden>
+  <h2 class="section-title">Specification playground</h2>
+  <p class="intro">Inspect a specification and follow its recorded CPU validation. Each preset includes requirements, acceptance criteria, and dependencies.</p>
+  <div id="playground-status" class="notice" role="status">Loading public specifications…</div>
+  <div id="playground-content" hidden>
+    <div class="preset-list" id="preset-list" role="group" aria-label="Specification presets"></div>
+    <div class="panel"><div class="panel-body">
+      <h3 class="section-title" id="preset-title"></h3><p class="intro" id="preset-description"></p>
+      <div class="stats spec-metrics" aria-label="Specification statistics">
+        <div class="stat"><div class="stat-label">REQUIREMENTS</div><div class="stat-value" id="preset-requirements"></div></div>
+        <div class="stat"><div class="stat-label">DEPENDENCIES</div><div class="stat-value" id="preset-dependencies"></div></div>
+        <div class="stat"><div class="stat-label">JSON SIZE</div><div class="stat-value" id="preset-size"></div></div>
+        <div class="stat"><div class="stat-label">EXECUTION MODE</div><div class="stat-note">Recorded CPU validation</div></div>
+      </div>
+      <div class="spec-actions"><button id="preset-replay" class="primary">Open CPU replay</button><button id="preset-download">Download specification</button><button id="preset-reference">Open reference app</button></div>
+    </div></div>
+    <div class="panel"><div class="panel-head"><h2>Requirements</h2><input id="requirement-search" class="requirement-search" type="search" aria-label="Search requirements" placeholder="Search requirements"></div>
+      <div class="panel-body"><p id="requirement-count" class="intro" role="status"></p><ul id="requirement-list" class="requirement-list"></ul></div>
+    </div>
+  </div>
+</section>
 <section class="section" id="view-execution" hidden><h2 class="section-title">Execution explorer</h2><p class="intro">Select a node to inspect recorded context, timing, and outputs. Parent relationships come directly from saved events.</p><div class="run-info"><label for="run-select">Recorded run </label><select class="run-select" id="run-select" aria-label="Select recorded run"></select></div><div class="grid"><div class="panel"><div class="panel-head"><h2>Execution graph</h2><span class="tag" id="trace-count">0 EVENTS</span></div><div class="trace-tools"><label class="visually-hidden" for="event-filter">Filter event type</label><select id="event-filter"><option value="all">All event types</option></select><button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-reset" aria-label="Reset zoom">100%</button><button id="expand-all" disabled>Expand branches</button><button id="step-back" aria-label="Previous event">←</button><button id="step-next" aria-label="Next event">→</button></div><div class="trace-scroll" id="trace-scroll" tabindex="0" role="region" aria-label="Scrollable execution graph"><div class="trace-tree" id="trace-tree"></div></div></div><div class="panel"><div class="panel-head"><h2>Node inspector</h2><small>Recorded evidence</small></div><div class="panel-body inspector" id="inspector"><div class="empty">Select an execution node.</div></div></div></div></section>
-<section class="section" id="view-artifacts" hidden><h2 class="section-title">Artifact explorer</h2><p class="intro">Read and export saved artifacts. Source is displayed as text; imported code is never executed in Studio.</p><div class="panel"><div class="panel-head"><h2>Artifact explorer</h2><span class="tag" id="artifact-count">0 FILES</span></div><div class="artifact-layout"><div class="file-tree" id="file-tree"></div><div class="code-wrap"><div class="code-toolbar"><span id="file-path">Select a file</span><button id="download-file" disabled>Download source ↓</button></div><pre class="code"><code id="source-code">No artifact selected.</code></pre></div></div></div><div class="notice">Preview isolation is required before running generated applications. This source explorer intentionally renders artifact contents as inert text.</div></section>
+<section class="section" id="view-artifacts" hidden><h2 class="section-title">Artifact explorer</h2><p class="intro">Inspect source files and view captured previews of verified builds.</p><button id="open-reference" class="spec-actions">Open Task Management reference app</button><p id="reference-status" class="intro" role="status"></p><div class="panel"><div class="panel-head"><h2>Artifact explorer</h2><span class="tag" id="artifact-count">0 FILES</span></div><div class="artifact-layout" id="artifact-layout"><div class="file-tree" id="file-tree"></div><div class="code-wrap"><div class="code-toolbar"><span id="file-path">Select a file</span><button id="download-file" disabled>Download source ↓</button></div><pre class="code"><code id="source-code">No artifact selected.</code></pre></div>
+<figure class="preview-panel" id="app-preview" hidden>
+  <div class="eyebrow">Verified build screenshot</div>
+  <figcaption>Human-authored Task Management reference app · static capture</figcaption>
+  <a href="/assets/task-preview.png" target="_blank" rel="noopener" aria-label="Open the reference screenshot at full size"><img id="app-preview-image" width="1000" height="850" alt="Task Management app showing three example tasks, one completed, and search and status filters"></a>
+</figure>
+</div></div></section>
 <section class="section" id="view-benchmarks" hidden><h2 class="section-title">Benchmarks</h2><p class="intro">Only values present in the selected run are shown. CPU smoke checks establish infrastructure behavior; they do not establish model quality or RLM superiority.</p><div class="panel"><div class="panel-head"><h2>Selected run measurements</h2><span class="tag amber">NO INFERRED RESULTS</span></div><div style="overflow:auto"><table class="metric-table"><thead><tr><th>Metric</th><th>Recorded value</th></tr></thead><tbody id="metrics-table"></tbody></table></div></div><div class="method-grid"><article class="method"><div class="method-number">A / DIRECT LLM</div><h3>Conventional generation</h3><p>Provide the specification to one model-driven workflow. Record context limits and actual validation outcomes.</p></article><article class="method"><div class="method-number">B / STRUCTURED WORKFLOW</div><h3>Nonrecursive decomposition</h3><p>Use dependency-aware generation and verification without a recursive RLM controller.</p></article><article class="method"><div class="method-number">C / RECURSIVE LANGUAGE MODEL</div><h3>Externalized context</h3><p>Measure adaptive inspection and model-backed recursive calls using the same inputs and explicit budgets.</p></article></div><div class="notice" style="margin-top:20px">Comparative conclusions require genuine completed runs, comparable models and budgets, independently checkable requirements, and repeated trials. No comparative improvement is claimed here.</div></section>
 <section class="section" id="view-research" hidden><h2 class="section-title">Context is an environment.</h2><p class="intro">Recursa applies Recursive Language Models to application synthesis. The research question is whether programmatic inspection helps preserve connected requirements as specifications grow.</p><div class="flow"><div><b>SPECIFICATION</b>Stable requirement IDs<br>Typed dependencies</div><div><b>RLM CONTROLLER</b>Python inspection<br>Adaptive model calls</div><div><b>ARTIFACT REGISTRY</b>Source and provenance<br>Dependency contracts</div><div><b>VERIFICATION</b>Tests and diagnostics<br>Bounded repair</div><div><b>STUDIO</b>Recorded traces<br>Inspectable evidence</div></div><div class="panel"><div class="panel-body research-copy"><h3 style="margin-top:0">The original method</h3><p>Recursive Language Models, by Alex L. Zhang, Tim Kraska, and Omar Khattab, let a model interact programmatically with external context and invoke sub-models. Recursa builds an application synthesis workflow around that idea; it does not claim authorship of RLMs.</p><p><a href="https://arxiv.org/abs/2512.24601" target="_blank" rel="noopener">Read the research paper ↗</a> · <a href="https://github.com/alexzhang13/rlm" target="_blank" rel="noopener">Explore the upstream runtime ↗</a></p><h3>Architectural honesty</h3><p>Deterministic parsing, orchestration, and verification are distinct from model inference. A graph is evidence of RLM behavior only when it records genuine context inspection and model-backed calls. Local smoke runs are labeled accordingly.</p><h3>Compute strategy</h3><p>Develop locally on CPU whenever practical. Public demonstrations use recorded runs without visitor API keys. Optional live experiments require explicit budgets. Substantial accelerator workloads should use the owner's existing Colab allocation; Hugging Face Pro is not assumed to include dedicated GPU hardware.</p><h3>What remains to be established</h3><p>Compilation alone does not prove functional correctness. Requirement satisfaction, interaction tests, actual token usage, execution time, and comparable baseline results are needed before drawing research conclusions. The benefit of recursion is a hypothesis to evaluate.</p></div></div></section>
 <section class="section" id="view-progress" hidden><h2 class="section-title">Build progress</h2><p class="intro">The ordered 1–21 implementation record, updated with each published release. This view checks for updates every 15 seconds while visible. It does not stream private engineering sessions or live model inference.</p><div class="notice" id="progress-summary">Loading release evidence…</div><div class="panel"><div class="panel-head"><h2>Implementation and verification</h2><a href="https://github.com/jacobhroutzong/recursa" target="_blank" rel="noopener">View source ↗</a></div><div style="overflow:auto"><table class="metric-table"><thead><tr><th>Section</th><th>Status</th><th>Evidence and remaining work</th></tr></thead><tbody id="progress-rows"></tbody></table></div></div></section>
@@ -211,8 +265,8 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
 </div></main></div>
 <script>
 'use strict';
-const $=id=>document.getElementById(id);let runs=[],run=null,selectedEvent=-1,selectedArtifact=null,zoom=1,loadVersion=0;
-const collapsed=new Set();const titles={overview:'Overview',execution:'Execution explorer',artifacts:'Generated artifacts',benchmarks:'Benchmarks',research:'Research & architecture',progress:'Build progress'};
+const $=id=>document.getElementById(id);let runs=[],run=null,selectedEvent=-1,selectedArtifact=null,zoom=1,loadVersion=0,previewReference=false,catalogPromise=null,selectedPreset=null;
+const collapsed=new Set();const titles={overview:'Overview',playground:'Specification playground',execution:'Execution explorer',artifacts:'Generated artifacts',benchmarks:'Benchmarks',research:'Research & architecture',progress:'Build progress'};
 function element(tag,text,className){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e}
 const progressButton=element('button','Build progress');progressButton.dataset.view='progress';document.querySelector('.nav').append(progressButton);
 function showView(view){
@@ -224,9 +278,10 @@ function showView(view){
     if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');
   });
   $('overview-hero').hidden=view!=='overview';
-  document.querySelector('.stats').hidden=!['overview','execution'].includes(view);
+  document.querySelector('.content > .stats').hidden=!['overview','execution'].includes(view);
   $('release-notice').hidden=!['overview','progress'].includes(view);
   $('breadcrumb').textContent=titles[view];
+  if(view==='playground')loadPlayground();
   if(location.hash!=='#'+view)location.hash=view;
   const active=document.querySelector('.nav [aria-current="page"]');
   if(active&&matchMedia('(max-width:720px)').matches){
@@ -251,18 +306,18 @@ async function loadRun(id){
   const entry=runs.find(r=>r.id===id);
   try{
     const data=entry?._local||await fetchJSON('/api/runs/'+encodeURIComponent(id));
-    if(version===loadVersion)setRun(normalize(data.run||data));
+    if(version===loadVersion)setRun(normalize(data.run||data), entry?._reference===true);
   }catch(error){if(version===loadVersion)reportError('Could not load run: '+error.message)}
 }
-function setRun(data){run=data;selectedEvent=-1;selectedArtifact=null;zoom=1;collapsed.clear();$('trace-scroll').scrollTo(0,0);$('evidence-notice').classList.remove('error');$('run-select').value=data.id;const live=String(data.mode||'').toLowerCase();const isPrivate=data.mode==='private-reviewed-replay';const isModel=/rlm|live|direct|baseline/.test(live)&&!(/smoke|deterministic|sample/.test(live));const evidenceTitle=isPrivate?'Private replay. ':isModel?'Recorded experiment. ':'Deterministic infrastructure evidence. ';
-const evidenceCopy=isPrivate?'This import stays in this browser session. Host broker events and container-reported observations have separate labels. Source files stay in the run directory.':isModel?'Inspect the saved events and validation outcomes before drawing conclusions.':'This run checks the local workflow. It does not demonstrate model-backed recursion or measure synthesis quality.';
+function setRun(data, reference=false){run=data;previewReference=reference;selectedEvent=-1;selectedArtifact=null;zoom=1;collapsed.clear();$('trace-scroll').scrollTo(0,0);$('evidence-notice').classList.remove('error');$('run-select').value=data.id;const live=String(data.mode||'').toLowerCase();const isPrivate=data.mode==='private-reviewed-replay';const isModel=/rlm|live|direct|baseline/.test(live)&&!(/smoke|deterministic|sample/.test(live));const evidenceTitle=reference?'Verified reference app. ':isPrivate?'Private replay. ':isModel?'Recorded experiment. ':'Deterministic infrastructure evidence. ';
+const evidenceCopy=reference?'This human-authored example passed the local build and browser checks. The preview is a captured screenshot.':isPrivate?'This import stays in this browser session. Host broker events and container-reported observations have separate labels. Source files stay in the run directory.':isModel?'Inspect the saved events and validation outcomes before drawing conclusions.':'This run checks the local workflow. It does not demonstrate model-backed recursion or measure synthesis quality.';
 $('evidence-notice').replaceChildren(element('strong',evidenceTitle),document.createTextNode(evidenceCopy));
 $('stat-calls-label').textContent=isPrivate?'BROKER COMPLETIONS':'MODEL CALLS';
 $('stat-calls').textContent=format(isPrivate?data.metrics.broker_completions:data.metrics.model_calls??data.metrics.calls??(isModel?null:0));
 $('stat-artifacts').textContent=isPrivate?format(data.metrics.validated_source_files):data.artifacts.length;
 $('stat-artifacts-note').textContent=isPrivate?'Validated source files in the run directory':'Inspectable source files';
 $('stat-duration').textContent=duration(data.metrics.duration_ms??(data.metrics.duration_seconds!=null?data.metrics.duration_seconds*1000:undefined));
-$('stat-mode').textContent=isPrivate?'Private replay':data.mode||'Recorded';
+$('stat-mode').textContent=reference?'Reference app':isPrivate?'Private replay':data.mode||'Recorded';
 $('trace-count').textContent=data.events.length+' EVENTS';$('artifact-count').textContent=data.artifacts.length+' FILES';const filter=$('event-filter');clear(filter);const all=element('option','All event types');all.value='all';filter.append(all);[...new Set(data.events.map(e=>String(e.type||'event')))].forEach(t=>{const op=element('option',t.replaceAll('_',' '));op.value=t;filter.append(op)});renderTrace();renderArtifacts();renderMetrics();if(data.events.length)inspectEvent(0);else $('inspector').replaceChildren(element('div','No events were recorded.','empty'))}
 function traceRows(){
   const byId=new Map(run.events.map((event,index)=>[event.id,index]));
@@ -360,11 +415,110 @@ $('zoom-reset').addEventListener('click',()=>{zoom=1;renderTrace()});
 $('expand-all').addEventListener('click',()=>{collapsed.clear();renderTrace();$('trace-scroll').focus()});
 $('step-back').addEventListener('click',()=>stepEvent(-1));
 $('step-next').addEventListener('click',()=>stepEvent(1));
-function renderArtifacts(){clear($('file-tree'));if(!run)return;run.artifacts.forEach((a,i)=>{const b=element('button','▤ '+(a.path||a.id||'Artifact '+(i+1)),'file-button');b.addEventListener('click',()=>selectArtifact(i));$('file-tree').append(b)});if(run.artifacts.length)selectArtifact(0);else{$('file-tree').append(element('div','No saved source files.','empty'));$('source-code').textContent='No artifacts were recorded.';$('file-path').textContent='No artifact selected';$('download-file').disabled=true}}
+function renderArtifacts(){
+$('artifact-layout').classList.toggle('with-preview',previewReference);
+$('app-preview').hidden=!previewReference;
+if(previewReference)$('app-preview-image').src='/assets/task-preview.png';
+else $('app-preview-image').removeAttribute('src');
+clear($('file-tree'));if(!run)return;run.artifacts.forEach((a,i)=>{const b=element('button','▤ '+(a.path||a.id||'Artifact '+(i+1)),'file-button');b.addEventListener('click',()=>selectArtifact(i));$('file-tree').append(b)});if(run.artifacts.length)selectArtifact(0);else{$('file-tree').append(element('div','No saved source files.','empty'));$('source-code').textContent='No artifacts were recorded.';$('file-path').textContent='No artifact selected';$('download-file').disabled=true}}
 function selectArtifact(index){selectedArtifact=run.artifacts[index];$('file-path').textContent=selectedArtifact.path||'artifact.txt';$('source-code').textContent=typeof selectedArtifact.content==='string'?selectedArtifact.content:format(selectedArtifact.content??selectedArtifact);$('download-file').disabled=false;[...$('file-tree').children].forEach((b,i)=>b.classList.toggle('active',i===index))}
 $('download-file').addEventListener('click',()=>{if(!selectedArtifact)return;const blob=new Blob([$('source-code').textContent],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=element('a');a.href=url;a.download=String(selectedArtifact.path||'artifact.txt').split(/[\\/]/).pop();a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
 function renderMetrics(){const body=$('metrics-table');clear(body);const metrics=Object.entries(run?.metrics||{});if(!metrics.length){const row=element('tr'),cell=element('td','No measurements recorded.');cell.colSpan=2;row.append(cell);body.append(row)}metrics.forEach(([key,value])=>{const row=element('tr');row.append(element('td',key.replaceAll('_',' ')),element('td',format(value)));body.append(row)})}
 async function fetchJSON(url){const response=await fetch(url,{headers:{Accept:'application/json'}});if(!response.ok)throw Error('Archive returned HTTP '+response.status);return response.json()}
+function getCatalog(){
+  if(!catalogPromise){
+    catalogPromise=fetchJSON('/api/playground').catch(error=>{catalogPromise=null;throw error});
+  }
+  return catalogPromise;
+}
+async function loadPlayground(){
+  if(selectedPreset)return;
+  try {
+    const catalog=await getCatalog();
+    if(selectedPreset)return;
+    const choices=$('preset-list');
+    clear(choices);
+    for(const preset of catalog.presets){
+      const button=element('button',undefined,'preset-choice');
+      button.dataset.preset=preset.key;
+      button.append(element('span',preset.size),element('strong',preset.replay.spec.name));
+      button.addEventListener('click',()=>selectPreset(preset));
+      choices.append(button);
+    }
+    $('playground-status').hidden=true;
+    $('playground-content').hidden=false;
+    selectPreset(catalog.presets[0]);
+  } catch(error){$('playground-status').textContent='Specifications could not be loaded. Reopen Playground to try again.'}
+}
+function selectPreset(preset){
+  selectedPreset=preset;
+  const spec=preset.replay.spec;
+  const size=new TextEncoder().encode(specJSON()).length;
+  $('preset-title').textContent=spec.name;
+  $('preset-description').textContent=spec.description;
+  $('preset-requirements').textContent=spec.requirements.length;
+  $('preset-dependencies').textContent=spec.requirements.reduce((count,item)=>count+(item.depends_on||[]).length,0);
+  $('preset-size').textContent=(size/1024).toFixed(1)+' KiB';
+  $('preset-reference').hidden=preset.key!=='tasks';
+  $('requirement-search').value='';
+  for(const button of $('preset-list').children){
+    button.setAttribute('aria-pressed',String(button.dataset.preset===preset.key));
+  }
+  renderRequirements();
+}
+function specJSON(){return JSON.stringify(selectedPreset.replay.spec,null,2)+'\n'}
+function renderRequirements(){
+  const list=$('requirement-list');
+  const requirements=selectedPreset.replay.spec.requirements;
+  const search=$('requirement-search').value.trim().toLowerCase();
+  clear(list);
+  let matched=0;
+  for(const req of requirements){
+    const dependencies=req.depends_on||[];
+    const criteria=[req.acceptance].flat().filter(Boolean).join(' ');
+    if(![req.id,req.text,criteria,...dependencies].join(' ').toLowerCase().includes(search))continue;
+    matched++;
+    const item=element('li');
+    item.append(element('strong',req.id),element('p',req.text));
+    if(criteria)item.append(element('small','Acceptance · '+criteria));
+    if(dependencies.length)item.append(element('small','Depends on · '+dependencies.join(', ')));
+    list.append(item);
+  }
+  $('requirement-count').textContent=matched+' of '+requirements.length+' requirements';
+}
+function openCatalogRun(data,view,reference=false){
+  const normalized=normalize(data);
+  ++loadVersion;
+  runs=runs.filter(entry=>entry.id!==normalized.id);
+  runs.unshift({id:normalized.id,label:normalized.label,mode:normalized.mode,status:normalized.status,
+                _local:normalized,_reference:reference});
+  renderArchive();
+  setRun(normalized,reference);
+  showView(view);
+}
+async function openReference(){
+  const status=$('reference-status');
+  status.textContent='';
+  try {
+    const catalog=await getCatalog();
+    openCatalogRun(catalog.reference,'artifacts',true);
+  } catch(error){
+    showView('artifacts');
+    status.textContent='The reference app could not be loaded. Try opening it again.';
+  }
+}
+$('requirement-search').addEventListener('input',renderRequirements);
+$('preset-replay').addEventListener('click',()=>openCatalogRun(selectedPreset.replay,'execution'));
+$('preset-reference').addEventListener('click',openReference);
+$('open-reference').addEventListener('click',openReference);
+$('preset-download').addEventListener('click',()=>{
+  const url=URL.createObjectURL(new Blob([specJSON()],{type:'application/json'}));
+  const link=element('a');
+  link.href=url;
+  link.download=selectedPreset.key+'-specification.json';
+  link.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
 async function refreshProgress(){try{const p=await fetchJSON('/api/progress');const stamp=p.updated_at?new Date(p.updated_at).toLocaleString():'Not published';const checks=p.tests?p.tests.passed+' of '+p.tests.total+' offline checks passed'+(p.tests.skipped?' · '+p.tests.skipped+' skipped':''):'Test evidence not yet published';$('release-notice').replaceChildren(element('strong','Development preview · '),document.createTextNode(p.phase+' · '+checks+' · Updated '+stamp+' '));const open=element('button','View build progress');open.addEventListener('click',()=>showView('progress'));$('release-notice').append(open);$('progress-summary').textContent=checks+'. Published '+stamp+'. '+(p.notice||'');const rows=$('progress-rows');clear(rows);(p.sections||[]).forEach(s=>{const row=element('tr');row.append(element('td',s.name),element('td',s.status),element('td',s.evidence));rows.append(row)})}catch(error){if(!$('progress-rows').children.length)$('progress-summary').textContent='Progress refresh is unavailable. The recorded execution archive remains usable.'}}
 refreshProgress();setInterval(()=>{if(!document.hidden)refreshProgress()},15000);
 function reportError(message){$('evidence-notice').replaceChildren(element('strong','Archive unavailable. '),document.createTextNode(message+' You can still import a saved run JSON.'));$('evidence-notice').classList.add('error')}

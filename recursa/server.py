@@ -32,6 +32,10 @@ def make_handler(directory):
             route = urlparse(self.path).path
             if route == "/api/runs":
                 self.send_data(200, list(load_runs(directory).values()))
+            elif route == "/api/playground":
+                self.send_data(200, (ROOT / "apps/studio/playground.json").read_bytes())
+            elif route == "/assets/task-preview.png":
+                self.send_data(200, (ROOT / "apps/studio/assets/task-preview.png").read_bytes(), "image/png")
             elif route == "/api/progress":
                 path = ROOT / "public/progress.json"
                 if path.exists():

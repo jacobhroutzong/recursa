@@ -1,3 +1,4 @@
+import hashlib
 from http.server import ThreadingHTTPServer
 import json
 from pathlib import Path
@@ -34,7 +35,22 @@ class ServerTests(unittest.TestCase):
                 with urlopen(base + "/api/progress") as response:
                     self.assertEqual(response.headers["Cache-Control"], "no-store")
                     self.assertIn("phase", json.loads(response.read()))
-                for route in ("/../README.md", "/api/execute", "/api/runs/missing", "/api/runs/private-copied", "/api/runs/generated-record-shaped-source"):
+                with urlopen(base + "/api/playground") as response:
+                    catalog = json.load(response)
+                self.assertEqual([item["key"] for item in catalog["presets"]], ["tasks", "operations", "aviation"])
+                for preset in catalog["presets"]:
+                    self.assertEqual(preset["replay"]["mode"], "deterministic-smoke")
+                    self.assertIsNone(preset["replay"]["metrics"]["functional_success"])
+                reference = catalog["reference"]
+                self.assertEqual(reference["mode"], "human-authored-reference")
+                self.assertTrue(reference["metrics"]["functional_success"])
+                with urlopen(base + "/assets/task-preview.png") as response:
+                    self.assertEqual(response.headers["Content-Type"], "image/png")
+                    preview = response.read()
+                self.assertTrue(preview.startswith(b"\x89PNG"))
+                self.assertEqual(hashlib.sha256(preview).hexdigest(),
+                                 reference["events"][-1]["details"]["screenshot_sha256"])
+                for route in ("/../README.md", "/api/execute", "/assets/unknown.png", "/api/runs/missing", "/api/runs/private-copied", "/api/runs/generated-record-shaped-source"):
                     with self.assertRaises(HTTPError) as error:
                         urlopen(base + route)
                     self.assertEqual(error.exception.code, 404)

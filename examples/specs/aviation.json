@@ -1,0 +1,137 @@
+{
+  "name": "Aviation Operations Console",
+  "description": "Explore a fictional airport operations exercise using entirely synthetic, non-operational data.",
+  "requirements": [
+    {
+      "id": "AV-01",
+      "text": "Load synthetic flights, stands, turnaround milestones, and simulated alerts.",
+      "acceptance": "Malformed records appear in a data quality summary."
+    },
+    {
+      "id": "AV-02",
+      "text": "Display the current exercise clock in UTC.",
+      "acceptance": "Pausing the exercise freezes all time-based views."
+    },
+    {
+      "id": "AV-03",
+      "text": "Filter the exercise by terminal, time range, and flight status.",
+      "acceptance": "The board, stand view, and alert list reflect the selected scope.",
+      "depends_on": [
+        "AV-01",
+        "AV-02"
+      ]
+    },
+    {
+      "id": "AV-04",
+      "text": "Show arrivals and departures on a sortable flight board.",
+      "acceptance": "Sort order uses scheduled UTC time with a stable flight ID tie-breaker.",
+      "depends_on": [
+        "AV-03"
+      ]
+    },
+    {
+      "id": "AV-05",
+      "text": "Open a flight detail panel from the board.",
+      "acceptance": "The panel shows synthetic movement, stand, milestone, and alert references.",
+      "depends_on": [
+        "AV-04"
+      ]
+    },
+    {
+      "id": "AV-06",
+      "text": "Visualize stand assignments across the selected period.",
+      "acceptance": "Overlapping assignments render as separate blocks and list the affected flight IDs.",
+      "depends_on": [
+        "AV-03"
+      ]
+    },
+    {
+      "id": "AV-07",
+      "text": "Flag conflicting stand assignments.",
+      "acceptance": "Two occupied intervals that overlap trigger a single conflict per flight pair.",
+      "depends_on": [
+        "AV-06"
+      ]
+    },
+    {
+      "id": "AV-08",
+      "text": "Track turnaround milestones and simulated delay reasons.",
+      "acceptance": "A missing milestone is labeled unknown and excluded from completion totals.",
+      "depends_on": [
+        "AV-05"
+      ]
+    },
+    {
+      "id": "AV-09",
+      "text": "Display simulated alert priorities and sources.",
+      "acceptance": "Alerts preserve their fictional event IDs and link to affected flight or stand records.",
+      "depends_on": [
+        "AV-03",
+        "AV-07",
+        "AV-08"
+      ]
+    },
+    {
+      "id": "AV-10",
+      "text": "Acknowledge an exercise alert locally.",
+      "acceptance": "Acknowledging one alert updates its state while retaining its original event and priority.",
+      "depends_on": [
+        "AV-09"
+      ]
+    },
+    {
+      "id": "AV-11",
+      "text": "Record local acknowledgement history.",
+      "acceptance": "Reload restores acknowledgements and the exercise timestamps.",
+      "depends_on": [
+        "AV-10"
+      ]
+    },
+    {
+      "id": "AV-12",
+      "text": "Show aggregate activity and stand utilization.",
+      "acceptance": "Totals match filtered exercise records and identify incomplete data.",
+      "depends_on": [
+        "AV-04",
+        "AV-06"
+      ]
+    },
+    {
+      "id": "AV-13",
+      "text": "Provide keyboard navigation and readable status labels.",
+      "acceptance": "Every view is reachable by keyboard and no status depends on color alone.",
+      "depends_on": [
+        "AV-04",
+        "AV-06",
+        "AV-09"
+      ]
+    },
+    {
+      "id": "AV-14",
+      "text": "Export a synthetic exercise summary.",
+      "acceptance": "The export includes filters, source IDs, alert counts, and the exercise-only label.",
+      "depends_on": [
+        "AV-11",
+        "AV-12"
+      ]
+    },
+    {
+      "id": "AV-15",
+      "text": "Reset the exercise and clear local adjustments.",
+      "acceptance": "Reset restores the initial synthetic snapshot and default scope.",
+      "depends_on": [
+        "AV-03",
+        "AV-11"
+      ]
+    },
+    {
+      "id": "AV-16",
+      "text": "Label every view as a synthetic exercise.",
+      "acceptance": "The label remains visible on narrow layouts and is included in exports.",
+      "depends_on": [
+        "AV-13",
+        "AV-14"
+      ]
+    }
+  ]
+}

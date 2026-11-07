@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T16:08:42.822950+00:00",
-  "phase": "Section 6 \u00b7 Studio redesign and replay verification",
-  "source_digest": "325f3e822c51113eefc0cc3313814092b4b0b2315f62d06762da032c1b123e80",
+  "updated_at": "2026-11-07T16:21:24.444376+00:00",
+  "phase": "Section 6 \u00b7 Specification playground and app previews",
+  "source_digest": "c9f2821bf9bece5ab9df1a097b2cbf17b21fdc6e91d0010d93ac43f9cc162954",
   "tests": {
     "total": 106,
     "passed": 106,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T16:08:37.970665+00:00",
-    "source_digest": "325f3e822c51113eefc0cc3313814092b4b0b2315f62d06762da032c1b123e80",
+    "verified_at": "2026-11-07T16:21:17.436519+00:00",
+    "source_digest": "c9f2821bf9bece5ab9df1a097b2cbf17b21fdc6e91d0010d93ac43f9cc162954",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -46,8 +46,8 @@
     {
       "number": 6,
       "name": "6. Studio",
-      "status": "Redesigned replay preview",
-      "evidence": "Responsive workspace and architecture overview. The execution explorer supports branch collapse, filtering, zoom, keyboard navigation and private replay import. Specification playground and generated app previews remain open"
+      "status": "Playground and captured reference preview",
+      "evidence": "Three synthetic specifications with CPU replays, searchable requirements, JSON export, and a verified Task Management reference screenshot beside the source. Model-generated app previews await an authorized synthesis run"
     },
     {
       "number": 7,

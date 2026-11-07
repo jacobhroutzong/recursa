@@ -85,3 +85,14 @@ The target research runtime is the official [RLM project](https://github.com/ale
 The adapter supports reviewed application verification and focused repair under shared call/token/cost reservations and an elapsed-time deadline; an intercepted-transport regression proves the wiring without genuine inference. The offline fixture command accepts `--max-wall-seconds`, runs in a worker with a parent deadline, and retains measured partial stages on exhaustion. Windows kill-on-close job tests verify descendant cleanup even when a scripted upstream REPL blocks. This controls lifetime and is not filesystem/network sandboxing; the shipped worker has no provider execution mode. Next: strengthen the execution security boundary and verify a genuine authorized inspection/subcall/artifact run using the installed, pinned runtime. Fair direct/structured baselines follow the working core. Open-weight model loading, GPU checkpoint continuation, fine-tuning, baselines, genuine model replays and statistical evaluation remain outstanding. Current resume is **between trials**, not inside an interrupted model/training process.
 
 The redesigned Studio has a dedicated overview and a replay workspace. Open the execution explorer to filter saved events, expand or collapse branches, zoom, and step through the visible events. The browser import supports private run files. The public archive serves recorded CPU evidence.
+
+
+The **Playground** offers three synthetic specifications, searchable requirements, JSON downloads, and recorded CPU validation. The artifact explorer shows actual source beside a captured screenshot of the verified human-authored Task Management reference app. Model-generated previews require a verified model-generated build.
+
+To refresh the reference preview locally, run the following commands with the pinned browser and frontend tools installed:
+
+```powershell
+python -m recursa.offline --output .cache/studio-task-reference-new
+node scripts/capture_task_preview.mjs .cache/studio-task-reference-new/application/application-report.json apps/studio/assets/task-preview.png
+python scripts/build_studio_catalog.py .cache/studio-task-reference-new/application/application-report.json
+```

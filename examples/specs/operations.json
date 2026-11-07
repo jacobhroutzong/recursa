@@ -1,0 +1,85 @@
+{
+  "name": "Operations Analytics Dashboard",
+  "description": "Compare synthetic fulfillment and staffing metrics across teams and reporting periods.",
+  "requirements": [
+    {
+      "id": "OPS-01",
+      "text": "Choose a date range and team for the dashboard.",
+      "acceptance": "Every panel uses the same date range and team."
+    },
+    {
+      "id": "OPS-02",
+      "text": "Validate records against the typed order and staffing contracts.",
+      "acceptance": "Rows with missing team IDs or negative durations are excluded and counted."
+    },
+    {
+      "id": "OPS-03",
+      "text": "Show volume, completion rate, and median turnaround cards.",
+      "acceptance": "Card totals match the filtered records and zero denominators show an empty value.",
+      "depends_on": [
+        "OPS-01",
+        "OPS-02"
+      ]
+    },
+    {
+      "id": "OPS-04",
+      "text": "Plot daily volume and completion rate.",
+      "acceptance": "Days without records appear as gaps or explicit zero volume.",
+      "depends_on": [
+        "OPS-01",
+        "OPS-02"
+      ]
+    },
+    {
+      "id": "OPS-05",
+      "text": "Compare staffing hours with completed work by team.",
+      "acceptance": "Changing the reporting period updates both axes and accessible table values.",
+      "depends_on": [
+        "OPS-01",
+        "OPS-02"
+      ]
+    },
+    {
+      "id": "OPS-06",
+      "text": "Open the underlying order table from a chart selection.",
+      "acceptance": "Selecting a day applies its date constraint and preserves the team filter.",
+      "depends_on": [
+        "OPS-04"
+      ]
+    },
+    {
+      "id": "OPS-07",
+      "text": "Sort and paginate order records.",
+      "acceptance": "Sorting applies before pagination and preserves the current filters.",
+      "depends_on": [
+        "OPS-06"
+      ]
+    },
+    {
+      "id": "OPS-08",
+      "text": "Save a dashboard view locally.",
+      "acceptance": "Reload restores the saved range, team, and table sort.",
+      "depends_on": [
+        "OPS-01",
+        "OPS-07"
+      ]
+    },
+    {
+      "id": "OPS-09",
+      "text": "Export the filtered table as CSV.",
+      "acceptance": "Exported rows match the active filters and have escaped cells.",
+      "depends_on": [
+        "OPS-07"
+      ]
+    },
+    {
+      "id": "OPS-10",
+      "text": "Explain empty and incomplete results.",
+      "acceptance": "Missing staffing values show a reason and leave order totals available.",
+      "depends_on": [
+        "OPS-03",
+        "OPS-05"
+      ]
+    }
+  ]
+}
