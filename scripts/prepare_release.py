@@ -24,9 +24,11 @@ if __name__ == "__main__":
     paths.extend(ROOT / "apps/studio" / name for name in ("playground.json", "generated-task.json", "task-comparison.json", "comparison-series.json", "repair-series.json", "assets/task-preview.png", "assets/generated-task-preview.png"))
     paths.append(ROOT / "apps/studio/benchmark-traces.json")
     paths.append(ROOT / "apps/studio/security-checks.json")
-    replay = ROOT / "apps/studio/assets/task-replay"
-    paths.append(replay / "manifest.json")
-    paths.extend(replay.glob("*.png"))
+    paths.extend(ROOT / "apps/studio" / name for name in ("generated-operations.json", "assets/generated-operations-preview.png"))
+    for name in ("task-replay", "operations-replay"):
+        replay = ROOT / "apps/studio/assets" / name
+        paths.append(replay / "manifest.json")
+        paths.extend(replay.glob("*.png"))
     paths.extend((ROOT / "recursa").glob("*.py"))
     paths.extend((ROOT / "traces/public").glob("*.json"))
     paths.append(ROOT / "deploy/space/README.md")

@@ -1,0 +1,289 @@
+{
+  "schema_version": 1,
+  "id": "generated-operations-local-d01e2c9e6e73",
+  "label": "Operations Analytics · Verified generated showcase",
+  "mode": "structured-local-synthesis",
+  "status": "verified",
+  "live_inference": true,
+  "spec": {
+    "name": "Operations Analytics Dashboard",
+    "description": "Compare synthetic fulfillment and staffing metrics across teams and reporting periods.",
+    "requirements": [
+      {
+        "id": "OPS-01",
+        "text": "Choose a date range and team for the dashboard. Use labeled select controls Team (All teams, North, South) and Reporting period (Jan 1–3, Jan 2), default All teams and Jan 1–3. Dates are January 2025. Option values must equal their visible labels.",
+        "acceptance": "Every panel uses the same date range and team."
+      },
+      {
+        "id": "OPS-02",
+        "text": "Validate records against the typed order and staffing contracts. Use this fixed synthetic dataset. Orders are (id, day in January, team, minutes, completed): (N1,1,North,20,true), (N2,2,North,40,false), (N3,2,North,60,true), (S1,2,South,10,true), (S2,3,South,30,false), (X1,2,empty team,15,true), (X2,2,North,-5,true). Staffing hours are (1,North,4), (2,North,5), (2,South,3). Other entries are missing. Report the number of invalid records across the whole input in text using “Excluded records: N”.",
+        "acceptance": "Rows with missing team IDs or negative durations are excluded and counted."
+      },
+      {
+        "id": "OPS-03",
+        "text": "Show volume, completion rate, and median turnaround cards. Volume counts valid matching orders. Rate is completed divided by volume as a whole percent. Median uses all valid matching order durations in minutes, including incomplete orders. Include visible text “Volume: N”, “Completion rate: N%”, and “Median turnaround: N min” for nonempty results.",
+        "acceptance": "Card totals match the filtered records and zero denominators show an empty value.",
+        "depends_on": [
+          "OPS-01",
+          "OPS-02"
+        ]
+      },
+      {
+        "id": "OPS-04",
+        "text": "Plot daily volume and completion rate. Provide selectable days with accessible buttons named Jan 1, Jan 2, Jan 3 in the full-period chart.",
+        "acceptance": "Days without records appear as gaps or explicit zero volume.",
+        "depends_on": [
+          "OPS-01",
+          "OPS-02"
+        ]
+      },
+      {
+        "id": "OPS-05",
+        "text": "Compare staffing hours with completed work by team. Provide an accessible table named Staffing comparison and show team, total staffing hours, and completed order count. Sum the known staffing hours in the selected window and label incomplete totals. Use cell text Staffing hours: N and Completed orders: N.",
+        "acceptance": "Changing the reporting period updates both axes and accessible table values.",
+        "depends_on": [
+          "OPS-01",
+          "OPS-02"
+        ]
+      },
+      {
+        "id": "OPS-06",
+        "text": "Open the underlying order table from a chart selection. Expose the filtered results in an accessible table named Orders with the order IDs.",
+        "acceptance": "Selecting a day applies its date constraint and preserves the team filter.",
+        "depends_on": [
+          "OPS-04"
+        ]
+      },
+      {
+        "id": "OPS-07",
+        "text": "Sort and paginate order records.",
+        "acceptance": "Sorting applies before pagination and preserves the current filters.",
+        "depends_on": [
+          "OPS-06"
+        ]
+      },
+      {
+        "id": "OPS-08",
+        "text": "Save a dashboard view locally. Provide a button named Save view and restore the saved view on reload.",
+        "acceptance": "Reload restores the saved range, team, and table sort.",
+        "depends_on": [
+          "OPS-01",
+          "OPS-07"
+        ]
+      },
+      {
+        "id": "OPS-09",
+        "text": "Export the filtered table as CSV.",
+        "acceptance": "Exported rows match the active filters and have escaped cells.",
+        "depends_on": [
+          "OPS-07"
+        ]
+      },
+      {
+        "id": "OPS-10",
+        "text": "Explain empty and incomplete results. When a selected team or period has missing staffing entries, include the text “Staffing data incomplete” and keep order KPIs visible.",
+        "acceptance": "Missing staffing values show a reason and leave order totals available.",
+        "depends_on": [
+          "OPS-03",
+          "OPS-05"
+        ]
+      }
+    ]
+  },
+  "events": [
+    {
+      "id": "run",
+      "parent_id": null,
+      "type": "execution",
+      "label": "Local Operations showcase",
+      "status": "passed"
+    },
+    {
+      "id": "source",
+      "parent_id": "run",
+      "type": "artifact",
+      "label": "Generated source and host repairs",
+      "status": "recorded",
+      "details": {
+        "files": [
+          {
+            "path": "index.html",
+            "sha256": "073291ca5a513af608ab901e04ff3b61fc2f949addeaff26f106b948da3783d5",
+            "origin": "host-repair",
+            "model_call": 1,
+            "model_source_sha256": "b85683120390d3f1910df74639a47b47bab6d0ae6e18b15b4f74d53e6e580245"
+          },
+          {
+            "path": "domain.js",
+            "sha256": "5afe910ef705fb7f2784991ce936070e589f73364c29a01a1164d54382ae3ab7",
+            "origin": "host-repair",
+            "model_call": 2,
+            "model_source_sha256": "5fc8fb30c75fe23a3e7588e3e42178cf4ed0f49ee004788ea896e4e37238140c"
+          },
+          {
+            "path": "app.js",
+            "sha256": "8e01eded902f240cc075da9f9591f51cd5c9c08b14134433a6f1c1d4772bea99",
+            "origin": "host-repair",
+            "model_call": 3,
+            "model_source_sha256": "eff53cb7ea0d127c9bfed1c179810d3ae8f7490e5b5a1ddaf5dabf0479db28a3"
+          },
+          {
+            "path": "styles.css",
+            "sha256": "3ae01ff808f38c7c0e5d2c5ff3574ba50af40e7cca0cbe4a8771ce92cdb938a1",
+            "origin": "host-repair",
+            "model_call": 4,
+            "model_source_sha256": "a7fcf7902f338db8db479329b86ce873908be9e3003fb6483978edbeb05373b1"
+          }
+        ],
+        "model_repair_rounds": 3,
+        "host_repaired": true
+      }
+    },
+    {
+      "id": "verify",
+      "parent_id": "run",
+      "type": "validation",
+      "label": "Build and browser verification",
+      "status": "passed",
+      "details": {
+        "build_outputs": {
+          "assets/entry-0.css": "093dc7a1ced66187253c93b3d563d5393a51286569d138d1f17af8b1930e3b01",
+          "assets/entry-1.js": "08ba36d0ec3f4487a8cb8e2b5fca1ea48c61c6a399ae6ce94a3e1b2d63eb20b2",
+          "index.html": "842d55459af1b66d004f50ab0d19ffae1f8720d5676f3095fa32393696b948a7"
+        },
+        "scenarios": [
+          {
+            "id": "ops-valid-aggregates",
+            "status": "passed",
+            "completed_steps": 4
+          },
+          {
+            "id": "ops-team-period",
+            "status": "passed",
+            "completed_steps": 10
+          },
+          {
+            "id": "ops-drilldown",
+            "status": "passed",
+            "completed_steps": 6
+          },
+          {
+            "id": "ops-saved-view",
+            "status": "passed",
+            "completed_steps": 6
+          }
+        ]
+      }
+    },
+    {
+      "id": "capture",
+      "parent_id": "verify",
+      "type": "artifact",
+      "label": "Browser capture and replay",
+      "status": "passed",
+      "details": {
+        "screenshot_sha256": "e886dc1d783da3ac7f69a1af197317c8623807f373a3b360f64dbd4b99df2959",
+        "frames": 9
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "index.html",
+      "content": "<!doctype html>\n<html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Operations Analytics</title><link rel=\"stylesheet\" href=\"./styles.css\"></head><body>\n<main>\n  <header><p class=\"kicker\">FULFILLMENT INTELLIGENCE · JAN 2025</p><h1>Operations Analytics</h1><p>Compare order volume, turnaround, and staffing on synthetic data.</p></header>\n  <div class=\"toolbar\" aria-label=\"Dashboard controls\">\n    <label for=\"team\">Team</label>\n    <select id=\"team\" aria-label=\"Team\">\n      <option value=\"All teams\">All teams</option>\n      <option value=\"North\">North</option>\n      <option value=\"South\">South</option>\n    </select>\n    <label for=\"period\">Reporting period</label>\n    <select id=\"period\" aria-label=\"Reporting period\">\n      <option value=\"Jan 1–3\">Jan 1–3</option>\n      <option value=\"Jan 2\">Jan 2</option>\n    </select>\n    <label for=\"sort\">Sort orders</label>\n    <select id=\"sort\" aria-label=\"Sort orders\">\n      <option value=\"ID\">ID</option>\n      <option value=\"Duration\">Duration</option>\n    </select>\n    <button id=\"save\">Save view</button>\n    <button id=\"export\">Export CSV</button>\n    <button id=\"prev\">Previous</button>\n    <button id=\"next\">Next</button>\n  </div>\n  <div class=\"metrics\">\n    <div class=\"card\" id=\"volume\"></div>\n    <div class=\"card\" id=\"rate\"></div>\n    <div class=\"card\" id=\"median\"></div>\n    <div id=\"excluded\"></div>\n    </div>\n  <section class=\"panel\"><h2>Daily fulfillment</h2><div id=\"daily\"></div></section>\n  <section class=\"panel\">\n    <h2>Staffing and orders</h2>\n    <span id=\"page\"></span>\n    <p id=\"feedback\"></p>\n    <table id=\"staffing\" aria-label=\"Staffing comparison\">\n      <thead>\n        <tr>\n          <th>Team</th>\n          <th>Hours</th>\n          <th>Completed</th>\n          <th>Note</th>\n        </tr>\n      </thead>\n      <tbody></tbody>\n    </table>\n    <table id=\"orders\" aria-label=\"Orders\">\n      <thead>\n        <tr>\n          <th>ID</th>\n          <th>Day</th>\n          <th>Team</th>\n          <th>Duration</th>\n          <th>Status</th>\n        </tr>\n      </thead>\n      <tbody></tbody>\n    </table>\n  </section>\n</main>\n<script type=\"module\" src=\"./app.js\"></script></body></html>",
+      "requirements": [
+        "OPS-01",
+        "OPS-02",
+        "OPS-03",
+        "OPS-04",
+        "OPS-05",
+        "OPS-06",
+        "OPS-07",
+        "OPS-08",
+        "OPS-09",
+        "OPS-10"
+      ],
+      "imports": [],
+      "exports": [],
+      "assumptions": [],
+      "sha256": "073291ca5a513af608ab901e04ff3b61fc2f949addeaff26f106b948da3783d5"
+    },
+    {
+      "path": "domain.js",
+      "content": "export function dashboard(team, period, sort, requestedPage) {\n  // Fixed synthetic dataset\n  const orders = [\n    { id: 'N1', day: 1, team: 'North', minutes: 20, completed: true },\n    { id: 'N2', day: 2, team: 'North', minutes: 40, completed: false },\n    { id: 'N3', day: 2, team: 'North', minutes: 60, completed: true },\n    { id: 'S1', day: 2, team: 'South', minutes: 10, completed: true },\n    { id: 'S2', day: 3, team: 'South', minutes: 30, completed: false },\n    { id: 'X1', day: 2, team: '', minutes: 15, completed: true },\n    { id: 'X2', day: 2, team: 'North', minutes: -5, completed: true }\n  ];\n\n  const staffing = [\n    { day: 1, team: 'North', hours: 4 },\n    { day: 2, team: 'North', hours: 5 },\n    { day: 2, team: 'South', hours: 3 }\n  ];\n\n  // Validate orders\n  let excluded = 0;\n  let validOrders = [];\n  for (let order of orders) {\n    if (!order.team || order.day < 1 || order.day > 3) {\n      excluded++;\n      continue;\n    }\n    if (order.minutes < 0) {\n      excluded++;\n      continue;\n    }\n    if (order.completed === true || order.completed === false) {\n      validOrders.push(order);\n    } else {\n      excluded++;\n      continue;\n    }\n  }\n\n  const days = period === 'Jan 1–3' ? [1, 2, 3] : [Number(period.split(' ')[1])];\n  const teams = team === 'All teams' ? ['North', 'South'] : [team];\n  const filteredOrders = validOrders.filter(order => days.includes(order.day) && teams.includes(order.team));\n\n  // Compute volume, rate, median\n  let volume = filteredOrders.length;\n  let durations = filteredOrders.map(order => order.minutes);\n  let rate = null;\n  let median = null;\n\n  if (volume > 0) {\n    rate = Math.round((filteredOrders.filter(order => order.completed).length / volume) * 100);\n    if (volume % 2 === 0) {\n      let sortedDurations = [...durations].sort((a, b) => a - b);\n      let mid = volume / 2;\n      median = (sortedDurations[mid - 1] + sortedDurations[mid]) / 2;\n    } else {\n      let sortedDurations = [...durations].sort((a, b) => a - b);\n      median = sortedDurations[Math.floor(volume / 2)];\n    }\n  }\n\n  const staffingRows = teams.map(name => {\n    const entries = staffing.filter(row => row.team === name && days.includes(row.day));\n    return {\n      team: name,\n      hours: entries.reduce((total, row) => total + row.hours, 0),\n      completed: filteredOrders.filter(order => order.team === name && order.completed).length,\n      incomplete: days.some(day => !entries.some(row => row.day === day))\n    };\n  });\n  const daily = days.map(day => {\n    const rows = filteredOrders.filter(order => order.day === day);\n    return {day, volume: rows.length, rate: rows.length ? Math.round(rows.filter(order => order.completed).length / rows.length * 100) : null};\n  });\n  const allOrders = [...filteredOrders].sort(sort === 'Duration'\n    ? (a, b) => a.minutes - b.minutes || a.id.localeCompare(b.id)\n    : (a, b) => a.id.localeCompare(b.id));\n  const pageSize = 5;\n  const pages = Math.max(1, Math.ceil(allOrders.length / pageSize));\n  const page = Math.max(1, Math.min(requestedPage, pages));\n  const ordersForPage = allOrders.slice((page - 1) * pageSize, page * pageSize);\n  return {volume, rate, median, excluded, orders: ordersForPage, allOrders, staffing: staffingRows, daily, page, pages};\n}\n",
+      "requirements": [
+        "OPS-01",
+        "OPS-02",
+        "OPS-03",
+        "OPS-04",
+        "OPS-05",
+        "OPS-06",
+        "OPS-07",
+        "OPS-08",
+        "OPS-09",
+        "OPS-10"
+      ],
+      "imports": [],
+      "exports": [],
+      "assumptions": [],
+      "sha256": "5afe910ef705fb7f2784991ce936070e589f73364c29a01a1164d54382ae3ab7"
+    },
+    {
+      "path": "app.js",
+      "content": "import { dashboard } from './domain.js';\n\nconst byId = id => document.getElementById(id);\nconst controls = {team: byId('team'), period: byId('period'), sort: byId('sort')};\nconst storageKey = 'recursa-operations-view';\nconst state = {team: 'All teams', period: 'Jan 1–3', sort: 'ID', day: null, page: 1};\ntry {\n  const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');\n  for (const [key, select] of Object.entries(controls)) {\n    if ([...select.options].some(option => option.value === saved[key])) state[key] = saved[key];\n  }\n  if ([1, 2, 3].includes(saved.day)) state.day = saved.day;\n} catch {\n  byId('feedback').textContent = 'Saved view could not be restored.';\n}\nfor (const [key, select] of Object.entries(controls)) {\n  select.value = state[key];\n  select.addEventListener('change', () => {\n    state[key] = select.value;\n    state.page = 1;\n    if (key === 'period') state.day = null;\n    render();\n  });\n}\n\nfunction renderRows(tableId, rows) {\n  const tbody = document.querySelector(`#${tableId} tbody`);\n  tbody.replaceChildren();\n  rows.forEach(row => {\n    const tr = document.createElement('tr');\n    row.forEach(cell => {\n      const td = document.createElement('td');\n      td.textContent = cell;\n      tr.appendChild(td);\n    });\n    tbody.appendChild(tr);\n  });\n}\n\nfunction orderCells(order) {\n  return [order.id, 'Jan ' + order.day, order.team, order.minutes, order.completed ? 'Completed' : 'Open'];\n}\n\nlet current;\nfunction render() {\n  const period = state.day === null ? state.period : 'Jan ' + state.day;\n  current = dashboard(state.team, period, state.sort, state.page);\n  state.page = current.page;\n  byId('volume').textContent = 'Volume: ' + current.volume;\n  byId('rate').textContent = 'Completion rate: ' + (current.rate === null ? '—' : current.rate + '%');\n  byId('median').textContent = 'Median turnaround: ' + (current.median === null ? '—' : current.median + ' min');\n  byId('excluded').textContent = 'Excluded records: ' + current.excluded;\n  renderRows('staffing', current.staffing.map(row => [\n    row.team, 'Staffing hours: ' + row.hours, 'Completed orders: ' + row.completed,\n    row.incomplete ? 'Staffing data incomplete' : 'Complete coverage'\n  ]));\n  renderRows('orders', current.orders.map(orderCells));\n  byId('page').textContent = 'Page ' + current.page + ' of ' + current.pages;\n  byId('prev').disabled = current.page === 1;\n  byId('next').disabled = current.page === current.pages;\n  const daily = dashboard(state.team, state.period, state.sort, 1).daily;\n  byId('daily').replaceChildren(...daily.map(row => {\n    const button = document.createElement('button');\n    button.type = 'button';\n    button.setAttribute('aria-label', 'Jan ' + row.day);\n    button.setAttribute('aria-pressed', String(state.day === row.day));\n    const title = document.createElement('strong');\n    title.textContent = 'Jan ' + row.day;\n    const bar = document.createElement('meter');\n    bar.max = 5;\n    bar.value = row.volume;\n    bar.setAttribute('aria-hidden', 'true');\n    const count = document.createElement('span');\n    count.textContent = row.volume + ' orders · ' + (row.rate === null ? '—' : row.rate + '% complete');\n    button.append(title, bar, count);\n    button.addEventListener('click', () => {\n      state.day = state.day === row.day ? null : row.day;\n      state.page = 1;\n      render();\n      byId('daily').querySelector('[aria-label=\"Jan ' + row.day + '\"]')?.focus();\n    });\n    return button;\n  }));\n}\n\nbyId('prev').addEventListener('click', () => { state.page--; render(); });\nbyId('next').addEventListener('click', () => { state.page++; render(); });\nbyId('save').addEventListener('click', () => {\n  localStorage.setItem(storageKey, JSON.stringify(state));\n  byId('feedback').textContent = 'View saved.';\n});\nbyId('export').addEventListener('click', () => {\n  const escapeCell = cell => '\"' + String(cell).replaceAll('\"', '\"\"') + '\"';\n  const rows = [['ID', 'Day', 'Team', 'Duration', 'Status'], ...current.allOrders.map(orderCells)];\n  const csv = rows.map(row => row.map(escapeCell).join(',')).join(String.fromCharCode(13, 10));\n  const blob = new Blob([csv], {type: 'text/csv;charset=utf-8'});\n  const url = URL.createObjectURL(blob);\n  const link = document.createElement('a');\n  link.href = url;\n  link.download = 'orders.csv';\n  link.click();\n  setTimeout(() => URL.revokeObjectURL(url), 1000);\n  byId('feedback').textContent = 'CSV exported.';\n});\nrender();\n",
+      "requirements": [
+        "OPS-01",
+        "OPS-02",
+        "OPS-03",
+        "OPS-04",
+        "OPS-05",
+        "OPS-06",
+        "OPS-07",
+        "OPS-08",
+        "OPS-09",
+        "OPS-10"
+      ],
+      "imports": [],
+      "exports": [],
+      "assumptions": [],
+      "sha256": "8e01eded902f240cc075da9f9591f51cd5c9c08b14134433a6f1c1d4772bea99"
+    },
+    {
+      "path": "styles.css",
+      "content": "body {\n  margin: 0;\n  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n  background-color: #e0f7fa;\n  color: #333;\n  padding: 20px;\n  line-height: 1.6;\n}\n\nheader {\n  background-color: #c5e1e6;\n  padding: 15px 20px;\n  border-bottom: 1px solid #b2d8d4;\n}\n\n.toolbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 20px;\n}\n\n.toolbar button {\n  background-color: #a5d6d6;\n  color: #000;\n  border: none;\n  padding: 10px 15px;\n  font-size: 14px;\n  cursor: pointer;\n  transition: background-color 0.2s;\n}\n\n.toolbar button:hover {\n  background-color: #80c8c8;\n}\n\n.metrics {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 20px;\n  margin-bottom: 30px;\n}\n\n.metrics .card {\n  background-color: #ffffff;\n  border: 1px solid #b2d8d4;\n  padding: 20px;\n  flex: 1 1 220px;\n  min-width: 220px;\n  text-align: center;\n  transition: transform 0.2s;\n}\n\n.metrics .card:hover {\n  transform: scale(1.02);\n}\n\n.metrics .card h3 {\n  margin: 0 0 10px;\n  color: #0057a3;\n}\n\n.metrics .card p {\n  font-size: 1.2em;\n  margin: 0;\n}\n\n.panel {\n  background-color: #ffffff;\n  border: 1px solid #b2d8d4;\n  padding: 20px;\n  margin-bottom: 30px;\n  border-radius: 8px;\n}\n\n#daily, #feedback {\n  width: 100%;\n  border-collapse: collapse;\n  margin-bottom: 30px;\n}\n\n#daily, #feedback th, #daily, #feedback td {\n  padding: 12px;\n  text-align: left;\n  border-bottom: 1px solid #b2d8d4;\n}\n\n#daily th {\n  background-color: #c5e1e6;\n  color: #000;\n}\n\nbutton {\n  background-color: #a5d6d6;\n  color: #000;\n  border: none;\n  padding: 10px 15px;\n  font-size: 14px;\n  cursor: pointer;\n  transition: background-color 0.2s;\n}\n\nbutton:hover {\n  background-color: #80c8c8;\n}\n\nlabel {\n  font-weight: bold;\n  display: block;\n  margin-bottom: 5px;\n}\n\nselect {\n  width: 100%;\n  padding: 8px;\n  margin-bottom: 15px;\n  border: 1px solid #b2d8d4;\n  font-size: 14px;\n}\n\ntable {\n  width: 100%;\n  border-collapse: collapse;\n  margin-bottom: 30px;\n}\n\ntable th, table td {\n  padding: 12px;\n  text-align: left;\n  border-bottom: 1px solid #b2d8d4;\n}\n\ntable th {\n  background-color: #c5e1e6;\n  color: #000;\n}\nmain { max-width: 1160px; margin: auto; }\nheader { border-radius: 12px; margin-bottom: 16px; padding: 20px 24px; background: #163a4a; color: #f4fdff; }\nheader h1 { margin: 0; line-height: 1.2; }\nheader p { margin: 8px 0 0; }\nheader .kicker { margin: 0 0 8px; font-size: .75rem; letter-spacing: .14em; color: #a6e2e2; }\n.toolbar { justify-content: flex-start; flex-wrap: wrap; gap: 8px 12px; }\n.toolbar label, .toolbar select { margin: 0; }\n.toolbar select { width: auto; }\n.metrics { gap: 12px; margin-bottom: 16px; }\n.metrics .card { padding: 16px; border-radius: 8px; min-width: 0; font-weight: 650; }\n#excluded { flex-basis: 100%; color: #365764; }\n.panel { padding: 16px; margin-bottom: 16px; overflow-x: auto; }\n.panel h2 { margin: 0 0 12px; font-size: 1.18rem; color: #163a4a; }\n#daily { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; padding: 0; margin: 0; border: 0; }\n#daily button { display: grid; gap: 3px; text-align: left; border-radius: 7px; }\n#daily button[aria-pressed=\"true\"] { background: #163a4a; color: white; }\n#daily meter { width: 100%; }\ntable caption { text-align: left; }\ntable th, table td { padding: 7px 9px; }\nbutton:disabled { opacity: .48; cursor: default; }\n",
+      "requirements": [
+        "OPS-01",
+        "OPS-02",
+        "OPS-03",
+        "OPS-04",
+        "OPS-05",
+        "OPS-06",
+        "OPS-07",
+        "OPS-08",
+        "OPS-09",
+        "OPS-10"
+      ],
+      "imports": [],
+      "exports": [],
+      "assumptions": [],
+      "sha256": "3ae01ff808f38c7c0e5d2c5ff3574ba50af40e7cca0cbe4a8771ce92cdb938a1"
+    }
+  ],
+  "metrics": {
+    "build_success": true,
+    "functional_success": true,
+    "end_to_end_pass_rate": 1,
+    "lint_success": true,
+    "requirement_satisfaction": null,
+    "model_calls": 7,
+    "cost_usd": null
+  },
+  "provenance": {
+    "model": "Qwen/Qwen3-4B-GGUF",
+    "revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+    "model_file_sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+    "paid_api_calls": 0,
+    "host_repaired": true,
+    "scope": "Showcase with model-generated files and host corrections. Four reviewed browser scenarios on synthetic records. CSV downloads and sort order across pages were outside these checks."
+  }
+}

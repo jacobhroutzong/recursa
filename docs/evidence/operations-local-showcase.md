@@ -1,0 +1,7 @@
+# Operations Analytics verified showcase
+
+Local Qwen3-4B generated the HTML, data and view modules, and stylesheet under a host-defined file contract. Early candidates returned the wrong file type, disagreed on DOM bindings, or failed compilation. The retained model candidate also failed its first build. Host corrections completed the document entry point, filtered and grouped the synthetic data, wired the controls and saved view, and refined the generated stylesheet. The public record binds each final source file to its original model-output hash and records the compiled output hashes.
+
+The corrected build passed the fixed lint and production build checks and all four independently reviewed Chromium scenarios. Those scenarios checked invalid record exclusion and KPI totals, team and period filtering with staffing totals, chart drill-down preserving team, and restoring a saved view while retaining the incomplete staffing notice. They covered 26 steps. CSV downloads and ordering across multiple pages remain unmeasured in this showcase.
+
+The screenshot and nine replay frames came from rerunning those scenarios against the same hashed build. Studio serves captures and inert source. The showcase used zero paid API calls and is separate from the matched benchmark series. [Studio Artifact explorer](https://jacobroutzong-recursa.hf.space/#artifacts) · [Run evidence](../../apps/studio/generated-operations.json)

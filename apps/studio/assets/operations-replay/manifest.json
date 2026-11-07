@@ -1,0 +1,100 @@
+{
+  "run_id": "generated-operations-local-d01e2c9e6e73",
+  "browser": "chromium",
+  "chapters": [
+    {
+      "id": "ops-valid-aggregates",
+      "title": "Validate totals",
+      "checked_steps": 4,
+      "frames": [
+        {
+          "file": "ops-valid-aggregates-4.png",
+          "step": 4,
+          "caption": "Chromium confirmed two excluded records, five valid orders, 60% completion, and a 30-minute median.",
+          "sha256": "e886dc1d783da3ac7f69a1af197317c8623807f373a3b360f64dbd4b99df2959"
+        }
+      ]
+    },
+    {
+      "id": "ops-team-period",
+      "title": "Filter team and period",
+      "checked_steps": 10,
+      "frames": [
+        {
+          "file": "ops-team-period-1.png",
+          "step": 1,
+          "caption": "Select North across the full reporting period.",
+          "sha256": "5930af10dcc6b22ac442d363a2c15235622a14b2550436e7811fbd97700aebb0"
+        },
+        {
+          "file": "ops-team-period-2.png",
+          "step": 2,
+          "caption": "Narrow the reporting period to Jan 2.",
+          "sha256": "e1fe3b777ab47c8d8aec2d4b616ce21516c46d50769c3a84b2588c215e709d05"
+        },
+        {
+          "file": "ops-team-period-10.png",
+          "step": 10,
+          "caption": "Verify both North orders, the filtered KPIs, five staffing hours, and one completed order.",
+          "sha256": "e1fe3b777ab47c8d8aec2d4b616ce21516c46d50769c3a84b2588c215e709d05"
+        }
+      ]
+    },
+    {
+      "id": "ops-drilldown",
+      "title": "Drill into a chart day",
+      "checked_steps": 6,
+      "frames": [
+        {
+          "file": "ops-drilldown-1.png",
+          "step": 1,
+          "caption": "Select North and leave the full period active.",
+          "sha256": "5930af10dcc6b22ac442d363a2c15235622a14b2550436e7811fbd97700aebb0"
+        },
+        {
+          "file": "ops-drilldown-6.png",
+          "step": 6,
+          "caption": "Choose Jan 2 on the chart. The Orders table keeps North and shows only N2 and N3.",
+          "sha256": "d5bee3aa4caf60f5b4cb7f68add9bfa8988a6e45485f727caff3e98256ca3435"
+        }
+      ]
+    },
+    {
+      "id": "ops-saved-view",
+      "title": "Restore a saved view",
+      "checked_steps": 6,
+      "frames": [
+        {
+          "file": "ops-saved-view-1.png",
+          "step": 1,
+          "caption": "Select South to see its two orders and the incomplete staffing notice.",
+          "sha256": "044891f00ce36bc3b456cb333d032bf415c3c87ece4399b852c262bf7a3fc14e"
+        },
+        {
+          "file": "ops-saved-view-2.png",
+          "step": 2,
+          "caption": "Save the current dashboard view.",
+          "sha256": "b5936a847b42ca09cb0cc573b163da255bbdb99a5c09f21e28af7a37983c6b0e"
+        },
+        {
+          "file": "ops-saved-view-6.png",
+          "step": 6,
+          "caption": "Reload. Chromium verifies that South, the order volume, and the staffing notice are restored.",
+          "sha256": "044891f00ce36bc3b456cb333d032bf415c3c87ece4399b852c262bf7a3fc14e"
+        }
+      ]
+    }
+  ],
+  "scenarios_sha256": "e01b94db56c21effae12a9b70396218a014ccb3713703ce55849f7fcf3975927",
+  "artifacts": {
+    "index.html": "073291ca5a513af608ab901e04ff3b61fc2f949addeaff26f106b948da3783d5",
+    "domain.js": "5afe910ef705fb7f2784991ce936070e589f73364c29a01a1164d54382ae3ab7",
+    "app.js": "8e01eded902f240cc075da9f9591f51cd5c9c08b14134433a6f1c1d4772bea99",
+    "styles.css": "3ae01ff808f38c7c0e5d2c5ff3574ba50af40e7cca0cbe4a8771ce92cdb938a1"
+  },
+  "build_outputs": {
+    "assets/entry-0.css": "093dc7a1ced66187253c93b3d563d5393a51286569d138d1f17af8b1930e3b01",
+    "assets/entry-1.js": "08ba36d0ec3f4487a8cb8e2b5fca1ea48c61c6a399ae6ce94a3e1b2d63eb20b2",
+    "index.html": "842d55459af1b66d004f50ab0d19ffae1f8720d5676f3095fa32393696b948a7"
+  }
+}

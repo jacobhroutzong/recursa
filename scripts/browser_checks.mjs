@@ -89,7 +89,7 @@ try {
           const {width,height}=page.viewportSize();
           await page.screenshot({
             path:path.join(payload.capture_directory,`${scenario.id}-${row.completed_steps}.png`),
-            clip:{x:0,y:0,width:Math.min(width,960),height:Math.min(height,340)},
+            ...(payload.capture_full_page?{fullPage:true}:{clip:{x:0,y:0,width:Math.min(width,960),height:Math.min(height,340)}}),
             animations:'disabled',timeout:2000
           });
         }

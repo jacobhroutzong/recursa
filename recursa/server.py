@@ -62,9 +62,10 @@ def make_handler(directory):
             elif route == "/api/playground":
                 studio = ROOT / "apps/studio"
                 catalog = json.loads((studio / "playground.json").read_bytes())
-                generated = studio / "generated-task.json"
-                if generated.is_file():
-                    catalog["generated"] = json.loads(generated.read_bytes())
+                for key, filename in (("generated", "generated-task.json"), ("operations", "generated-operations.json")):
+                    generated = studio / filename
+                    if generated.is_file():
+                        catalog[key] = json.loads(generated.read_bytes())
                 self.send_data(200, catalog)
             elif route in ("/api/task-comparison", "/api/comparison-series", "/api/repair-series"):
                 comparison = ROOT / "apps/studio" / (route.rsplit("/", 1)[1] + ".json")
@@ -72,13 +73,14 @@ def make_handler(directory):
                     self.send_data(200, comparison.read_bytes())
                 else:
                     self.send_data(404, {"error": "Comparison not published"})
-            elif route in ("/assets/task-preview.png", "/assets/generated-task-preview.png"):
+            elif route in ("/assets/task-preview.png", "/assets/generated-task-preview.png",
+                           "/assets/generated-operations-preview.png"):
                 asset = ROOT / "apps/studio" / route.lstrip("/")
                 if asset.is_file():
                     self.send_data(200, asset.read_bytes(), "image/png")
                 else:
                     self.send_data(404, {"error": "Preview not found"})
-            elif re.fullmatch(r"/assets/task-replay/(manifest\.json|[a-z-]+-\d{1,2}\.png)", route):
+            elif re.fullmatch(r"/assets/(?:task|operations)-replay/(manifest\.json|[a-z-]+-\d{1,2}\.png)", route):
                 asset = ROOT / "apps/studio" / route.lstrip("/")
                 if asset.is_file():
                     mime = "image/png" if asset.suffix == ".png" else "application/json"

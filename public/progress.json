@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T20:41:36.748857+00:00",
-  "phase": "Section 10 \u00b7 Security and reliability checks",
-  "source_digest": "ee0cb3ae414d3fd02bd5471953e0f4a1821d72f0ab8a97b1109e485c1ceff964",
+  "updated_at": "2026-11-07T21:04:25.761444+00:00",
+  "phase": "Section 11 \u00b7 Verified Operations Analytics showcase",
+  "source_digest": "7ff6ea2d8ca35d2df65eb6d33c78332c2d50c9c610fdb08600dff9ecd4ae0b08",
   "tests": {
     "total": 109,
     "passed": 109,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T20:41:18.950583+00:00",
-    "source_digest": "ee0cb3ae414d3fd02bd5471953e0f4a1821d72f0ab8a97b1109e485c1ceff964",
+    "verified_at": "2026-11-07T21:04:08.833735+00:00",
+    "source_digest": "7ff6ea2d8ca35d2df65eb6d33c78332c2d50c9c610fdb08600dff9ecd4ae0b08",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -40,14 +40,14 @@
     {
       "number": 5,
       "name": "5. Application synthesis",
-      "status": "One repaired model-generated app verified",
-      "evidence": "Task Management compiled and passed four independent Chromium acceptance scenarios after targeted model repairs and host composition of the final filter. The initial generated build failed functional checks"
+      "status": "Two repaired model-generated examples verified",
+      "evidence": "Task Management and Operations Analytics each passed four declared Chromium workflows. Operations required host corrections after the model candidates failed build or runtime checks"
     },
     {
       "number": 6,
       "name": "6. Studio",
-      "status": "Verified app workflow replay",
-      "evidence": "Four Task Management workflow chapters use 15 browser frames captured while rerunning the acceptance scenarios against the published build. The reference app remains separate"
+      "status": "Two verified workflow replays",
+      "evidence": "Task Management and Operations Analytics have verified screenshots and separate browser workflow captures. The human-authored Task Management reference remains separate"
     },
     {
       "number": 7,
@@ -76,8 +76,8 @@
     {
       "number": 11,
       "name": "11. Example applications",
-      "status": "One verified example",
-      "evidence": "Task Management verified after targeted repair. Operations Analytics has a reviewed synthetic dataset and four acceptance scenarios, with no verified generated build. Aviation remains a specification preset"
+      "status": "Two verified examples",
+      "evidence": "Operations Analytics passed all four reviewed scenarios on synthetic orders and staffing after host correction. The replay covers aggregates, filters, chart drill-down, and saved views. Aviation remains a specification preset"
     },
     {
       "number": 12,

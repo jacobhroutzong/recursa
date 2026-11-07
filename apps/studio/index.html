@@ -180,6 +180,7 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
 .workflow-stage { margin:0; min-width:0; display:grid; place-items:center; padding:8px; background:#0c1320; border:1px solid var(--line); border-radius:10px }
 .workflow-stage img { width:100%; max-width:960px; max-height:340px; object-fit:contain; display:block; border-radius:6px }
 .workflow-stage img.mobile { max-width:390px }
+.workflow-stage img.dashboard { max-height:560px }
 .workflow-controls { display:grid; gap:12px; min-width:0 }
 .workflow-controls select { width:100% }
 .workflow-controls .spec-actions { margin:0 }
@@ -263,13 +264,13 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
   </div>
 </section>
 <section class="section" id="view-execution" hidden><h2 class="section-title">Execution explorer</h2><p class="intro">Select a node to inspect recorded context, timing, and outputs. Parent relationships come directly from saved events.</p><div class="run-info"><label for="run-select">Recorded run </label><select class="run-select" id="run-select" aria-label="Select recorded run"></select><a id="run-json" target="_blank" rel="noopener" hidden>Trace JSON</a></div><div class="grid"><div class="panel"><div class="panel-head"><h2>Execution graph</h2><span class="tag" id="trace-count">0 EVENTS</span></div><div class="trace-tools"><label class="visually-hidden" for="event-filter">Filter event type</label><select id="event-filter"><option value="all">All event types</option></select><button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-reset" aria-label="Reset zoom">100%</button><button id="expand-all" disabled>Expand branches</button><button id="step-back" aria-label="Previous event">←</button><button id="step-next" aria-label="Next event">→</button></div><div class="trace-scroll" id="trace-scroll" tabindex="0" role="region" aria-label="Scrollable execution graph"><div class="trace-tree" id="trace-tree"></div></div></div><div class="panel"><div class="panel-head"><h2>Node inspector</h2><small>Recorded evidence</small></div><div class="panel-body inspector" id="inspector"><div class="empty">Select an execution node.</div></div></div></div></section>
-<section class="section" id="view-artifacts" hidden><h2 class="section-title">Artifact explorer</h2><p class="intro">Inspect source files and view captured previews of verified builds.</p><div class="spec-actions"><button id="open-generated" class="primary" hidden>Open generated Task Management app</button><button id="open-reference">Open Task Management reference app</button><button id="watch-workflows" aria-controls="workflow-player" aria-expanded="false" hidden>Watch verified workflows</button></div><p id="reference-status" class="intro" role="status"></p>
+<section class="section" id="view-artifacts" hidden><h2 class="section-title">Artifact explorer</h2><p class="intro">Inspect source files and view captured previews of verified builds.</p><div class="spec-actions"><button id="open-generated" class="primary" hidden>Open generated Task Management app</button><button id="open-operations" class="primary" hidden>Open generated Operations Analytics app</button><button id="open-reference">Open Task Management reference app</button><button id="watch-workflows" aria-controls="workflow-player" aria-expanded="false" hidden>Watch verified workflows</button></div><p id="reference-status" class="intro" role="status"></p>
 <div class="panel" id="workflow-player" hidden>
-  <div class="panel-head"><h2>Task Management workflow replay</h2><span class="tag">CHROMIUM CAPTURE</span></div>
+  <div class="panel-head"><h2 id="workflow-title">Workflow replay</h2><span class="tag">CHROMIUM CAPTURE</span></div>
   <div class="panel-body">
     <p class="intro">Recorded browser frames from the four passing acceptance scenarios.</p>
     <div class="workflow-grid">
-      <figure class="workflow-stage"><img id="workflow-image" hidden alt="Captured Task Management browser frame"></figure>
+      <figure class="workflow-stage"><img id="workflow-image" hidden alt="Captured application browser frame"></figure>
       <div class="workflow-controls">
         <label for="workflow-chapter">Workflow</label>
         <select id="workflow-chapter" disabled></select>
@@ -366,9 +367,15 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
 </div></main></div>
 <script>
 'use strict';
-const $=id=>document.getElementById(id);let runs=[],run=null,selectedEvent=-1,selectedArtifact=null,zoom=1,loadVersion=0,previewKey=null,catalogPromise=null,selectedPreset=null,hasGenerated=false;
-const workflowPath='/assets/task-replay/';
-let workflowPromise=null,workflowChapters=[],workflowFrame=0,workflowTimer=null;
+const $=id=>document.getElementById(id);let runs=[],run=null,selectedEvent=-1,selectedArtifact=null,zoom=1,loadVersion=0,previewKey=null,catalogPromise=null,selectedPreset=null,hasGenerated=false,hasOperations=false;
+const previews={
+  reference:{name:'Task Management',image:'/assets/task-preview.png',alt:'Task Management reference app with example tasks'},
+  generated:{name:'Task Management',image:'/assets/generated-task-preview.png',replay:'/assets/task-replay/',
+    alt:'Task Management app with example tasks and search and status filters'},
+  operations:{name:'Operations Analytics',image:'/assets/generated-operations-preview.png',replay:'/assets/operations-replay/',
+    alt:'Operations dashboard with fulfillment KPIs, staffing comparison, and order data'}
+};
+let workflowPromise=null,workflowChapters=[],workflowFrame=0,workflowTimer=null,workflowVersion=0;
 let comparisonPromise=null;
 let seriesPromise=null;
 let repairSeriesPromise=null;
@@ -450,20 +457,20 @@ async function loadRun(id){
     return true;
   }catch(error){if(version===loadVersion)reportError('Could not load run: '+error.message)}
 }
-function setRun(data, preview=null, publicBenchmark=false){run=data;previewKey=preview;const reference=preview==='reference';selectedEvent=-1;selectedArtifact=null;zoom=1;collapsed.clear();$('trace-scroll').scrollTo(0,0);$('evidence-notice').classList.remove('error');$('run-select').value=data.id;const live=String(data.mode||'').toLowerCase();const isPrivate=data.mode==='private-reviewed-replay';const isModel=live==='benchmark-trace'||live==='paired-repair-replay'||(/rlm|live|direct|baseline/.test(live)&&!(/smoke|deterministic|sample/.test(live)));const evidenceTitle=preview==='generated'?'Verified model-generated build. ':reference?'Verified reference app. ':isPrivate?'Private replay. ':isModel?'Recorded experiment. ':'Deterministic infrastructure evidence. ';
+function setRun(data, preview=null, publicBenchmark=false){run=data;previewKey=preview;const reference=preview==='reference';const generated=Boolean(previews[preview]?.replay);selectedEvent=-1;selectedArtifact=null;zoom=1;collapsed.clear();$('trace-scroll').scrollTo(0,0);$('evidence-notice').classList.remove('error');$('run-select').value=data.id;const live=String(data.mode||'').toLowerCase();const isPrivate=data.mode==='private-reviewed-replay';const isModel=generated||live==='benchmark-trace'||live==='paired-repair-replay'||(/rlm|live|direct|baseline/.test(live)&&!(/smoke|deterministic|sample/.test(live)));const evidenceTitle=generated?'Verified model-generated build. ':reference?'Verified reference app. ':isPrivate?'Private replay. ':isModel?'Recorded experiment. ':'Deterministic infrastructure evidence. ';
 const raw=$('run-json');raw.hidden=!publicBenchmark;
 if(publicBenchmark){raw.href='/api/runs/'+encodeURIComponent(data.id);raw.textContent='Trace JSON · v'+data.trace_schema_version;}
 const url=new URL(location.href);
 if(publicBenchmark)url.searchParams.set('run',data.id);else url.searchParams.delete('run');
 if(url.href!==location.href)history.replaceState(history.state,'',url);
-const evidenceCopy=preview==='generated'?'Source from a contained local model run. The captured build passed the recorded Task Management acceptance checks.':reference?'This human-authored example passed the local build and browser checks. The preview is a captured screenshot.':isPrivate?'This import stays in this browser session. Host broker events and container-reported observations have separate labels. Source files stay in the run directory.':isModel?'Inspect the saved events and validation outcomes before drawing conclusions.':'This run checks the local workflow. It does not demonstrate model-backed recursion or measure synthesis quality.';
+const evidenceCopy=generated?(data.provenance?.host_repaired?'Model-generated source with host corrections. ':'Source from a local model run. ')+'The captured build passed the recorded '+previews[preview].name+' browser checks.':reference?'This human-authored example passed the local build and browser checks. The preview is a captured screenshot.':isPrivate?'This import stays in this browser session. Host broker events and container-reported observations have separate labels. Source files stay in the run directory.':isModel?'Inspect the saved events and validation outcomes before drawing conclusions.':'This run checks the local workflow. It does not demonstrate model-backed recursion or measure synthesis quality.';
 $('evidence-notice').replaceChildren(element('strong',evidenceTitle),document.createTextNode(evidenceCopy));
 $('stat-calls-label').textContent=isPrivate?'BROKER COMPLETIONS':'MODEL CALLS';
 $('stat-calls').textContent=format(isPrivate?data.metrics.broker_completions:data.metrics.model_calls??data.metrics.calls??(isModel?null:0));
 $('stat-artifacts').textContent=isPrivate?format(data.metrics.validated_source_files):data.artifacts.length;
 $('stat-artifacts-note').textContent=isPrivate?'Validated source files in the run directory':'Inspectable source files';
 $('stat-duration').textContent=duration(data.metrics.duration_ms??(data.metrics.duration_seconds!=null?data.metrics.duration_seconds*1000:undefined));
-$('stat-mode').textContent=preview==='generated'?'Local synthesis':reference?'Reference app':isPrivate?'Private replay':data.mode||'Recorded';
+$('stat-mode').textContent=generated?'Local synthesis':reference?'Reference app':isPrivate?'Private replay':data.mode||'Recorded';
 $('trace-count').textContent=data.events.length+' EVENTS';$('artifact-count').textContent=data.artifacts.length+' FILES';const filter=$('event-filter');clear(filter);const all=element('option','All event types');all.value='all';filter.append(all);[...new Set(data.events.map(e=>String(e.type||'event')))].forEach(t=>{const op=element('option',t.replaceAll('_',' '));op.value=t;filter.append(op)});renderTrace();renderArtifacts();renderMetrics();if(data.events.length)inspectEvent(0);else $('inspector').replaceChildren(element('div','No events were recorded.','empty'))}
 function traceRows(){
   const byId=new Map(run.events.map((event,index)=>[event.id,index]));
@@ -569,8 +576,10 @@ function renderWorkflow(){
   const chapter=workflowChapters[Number($('workflow-chapter').value)];
   const frame=chapter.frames[workflowFrame];
   const image=$('workflow-image');
-  image.src=workflowPath+frame.file;
+  image.src=previews[previewKey].replay+frame.file;
   image.hidden=false;
+  image.alt=frame.caption;
+  image.classList.toggle('dashboard',previewKey==='operations');
   const fullSize=$('workflow-full-size');
   fullSize.href=image.src;
   fullSize.hidden=false;
@@ -580,15 +589,21 @@ function renderWorkflow(){
   $('workflow-progress').value=workflowFrame+1;
   $('workflow-prev').disabled=workflowFrame===0;
   $('workflow-next').disabled=workflowFrame===chapter.frames.length-1;
+  $('workflow-play').disabled=chapter.frames.length<2;
 }
 $('watch-workflows').addEventListener('click',async()=>{
   const panel=$('workflow-player');
   panel.hidden=!panel.hidden;
   $('watch-workflows').setAttribute('aria-expanded',String(!panel.hidden));
   if(panel.hidden){stopWorkflow();return;}
+  const version=workflowVersion;
+  const workflowPath=previews[previewKey]?.replay;
+  const runId=run?.id;
+  if(!workflowPath)return;
   if(!workflowPromise){
     workflowPromise=fetchJSON(workflowPath+'manifest.json').then(manifest=>{
-      if(manifest.run_id!==run?.id || !manifest.chapters.length ||
+      if(version!==workflowVersion)return;
+      if(manifest.run_id!==runId || !manifest.chapters.length ||
         manifest.chapters.some(chapter=>!chapter.frames.length || chapter.frames.some(frame=>!/^[a-z-]+-\d{1,2}\.png$/.test(frame.file))))
         throw Error('Invalid workflow archive');
       workflowChapters=manifest.chapters;
@@ -597,13 +612,13 @@ $('watch-workflows').addEventListener('click',async()=>{
       }));
       $('workflow-chapter').disabled=false;
       $('workflow-play').disabled=false;
-    }).catch(error=>{workflowPromise=null;throw error;});
+    }).catch(error=>{if(version===workflowVersion)workflowPromise=null;throw error;});
   }
   try{
     await workflowPromise;
-    if(!panel.hidden){renderWorkflow();$('workflow-chapter').focus();}
+    if(version===workflowVersion&&!panel.hidden){renderWorkflow();$('workflow-chapter').focus();}
   }catch{
-    $('workflow-caption').textContent='Could not load the recorded workflows. Close and reopen the replay to retry.';
+    if(version===workflowVersion)$('workflow-caption').textContent='Could not load the recorded workflows. Close and reopen the replay to retry.';
   }
 });
 $('workflow-chapter').addEventListener('change',()=>{stopWorkflow();workflowFrame=0;renderWorkflow();});
@@ -621,18 +636,26 @@ $('workflow-play').addEventListener('click',()=>{
 });
 function renderArtifacts(){
 stopWorkflow();
+workflowVersion++;workflowPromise=null;workflowChapters=[];workflowFrame=0;
+$('workflow-chapter').replaceChildren();$('workflow-image').hidden=true;
+$('workflow-full-size').hidden=true;
+for(const id of ['workflow-chapter','workflow-prev','workflow-next','workflow-play'])$(id).disabled=true;
+$('workflow-caption').textContent='Loading recorded frames…';
+$('workflow-progress').value=0;
 $('workflow-player').hidden=true;
 $('watch-workflows').setAttribute('aria-expanded','false');
-$('watch-workflows').hidden=previewKey!=='generated';
-const previewPaths={reference:'/assets/task-preview.png',generated:'/assets/generated-task-preview.png'};
-const screenshot=Object.hasOwn(previewPaths,previewKey)?previewPaths[previewKey]:null;
+const preview=previews[previewKey];
+$('watch-workflows').hidden=!preview?.replay;
+$('workflow-title').textContent=preview?preview.name+' workflow replay':'Workflow replay';
+const screenshot=preview?.image;
 $('artifact-layout').classList.toggle('with-preview',Boolean(screenshot));
 $('app-preview').hidden=!screenshot;
 if(screenshot){
   $('app-preview-image').src=screenshot;
+  $('app-preview-image').alt=preview.alt;
   $('app-preview-link').href=screenshot;
-  $('app-preview-caption').textContent=previewKey==='generated'
-    ?'Model-generated Task Management app · verified static capture'
+  $('app-preview-caption').textContent=preview.replay
+    ?'Model-generated '+preview.name+' app'+(run?.provenance?.host_repaired?' with host corrections':'')+' · verified static capture'
     :'Human-authored Task Management reference app · static capture';
 }else{
   $('app-preview-image').removeAttribute('src');
@@ -807,7 +830,9 @@ function getCatalog(){
   if(!catalogPromise){
     catalogPromise=fetchJSON('/api/playground').then(catalog=>{
       hasGenerated=Boolean(catalog.generated);
+      hasOperations=Boolean(catalog.operations);
       $('open-generated').hidden=!hasGenerated;
+      $('open-operations').hidden=!hasOperations;
       return catalog;
     }).catch(error=>{catalogPromise=null;throw error});
   }
@@ -842,7 +867,7 @@ function selectPreset(preset){
   $('preset-dependencies').textContent=spec.requirements.reduce((count,item)=>count+(item.depends_on||[]).length,0);
   $('preset-size').textContent=(size/1024).toFixed(1)+' KiB';
   $('preset-reference').hidden=preset.key!=='tasks';
-  $('preset-generated').hidden=preset.key!=='tasks'||!hasGenerated;
+  $('preset-generated').hidden=!(preset.key==='tasks'&&hasGenerated||preset.key==='operations'&&hasOperations);
   $('requirement-search').value='';
   for(const button of $('preset-list').children){
     button.setAttribute('aria-pressed',String(button.dataset.preset===preset.key));
@@ -885,6 +910,10 @@ async function openCatalogApp(key){
   try {
     const catalog=await getCatalog();
     openCatalogRun(catalog[key],'artifacts',key);
+    if(key==='operations'){
+      status.textContent='Four reviewed browser workflows passed. '+(catalog[key].provenance?.host_repaired?
+        'The verified source includes host corrections. ':'')+'The capture uses synthetic data.';
+    }
   } catch(error){
     showView('artifacts');
     status.textContent='The app could not be loaded. Try opening it again.';
@@ -895,9 +924,9 @@ $('preset-replay').addEventListener('click',()=>openCatalogRun(selectedPreset.re
 for(const id of ['preset-reference','open-reference']){
   $(id).addEventListener('click',()=>openCatalogApp('reference'));
 }
-for(const id of ['preset-generated','open-generated']){
-  $(id).addEventListener('click',()=>openCatalogApp('generated'));
-}
+$('open-generated').addEventListener('click',()=>openCatalogApp('generated'));
+$('open-operations').addEventListener('click',()=>openCatalogApp('operations'));
+$('preset-generated').addEventListener('click',()=>openCatalogApp(selectedPreset.key==='operations'?'operations':'generated'));
 $('preset-download').addEventListener('click',()=>{
   const url=URL.createObjectURL(new Blob([specJSON()],{type:'application/json'}));
   const link=element('a');
