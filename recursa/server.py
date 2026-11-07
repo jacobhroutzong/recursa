@@ -62,7 +62,8 @@ def make_handler(directory):
             elif route == "/api/playground":
                 studio = ROOT / "apps/studio"
                 catalog = json.loads((studio / "playground.json").read_bytes())
-                for key, filename in (("generated", "generated-task.json"), ("operations", "generated-operations.json")):
+                for key, filename in (("generated", "generated-task.json"), ("operations", "generated-operations.json"),
+                                      ("aviation", "generated-aviation.json")):
                     generated = studio / filename
                     if generated.is_file():
                         catalog[key] = json.loads(generated.read_bytes())
@@ -74,13 +75,13 @@ def make_handler(directory):
                 else:
                     self.send_data(404, {"error": "Comparison not published"})
             elif route in ("/assets/task-preview.png", "/assets/generated-task-preview.png",
-                           "/assets/generated-operations-preview.png"):
+                           "/assets/generated-operations-preview.png", "/assets/generated-aviation-preview.png"):
                 asset = ROOT / "apps/studio" / route.lstrip("/")
                 if asset.is_file():
                     self.send_data(200, asset.read_bytes(), "image/png")
                 else:
                     self.send_data(404, {"error": "Preview not found"})
-            elif re.fullmatch(r"/assets/(?:task|operations)-replay/(manifest\.json|[a-z-]+-\d{1,2}\.png)", route):
+            elif re.fullmatch(r"/assets/(?:task|operations|aviation)-replay/(manifest\.json|[a-z-]+-\d{1,2}\.png)", route):
                 asset = ROOT / "apps/studio" / route.lstrip("/")
                 if asset.is_file():
                     mime = "image/png" if asset.suffix == ".png" else "application/json"

@@ -25,7 +25,8 @@ if __name__ == "__main__":
     paths.append(ROOT / "apps/studio/benchmark-traces.json")
     paths.append(ROOT / "apps/studio/security-checks.json")
     paths.extend(ROOT / "apps/studio" / name for name in ("generated-operations.json", "assets/generated-operations-preview.png"))
-    for name in ("task-replay", "operations-replay"):
+    paths.extend(ROOT / "apps/studio" / name for name in ("generated-aviation.json", "assets/generated-aviation-preview.png"))
+    for name in ("task-replay", "operations-replay", "aviation-replay"):
         replay = ROOT / "apps/studio/assets" / name
         paths.append(replay / "manifest.json")
         paths.extend(replay.glob("*.png"))

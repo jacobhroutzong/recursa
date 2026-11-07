@@ -264,7 +264,7 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
   </div>
 </section>
 <section class="section" id="view-execution" hidden><h2 class="section-title">Execution explorer</h2><p class="intro">Select a node to inspect recorded context, timing, and outputs. Parent relationships come directly from saved events.</p><div class="run-info"><label for="run-select">Recorded run </label><select class="run-select" id="run-select" aria-label="Select recorded run"></select><a id="run-json" target="_blank" rel="noopener" hidden>Trace JSON</a></div><div class="grid"><div class="panel"><div class="panel-head"><h2>Execution graph</h2><span class="tag" id="trace-count">0 EVENTS</span></div><div class="trace-tools"><label class="visually-hidden" for="event-filter">Filter event type</label><select id="event-filter"><option value="all">All event types</option></select><button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-reset" aria-label="Reset zoom">100%</button><button id="expand-all" disabled>Expand branches</button><button id="step-back" aria-label="Previous event">←</button><button id="step-next" aria-label="Next event">→</button></div><div class="trace-scroll" id="trace-scroll" tabindex="0" role="region" aria-label="Scrollable execution graph"><div class="trace-tree" id="trace-tree"></div></div></div><div class="panel"><div class="panel-head"><h2>Node inspector</h2><small>Recorded evidence</small></div><div class="panel-body inspector" id="inspector"><div class="empty">Select an execution node.</div></div></div></div></section>
-<section class="section" id="view-artifacts" hidden><h2 class="section-title">Artifact explorer</h2><p class="intro">Inspect source files and view captured previews of verified builds.</p><div class="spec-actions"><button id="open-generated" class="primary" hidden>Open generated Task Management app</button><button id="open-operations" class="primary" hidden>Open generated Operations Analytics app</button><button id="open-reference">Open Task Management reference app</button><button id="watch-workflows" aria-controls="workflow-player" aria-expanded="false" hidden>Watch verified workflows</button></div><p id="reference-status" class="intro" role="status"></p>
+<section class="section" id="view-artifacts" hidden><h2 class="section-title">Artifact explorer</h2><p class="intro">Inspect source files and view captured previews of verified builds.</p><div class="spec-actions"><button id="open-generated" class="primary" hidden>Open generated Task Management app</button><button id="open-operations" class="primary" hidden>Open generated Operations Analytics app</button><button id="open-aviation" class="primary" hidden>Open generated Aviation Operations app</button><button id="open-reference">Open Task Management reference app</button><button id="watch-workflows" aria-controls="workflow-player" aria-expanded="false" hidden>Watch verified workflows</button></div><p id="reference-status" class="intro" role="status"></p>
 <div class="panel" id="workflow-player" hidden>
   <div class="panel-head"><h2 id="workflow-title">Workflow replay</h2><span class="tag">CHROMIUM CAPTURE</span></div>
   <div class="panel-body">
@@ -348,7 +348,7 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
   <div class="panel"><div class="panel-head"><h2>Selected replay measurements</h2><span class="tag">REPLAY ARCHIVE</span></div><div style="overflow:auto"><table class="metric-table"><thead><tr><th>Metric</th><th>Recorded value</th></tr></thead><tbody id="metrics-table"></tbody></table></div></div>
 </section>
 <section class="section" id="view-research" hidden><h2 class="section-title">Context is an environment.</h2><p class="intro">Recursa applies Recursive Language Models to application synthesis. The research question is whether programmatic inspection helps preserve connected requirements as specifications grow.</p><div class="flow"><div><b>SPECIFICATION</b>Stable requirement IDs<br>Typed dependencies</div><div><b>RLM CONTROLLER</b>Python inspection<br>Adaptive model calls</div><div><b>ARTIFACT REGISTRY</b>Source and provenance<br>Dependency contracts</div><div><b>VERIFICATION</b>Tests and diagnostics<br>Bounded repair</div><div><b>STUDIO</b>Recorded traces<br>Inspectable evidence</div></div><div class="panel"><div class="panel-body research-copy"><h3 style="margin-top:0">The original method</h3><p>Recursive Language Models, by Alex L. Zhang, Tim Kraska, and Omar Khattab, let a model interact programmatically with external context and invoke sub-models. Recursa builds an application synthesis workflow around that idea; it does not claim authorship of RLMs.</p><p><a href="https://arxiv.org/abs/2512.24601" target="_blank" rel="noopener">Read the research paper ↗</a> · <a href="https://github.com/alexzhang13/rlm" target="_blank" rel="noopener">Explore the upstream runtime ↗</a></p><h3>Architectural honesty</h3><p>Deterministic parsing, orchestration, and verification are distinct from model inference. A graph is evidence of RLM behavior only when it records genuine context inspection and model-backed calls. Local smoke runs are labeled accordingly.</p><h3>Compute strategy</h3><p>Develop locally on CPU whenever practical. Public demonstrations use recorded runs without visitor API keys. Optional live experiments require explicit budgets. Substantial accelerator workloads should use the owner's existing Colab allocation; Hugging Face Pro is not assumed to include dedicated GPU hardware.</p><h3>What remains to be established</h3><p>Compilation alone does not prove functional correctness. Requirement satisfaction, interaction tests, actual token usage, execution time, and comparable baseline results are needed before drawing research conclusions. The benefit of recursion is a hypothesis to evaluate.</p></div></div></section>
-<section class="section" id="view-progress" hidden><h2 class="section-title">Build progress</h2><p class="intro">The ordered 1–21 implementation record, updated with each published release. This view checks for updates every 15 seconds while visible. It does not stream private engineering sessions or live model inference.</p><div class="notice" id="progress-summary">Loading release evidence…</div><div class="panel"><div class="panel-head"><h2>Implementation and verification</h2><a href="https://github.com/jacobhroutzong/recursa" target="_blank" rel="noopener">View source ↗</a></div><div style="overflow:auto"><table class="metric-table"><thead><tr><th>Section</th><th>Status</th><th>Evidence and remaining work</th></tr></thead><tbody id="progress-rows"></tbody></table></div></div></section>
+<section class="section" id="view-progress" hidden><h2 class="section-title">Build progress</h2><p class="intro">The ordered 1–21 implementation record, updated with each published release. This view checks for updates every 15 seconds while visible. It does not stream private engineering sessions or live model inference.</p><p class="intro"><a href="https://github.com/jacobhroutzong/recursa/blob/main/docs/completion-checkpoint.md" target="_blank" rel="noopener">View completion checkpoint and roadmap ↗</a></p><div class="notice" id="progress-summary">Loading release evidence…</div><div class="panel"><div class="panel-head"><h2>Implementation and verification</h2><a href="https://github.com/jacobhroutzong/recursa" target="_blank" rel="noopener">View source ↗</a></div><div style="overflow:auto"><table class="metric-table"><thead><tr><th>Section</th><th>Status</th><th>Evidence and remaining work</th></tr></thead><tbody id="progress-rows"></tbody></table></div></div></section>
 <section class="section" id="view-security" hidden>
   <h2 class="section-title">Security checks</h2>
   <p class="intro" id="security-summary" role="status">Loading recorded boundary checks…</p>
@@ -367,13 +367,18 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
 </div></main></div>
 <script>
 'use strict';
-const $=id=>document.getElementById(id);let runs=[],run=null,selectedEvent=-1,selectedArtifact=null,zoom=1,loadVersion=0,previewKey=null,catalogPromise=null,selectedPreset=null,hasGenerated=false,hasOperations=false;
+const $=id=>document.getElementById(id);let runs=[],run=null,selectedEvent=-1,selectedArtifact=null,zoom=1,loadVersion=0,previewKey=null,catalogPromise=null,selectedPreset=null;
+const showcaseButtons={generated:'open-generated',operations:'open-operations',aviation:'open-aviation'};
+const availableShowcases=new Set();
+const showcaseKey=preset=>preset.key==='tasks'?'generated':preset.key;
 const previews={
   reference:{name:'Task Management',image:'/assets/task-preview.png',alt:'Task Management reference app with example tasks'},
   generated:{name:'Task Management',image:'/assets/generated-task-preview.png',replay:'/assets/task-replay/',
     alt:'Task Management app with example tasks and search and status filters'},
   operations:{name:'Operations Analytics',image:'/assets/generated-operations-preview.png',replay:'/assets/operations-replay/',
-    alt:'Operations dashboard with fulfillment KPIs, staffing comparison, and order data'}
+    alt:'Operations dashboard with fulfillment KPIs, staffing comparison, and order data'},
+  aviation:{name:'Aviation Operations',image:'/assets/generated-aviation-preview.png',replay:'/assets/aviation-replay/',
+    alt:'Synthetic Aviation Operations console showing the UTC exercise clock, flight board, and stand conflicts'}
 };
 let workflowPromise=null,workflowChapters=[],workflowFrame=0,workflowTimer=null,workflowVersion=0;
 let comparisonPromise=null;
@@ -579,7 +584,7 @@ function renderWorkflow(){
   image.src=previews[previewKey].replay+frame.file;
   image.hidden=false;
   image.alt=frame.caption;
-  image.classList.toggle('dashboard',previewKey==='operations');
+  image.classList.toggle('dashboard',previewKey==='operations'||previewKey==='aviation');
   const fullSize=$('workflow-full-size');
   fullSize.href=image.src;
   fullSize.hidden=false;
@@ -829,10 +834,10 @@ function loadComparison(){
 function getCatalog(){
   if(!catalogPromise){
     catalogPromise=fetchJSON('/api/playground').then(catalog=>{
-      hasGenerated=Boolean(catalog.generated);
-      hasOperations=Boolean(catalog.operations);
-      $('open-generated').hidden=!hasGenerated;
-      $('open-operations').hidden=!hasOperations;
+      for(const [key,id] of Object.entries(showcaseButtons)){
+        if(catalog[key])availableShowcases.add(key);
+        $(id).hidden=!availableShowcases.has(key);
+      }
       return catalog;
     }).catch(error=>{catalogPromise=null;throw error});
   }
@@ -867,7 +872,7 @@ function selectPreset(preset){
   $('preset-dependencies').textContent=spec.requirements.reduce((count,item)=>count+(item.depends_on||[]).length,0);
   $('preset-size').textContent=(size/1024).toFixed(1)+' KiB';
   $('preset-reference').hidden=preset.key!=='tasks';
-  $('preset-generated').hidden=!(preset.key==='tasks'&&hasGenerated||preset.key==='operations'&&hasOperations);
+  $('preset-generated').hidden=!availableShowcases.has(showcaseKey(preset));
   $('requirement-search').value='';
   for(const button of $('preset-list').children){
     button.setAttribute('aria-pressed',String(button.dataset.preset===preset.key));
@@ -914,6 +919,9 @@ async function openCatalogApp(key){
       status.textContent='Four reviewed browser workflows passed. '+(catalog[key].provenance?.host_repaired?
         'The verified source includes host corrections. ':'')+'The capture uses synthetic data.';
     }
+    if(key==='aviation'){
+      status.textContent='Four reviewed browser workflows passed. Model-generated interface files include host edits and a host-authored exercise controller. Synthetic exercise · Non-operational.';
+    }
   } catch(error){
     showView('artifacts');
     status.textContent='The app could not be loaded. Try opening it again.';
@@ -924,9 +932,8 @@ $('preset-replay').addEventListener('click',()=>openCatalogRun(selectedPreset.re
 for(const id of ['preset-reference','open-reference']){
   $(id).addEventListener('click',()=>openCatalogApp('reference'));
 }
-$('open-generated').addEventListener('click',()=>openCatalogApp('generated'));
-$('open-operations').addEventListener('click',()=>openCatalogApp('operations'));
-$('preset-generated').addEventListener('click',()=>openCatalogApp(selectedPreset.key==='operations'?'operations':'generated'));
+for(const [key,id] of Object.entries(showcaseButtons))$(id).addEventListener('click',()=>openCatalogApp(key));
+$('preset-generated').addEventListener('click',()=>openCatalogApp(showcaseKey(selectedPreset)));
 $('preset-download').addEventListener('click',()=>{
   const url=URL.createObjectURL(new Blob([specJSON()],{type:'application/json'}));
   const link=element('a');

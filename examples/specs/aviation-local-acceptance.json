@@ -1,0 +1,349 @@
+[
+  {
+    "id": "av-board-conflict",
+    "requirements": [
+      "AV-01",
+      "AV-04",
+      "AV-06",
+      "AV-07",
+      "AV-12"
+    ],
+    "source_path": "index.html",
+    "steps": [
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "Invalid records: 1"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "Flights in scope: 4"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "Board order: AX101, AX102, AX205, AX310"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "region",
+          "name": "Stand assignments"
+        },
+        "value": "AX310"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "region",
+          "name": "Stand conflicts"
+        },
+        "value": "Conflict: A02 · AX101 / AX102"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "Stand conflicts: 1"
+      }
+    ]
+  },
+  {
+    "id": "av-scope-detail",
+    "requirements": [
+      "AV-03",
+      "AV-05",
+      "AV-08",
+      "AV-09",
+      "AV-12"
+    ],
+    "source_path": "index.html",
+    "steps": [
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "AX101"
+        }
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "region",
+          "name": "Flight detail"
+        },
+        "value": "Milestone: Unknown"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "region",
+          "name": "Flight detail"
+        },
+        "value": "SIM-101"
+      },
+      {
+        "action": "select",
+        "target": {
+          "role": "combobox",
+          "name": "Terminal"
+        },
+        "value": "T2"
+      },
+      {
+        "action": "select",
+        "target": {
+          "role": "combobox",
+          "name": "Time range"
+        },
+        "value": "08:30–09:30 UTC"
+      },
+      {
+        "action": "select",
+        "target": {
+          "role": "combobox",
+          "name": "Flight status"
+        },
+        "value": "Delayed"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "Flights in scope: 1"
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "button",
+          "name": "AX101"
+        },
+        "count": 0
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "table",
+          "name": "Flight board"
+        },
+        "value": "AX205"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "region",
+          "name": "Stand assignments"
+        },
+        "value": "B04"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "region",
+          "name": "Simulated alerts"
+        },
+        "value": "SIM-205"
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "button",
+          "name": "Acknowledge SIM-101"
+        },
+        "count": 0
+      }
+    ]
+  },
+  {
+    "id": "av-acknowledge-reset",
+    "requirements": [
+      "AV-02",
+      "AV-09",
+      "AV-10",
+      "AV-11",
+      "AV-15"
+    ],
+    "source_path": "index.html",
+    "steps": [
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "Advance 5 min"
+        }
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "08:05 UTC"
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "Pause exercise"
+        }
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "Advance 5 min"
+        }
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "08:05 UTC"
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "Acknowledge SIM-101"
+        }
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "region",
+          "name": "Simulated alerts"
+        },
+        "value": "Acknowledged at 08:05 UTC"
+      },
+      {
+        "action": "reload"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "region",
+          "name": "Simulated alerts"
+        },
+        "value": "Acknowledged at 08:05 UTC"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "region",
+          "name": "Simulated alerts"
+        },
+        "value": "High"
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "Reset exercise"
+        }
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "08:00 UTC"
+      },
+      {
+        "action": "expect_visible",
+        "target": {
+          "role": "button",
+          "name": "Acknowledge SIM-101"
+        }
+      }
+    ]
+  },
+  {
+    "id": "av-narrow-summary",
+    "requirements": [
+      "AV-13",
+      "AV-14",
+      "AV-16"
+    ],
+    "source_path": "index.html",
+    "steps": [
+      {
+        "action": "expect_visible",
+        "target": {
+          "role": "heading",
+          "name": "Aviation Operations"
+        }
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "Synthetic exercise · Non-operational"
+      },
+      {
+        "action": "press",
+        "target": {
+          "role": "button",
+          "name": "Prepare summary"
+        },
+        "value": "Enter"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "region",
+          "name": "Exercise summary"
+        },
+        "value": "Synthetic exercise · Non-operational"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "region",
+          "name": "Exercise summary"
+        },
+        "value": "All terminals"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "region",
+          "name": "Exercise summary"
+        },
+        "value": "AX101"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "region",
+          "name": "Exercise summary"
+        },
+        "value": "SIM-205"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "region",
+          "name": "Exercise summary"
+        },
+        "value": "Alerts: 2"
+      },
+      {
+        "action": "audit_accessibility"
+      }
+    ],
+    "viewport": {
+      "width": 390,
+      "height": 844
+    }
+  }
+]

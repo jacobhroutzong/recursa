@@ -1,0 +1,107 @@
+{
+  "run_id": "generated-aviation-local-0f899d84bbef",
+  "browser": "chromium",
+  "chapters": [
+    {
+      "id": "av-board-conflict",
+      "title": "Inspect the flight board",
+      "checked_steps": 6,
+      "frames": [
+        {
+          "file": "av-board-conflict-6.png",
+          "step": 6,
+          "caption": "Four valid flights are sorted by scheduled UTC and flight ID. One malformed record is excluded, and A02 has one overlapping pair.",
+          "sha256": "f8fdec980b21e2ca0af55cbb3a9e520adf5938eeabd057e438b63233c68461c6"
+        }
+      ]
+    },
+    {
+      "id": "av-scope-detail",
+      "title": "Inspect a flight and filter scope",
+      "checked_steps": 12,
+      "frames": [
+        {
+          "file": "av-scope-detail-3.png",
+          "step": 3,
+          "caption": "Open AX101. The detail shows an unknown milestone and the simulated alert SIM-101.",
+          "sha256": "f34ce32376192f0f703fd9bfdbed4ba2f662a90b7a04de622e6bba359fb8a83b"
+        },
+        {
+          "file": "av-scope-detail-7.png",
+          "step": 7,
+          "caption": "Filter to T2, the later UTC window, and Delayed. Only one flight remains in scope.",
+          "sha256": "8f5a4edaf5cde17d25c58a39a6c4e2e9c5ffa2b744bd4ed6029cf2514c5e8356"
+        },
+        {
+          "file": "av-scope-detail-12.png",
+          "step": 12,
+          "caption": "The board, stand assignments, and alerts reflect the same T2 scope.",
+          "sha256": "8f5a4edaf5cde17d25c58a39a6c4e2e9c5ffa2b744bd4ed6029cf2514c5e8356"
+        }
+      ]
+    },
+    {
+      "id": "av-acknowledge-reset",
+      "title": "Pause, acknowledge, reload, and reset",
+      "checked_steps": 13,
+      "frames": [
+        {
+          "file": "av-acknowledge-reset-2.png",
+          "step": 2,
+          "caption": "Advance the exercise to 08:05 UTC.",
+          "sha256": "7a58409c05b5b69b73e72831fe61af79208bee904074211f688ac81b1c5a541c"
+        },
+        {
+          "file": "av-acknowledge-reset-7.png",
+          "step": 7,
+          "caption": "Pause the clock and acknowledge SIM-101. The acknowledgement records 08:05 UTC.",
+          "sha256": "8f21de565cfd0b69ee317e5842f8a6a10c1c85368f5d22c91176001dc8cf8b47"
+        },
+        {
+          "file": "av-acknowledge-reset-10.png",
+          "step": 10,
+          "caption": "Reload. The acknowledgement and High priority are still visible.",
+          "sha256": "1a16c6d37f8a7ade67946eaab394581cf07e5c24f72f3570de65c3eeee1190a9"
+        },
+        {
+          "file": "av-acknowledge-reset-13.png",
+          "step": 13,
+          "caption": "Reset restores 08:00 UTC and clears the acknowledgement.",
+          "sha256": "43ccabae3c1665231f407144f23fe7d2427b864f6140fcda9398c6308b4d4975"
+        }
+      ]
+    },
+    {
+      "id": "av-narrow-summary",
+      "title": "Prepare a summary by keyboard",
+      "checked_steps": 9,
+      "frames": [
+        {
+          "file": "av-narrow-summary-2.png",
+          "step": 2,
+          "caption": "At a 390-pixel viewport, the fictional exercise label remains visible.",
+          "sha256": "7c2886903edac49b0d9cdfcdd2b7fc5e7c5ea0d19724ccfedc361d6494a1f795"
+        },
+        {
+          "file": "av-narrow-summary-9.png",
+          "step": 9,
+          "caption": "Press Enter to prepare the summary. Chromium checks the label, scope, source IDs, alert count, and basic accessibility.",
+          "sha256": "03f338e4055bae8adb6fb22e685da46989d66dcda337549edb7d6c75539f8832"
+        }
+      ]
+    }
+  ],
+  "scenarios_sha256": "2fc88e315e193489d0c613a915927d287402482437197c3109adb3fc429ccac2",
+  "build_outputs": {
+    "assets/entry-0.css": "cca78267a450533bb62641db6d69798bd389a8d6182ee79ed16c8ebefd2fe6f0",
+    "assets/entry-1.js": "8b738d25340dfb16431ca9c975c743c5fd1f177473658b4959595bc26f83c27e",
+    "index.html": "bbb294378db1ebff8e10c3c810eb4c30e965f26b523d01a9e68f3f58a3d2b3f8"
+  },
+  "artifacts": {
+    "index.html": "7d15e8af74825e81885c0992d6f6271b32ce55ea30822d267624524dec674848",
+    "views.js": "14e042f0e3a7deb092b97acc50da8f51256aa9aec6703f5152dd5c138a771586",
+    "styles.css": "f4ae8fd2ba2915a138515f1eb8efe6e80f6f5e640412f4c65c7c9431da24b97f",
+    "app.js": "cf4ecdc73fffe88509fb8a90edcdbf85328b79fc3c16f2a88398fdf5280f1a83",
+    "fixture.js": "f86009d8daf5538b3ca63f99ef94cb3aa84cbc02a6c66531b8e391d32bb24f6e"
+  }
+}

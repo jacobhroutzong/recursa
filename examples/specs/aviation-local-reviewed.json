@@ -1,0 +1,212 @@
+{
+  "name": "Aviation Operations Console",
+  "description": "Explore a fictional airport operations exercise using entirely synthetic, non-operational data.",
+  "requirements": [
+    {
+      "id": "AV-01",
+      "text": "Load synthetic flights, stands, turnaround milestones, and simulated alerts. Use the fixed synthetic fixture. Exclude the malformed record and show Invalid records: 1.",
+      "acceptance": "Malformed records appear in a data quality summary."
+    },
+    {
+      "id": "AV-02",
+      "text": "Display the current exercise clock in UTC. Start at 08:00 UTC. Advance 5 min advances one deterministic step unless paused. A Pause exercise button toggles pause.",
+      "acceptance": "Pausing the exercise freezes all time-based views."
+    },
+    {
+      "id": "AV-03",
+      "text": "Filter the exercise by terminal, time range, and flight status. Expose Terminal, Time range, and Flight status as labeled select controls. Values equal their labels. Defaults are All terminals, Full exercise, and All statuses. Also offer T1, T2, 08:30–09:30 UTC, On time, and Delayed as applicable.",
+      "acceptance": "The board, stand view, and alert list reflect the selected scope.",
+      "depends_on": [
+        "AV-01",
+        "AV-02"
+      ]
+    },
+    {
+      "id": "AV-04",
+      "text": "Show arrivals and departures on a sortable flight board. Expose a table named Flight board and visible Board order: followed by the displayed IDs separated by comma and space. Sort schedule ascending by default, using flight ID for ties.",
+      "acceptance": "Sort order uses scheduled UTC time with a stable flight ID tie-breaker.",
+      "depends_on": [
+        "AV-03"
+      ]
+    },
+    {
+      "id": "AV-05",
+      "text": "Open a flight detail panel from the board. Use a button with the exact flight ID to open the Flight detail region.",
+      "acceptance": "The panel shows synthetic movement, stand, milestone, and alert references.",
+      "depends_on": [
+        "AV-04"
+      ]
+    },
+    {
+      "id": "AV-06",
+      "text": "Visualize stand assignments across the selected period. Use a Stand assignments region. Show each matching flight, its stand, and interval.",
+      "acceptance": "Overlapping assignments render as separate blocks and list the affected flight IDs.",
+      "depends_on": [
+        "AV-03"
+      ]
+    },
+    {
+      "id": "AV-07",
+      "text": "Flag conflicting stand assignments. Use a Stand conflicts region. Treat intervals as half-open. Show Conflict: A02 · AX101 / AX102 for the one overlapping pair. Adjacent intervals are allowed.",
+      "acceptance": "Two occupied intervals that overlap trigger a single conflict per flight pair.",
+      "depends_on": [
+        "AV-06"
+      ]
+    },
+    {
+      "id": "AV-08",
+      "text": "Track turnaround milestones and simulated delay reasons. Show Milestone: Unknown in the detail panel for AX101. Keep missing milestones out of the completion numerator.",
+      "acceptance": "A missing milestone is labeled unknown and excluded from completion totals.",
+      "depends_on": [
+        "AV-05"
+      ]
+    },
+    {
+      "id": "AV-09",
+      "text": "Display simulated alert priorities and sources. Use a Simulated alerts region. Keep IDs and priority visible.",
+      "acceptance": "Alerts preserve their fictional event IDs and link to affected flight or stand records.",
+      "depends_on": [
+        "AV-03",
+        "AV-07",
+        "AV-08"
+      ]
+    },
+    {
+      "id": "AV-10",
+      "text": "Acknowledge an exercise alert locally. Use a button named Acknowledge SIM-101. After clicking it, show Acknowledged at 08:05 UTC if the exercise is at 08:05.",
+      "acceptance": "Acknowledging one alert updates its state while retaining its original event and priority.",
+      "depends_on": [
+        "AV-09"
+      ]
+    },
+    {
+      "id": "AV-11",
+      "text": "Record local acknowledgement history. Restore acknowledgement and exercise timestamp from local storage on reload.",
+      "acceptance": "Reload restores acknowledgements and the exercise timestamps.",
+      "depends_on": [
+        "AV-10"
+      ]
+    },
+    {
+      "id": "AV-12",
+      "text": "Show aggregate activity and stand utilization. Use Flights in scope: N and Stand conflicts: N for the current filtered counts.",
+      "acceptance": "Totals match filtered exercise records and identify incomplete data.",
+      "depends_on": [
+        "AV-04",
+        "AV-06"
+      ]
+    },
+    {
+      "id": "AV-13",
+      "text": "Provide keyboard navigation and readable status labels.",
+      "acceptance": "Every view is reachable by keyboard and no status depends on color alone.",
+      "depends_on": [
+        "AV-04",
+        "AV-06",
+        "AV-09"
+      ]
+    },
+    {
+      "id": "AV-14",
+      "text": "Export a synthetic exercise summary. Prepare summary renders a readable local Exercise summary region containing the exercise-only label, filters, flight and alert source IDs, and alert counts. Export JSON can download that same report.",
+      "acceptance": "The export includes filters, source IDs, alert counts, and the exercise-only label.",
+      "depends_on": [
+        "AV-11",
+        "AV-12"
+      ]
+    },
+    {
+      "id": "AV-15",
+      "text": "Reset the exercise and clear local adjustments. Use a Reset exercise button that clears exercise state and restores 08:00 UTC and all default filters.",
+      "acceptance": "Reset restores the initial synthetic snapshot and default scope.",
+      "depends_on": [
+        "AV-03",
+        "AV-11"
+      ]
+    },
+    {
+      "id": "AV-16",
+      "text": "Label every view as a synthetic exercise. Show the exact visible text Synthetic exercise · Non-operational on the main view and summary.",
+      "acceptance": "The label remains visible on narrow layouts and is included in exports.",
+      "depends_on": [
+        "AV-13",
+        "AV-14"
+      ]
+    }
+  ],
+  "fixture": {
+    "clock_utc": "08:00",
+    "flights": [
+      {
+        "id": "AX102",
+        "terminal": "T1",
+        "stand": "A02",
+        "scheduled": "08:00",
+        "movement": "Departure",
+        "status": "Delayed",
+        "start": "08:15",
+        "end": "08:40",
+        "milestone": "Boarding",
+        "delay": "Equipment hold"
+      },
+      {
+        "id": "AX101",
+        "terminal": "T1",
+        "stand": "A02",
+        "scheduled": "08:00",
+        "movement": "Arrival",
+        "status": "On time",
+        "start": "07:55",
+        "end": "08:25",
+        "milestone": null,
+        "delay": null
+      },
+      {
+        "id": "AX205",
+        "terminal": "T2",
+        "stand": "B04",
+        "scheduled": "08:35",
+        "movement": "Arrival",
+        "status": "Delayed",
+        "start": "08:30",
+        "end": "09:00",
+        "milestone": "Bags delivered",
+        "delay": "Weather exercise"
+      },
+      {
+        "id": "AX310",
+        "terminal": "T1",
+        "stand": "A02",
+        "scheduled": "09:05",
+        "movement": "Departure",
+        "status": "On time",
+        "start": "08:40",
+        "end": "09:20",
+        "milestone": "Ready",
+        "delay": null
+      },
+      {
+        "id": "BAD-01",
+        "terminal": "",
+        "stand": "A02",
+        "scheduled": "invalid"
+      }
+    ],
+    "alerts": [
+      {
+        "id": "SIM-101",
+        "flight": "AX101",
+        "priority": "High",
+        "source": "Stand simulator",
+        "message": "Stand assignment overlap"
+      },
+      {
+        "id": "SIM-205",
+        "flight": "AX205",
+        "priority": "Advisory",
+        "source": "Weather simulator",
+        "message": "Simulated weather delay"
+      }
+    ]
+  }
+}

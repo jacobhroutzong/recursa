@@ -92,6 +92,8 @@ In **Generated artifacts**, open the generated Task Management app and select **
 
 The [Operations Analytics showcase](docs/evidence/operations-local-showcase.md) adds a second verified preview and four workflow chapters. The recorded build includes explicit host corrections to local model output.
 
+The [Aviation Operations showcase](docs/evidence/aviation-local-showcase.md) adds a third verified preview for a fictional airfield exercise. The [completion checkpoint](docs/completion-checkpoint.md) records the current release and research gates.
+
 The [baseline protocol](docs/baseline-protocol.md) documents the original pilot, the repeated first-pass series, and 12 fresh paired trials across Task Management and Operations Analytics. The shared repair policy attempted seven repairs and rechecked three candidates. Both direct Task Management repairs fixed the build. Across the three repaired candidates, 0 of 12 Chromium checks passed. Studio shows each pair and links to recorded phase timing.
 
 

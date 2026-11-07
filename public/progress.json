@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T21:04:25.761444+00:00",
-  "phase": "Section 11 \u00b7 Verified Operations Analytics showcase",
-  "source_digest": "7ff6ea2d8ca35d2df65eb6d33c78332c2d50c9c610fdb08600dff9ecd4ae0b08",
+  "updated_at": "2026-11-07T21:49:26.568729+00:00",
+  "phase": "Section 11 \u00b7 Three verified showcase replays",
+  "source_digest": "23982bc4eff50a4212611318bdc00b3eef16fb9f93de278cd14e2eda37c314d6",
   "tests": {
     "total": 109,
     "passed": 109,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T21:04:08.833735+00:00",
-    "source_digest": "7ff6ea2d8ca35d2df65eb6d33c78332c2d50c9c610fdb08600dff9ecd4ae0b08",
+    "verified_at": "2026-11-07T21:49:11.329606+00:00",
+    "source_digest": "23982bc4eff50a4212611318bdc00b3eef16fb9f93de278cd14e2eda37c314d6",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -40,14 +40,14 @@
     {
       "number": 5,
       "name": "5. Application synthesis",
-      "status": "Two repaired model-generated examples verified",
-      "evidence": "Task Management and Operations Analytics each passed four declared Chromium workflows. Operations required host corrections after the model candidates failed build or runtime checks"
+      "status": "Three model-assisted showcases verified",
+      "evidence": "Task Management, Operations Analytics, and Aviation Operations each passed four declared Chromium workflows. Each record discloses its host edits or assembly"
     },
     {
       "number": 6,
       "name": "6. Studio",
-      "status": "Two verified workflow replays",
-      "evidence": "Task Management and Operations Analytics have verified screenshots and separate browser workflow captures. The human-authored Task Management reference remains separate"
+      "status": "Three verified workflow replays",
+      "evidence": "All three examples have verified screenshots and separate browser workflow captures. The human-authored Task Management reference remains separate"
     },
     {
       "number": 7,
@@ -76,8 +76,8 @@
     {
       "number": 11,
       "name": "11. Example applications",
-      "status": "Two verified examples",
-      "evidence": "Operations Analytics passed all four reviewed scenarios on synthetic orders and staffing after host correction. The replay covers aggregates, filters, chart drill-down, and saved views. Aviation remains a specification preset"
+      "status": "Three verified examples",
+      "evidence": "Aviation joins Task Management and Operations Analytics. Its synthetic exercise passed flight and stand checks, scoped detail, acknowledgement persistence and reset, and keyboard summary preparation"
     },
     {
       "number": 12,
@@ -112,8 +112,8 @@
     {
       "number": 17,
       "name": "17. Definition of done",
-      "status": "Not satisfied",
-      "evidence": "One verified local model case. Broader examples, comparisons and final research evidence remain open"
+      "status": "Release and research gates open",
+      "evidence": "Three verified showcases and a working public Studio. The completion checkpoint tracks clean-checkout verification, broader evaluation, and final handoff"
     },
     {
       "number": 18,

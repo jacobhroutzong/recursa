@@ -88,6 +88,28 @@ class ServerTests(unittest.TestCase):
                         with urlopen(operations_url + frame["file"]) as response:
                             self.assertEqual(response.headers["Content-Type"], "image/png")
                             self.assertEqual(hashlib.sha256(response.read()).hexdigest(), frame["sha256"])
+                aviation = catalog["aviation"]
+                self.assertTrue(aviation["metrics"]["functional_success"])
+                self.assertTrue(aviation["provenance"]["host_repaired"])
+                self.assertEqual(aviation["provenance"]["paid_api_calls"], 0)
+                with urlopen(base + "/assets/generated-aviation-preview.png") as response:
+                    self.assertEqual(response.headers["Content-Type"], "image/png")
+                    self.assertEqual(hashlib.sha256(response.read()).hexdigest(),
+                                     aviation["events"][-1]["details"]["screenshot_sha256"])
+                aviation_url = base + "/assets/aviation-replay/"
+                with urlopen(aviation_url + "manifest.json") as response:
+                    av_replay = json.load(response)
+                self.assertEqual(av_replay["run_id"], aviation["id"])
+                self.assertEqual(av_replay["artifacts"], {a["path"]: a["sha256"] for a in aviation["artifacts"]})
+                av_scenarios = (ROOT / "examples/specs/aviation-local-acceptance.json").read_bytes()
+                self.assertEqual(av_replay["scenarios_sha256"], hashlib.sha256(av_scenarios).hexdigest())
+                self.assertEqual([(c["id"], c["checked_steps"]) for c in av_replay["chapters"]],
+                                 [(s["id"], len(s["steps"])) for s in json.loads(av_scenarios)])
+                for chapter in av_replay["chapters"]:
+                    for frame in chapter["frames"]:
+                        with urlopen(aviation_url + frame["file"]) as response:
+                            self.assertEqual(response.headers["Content-Type"], "image/png")
+                            self.assertEqual(hashlib.sha256(response.read()).hexdigest(), frame["sha256"])
                 replay_url = base + "/assets/task-replay/"
                 with urlopen(replay_url + "manifest.json") as response:
                     replay = json.load(response)
