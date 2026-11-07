@@ -74,6 +74,12 @@ class ContainerRLMParentTests(unittest.TestCase):
             self.assertEqual(report['status'], 'container-failed')
             self.assertIsNone(report['functional_success'])
             self.assertFalse((output / 'artifacts').exists())
+            replay = json.loads((output / 'private/studio-replay.json').read_text())
+            self.assertEqual(replay['visibility'], 'private')
+            self.assertEqual(replay['status'], 'container-failed')
+            self.assertEqual(replay['metrics']['broker_completions'], 0)
+            self.assertIsNone(replay['metrics']['functional_success'])
+            self.assertNotIn(spec['requirements'][0]['text'], json.dumps(replay))
             context = json.dumps(execute.call_args.kwargs['context'])
             for value in config['provider'].values():
                 self.assertNotIn(value, context)

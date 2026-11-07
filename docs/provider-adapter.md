@@ -26,4 +26,4 @@ Seven focused supervisor checks cover actual intercepted worker success, parent 
 
 Run `python -m unittest discover -s tests -p "test_provider*.py" -v` for the adapter and supervisor checks. The container broker invokes the supervised adapter on the supervisor thread with the container deadline. The integrated checks use actual containers and supervised workers with intercepted HTTP. [Host broker verification](host-broker.md)
 
-The contained runner now accepts reviewed specifications. Safe private trace export and a genuine run remain open. An actual run requires explicit owner authorization, an endpoint and model, configured credentials and a spending cap. Failed or interrupted workers can leave provider usage unknown. The parent retains the reservations.
+The contained runner now accepts reviewed specifications. The private Studio replay contains broker outcomes and budget counters. A genuine run remains open. An actual run requires explicit owner authorization, an endpoint and model, configured credentials and a spending cap. Failed or interrupted workers can leave provider usage unknown. The parent retains the reservations.

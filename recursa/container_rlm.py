@@ -13,6 +13,7 @@ from recursa.broker import FRAME_LIMIT, PREFIX, ProviderBroker
 from recursa.engine import validate_spec
 from recursa.experiments import atomic_json
 from recursa.sandbox import run_python
+from recursa.replay import reviewed_replay
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = "from recursa.container_rlm import scripted_fixture; import json; print(json.dumps(scripted_fixture(context)))"
@@ -239,6 +240,7 @@ def run_reviewed(spec, config, image, output_dir, *, authorize_live=False, runti
                     save_artifacts(directory / 'artifacts', artifacts)
                     report.update(status='source-returned', artifact_count=len(artifacts))
     atomic_json(directory / 'reviewed-report.json', report)
+    atomic_json(directory / 'private/studio-replay.json', reviewed_replay(report))
     return report
 
 

@@ -88,7 +88,17 @@ def _verify(output):
                 assert manifest[0]['requirements'] == ['TITLE-1']
             else:
                 assert result['artifact_count'] == 0 and result['status'] == 'budget-exhausted', result
-            cases.append({**result, 'name': f'reviewed-{cap}', 'live_inference': False,
+            replay_bytes = (case_dir / 'private/studio-replay.json').read_bytes()
+            replay = json.loads(replay_bytes)
+            assert replay['visibility'] == 'private' and replay['mode'] == 'private-reviewed-replay'
+            assert replay['status'] == result['status'] and replay['artifacts'] == []
+            assert replay['metrics']['broker_completions'] == cap
+            assert replay['metrics']['validated_source_files'] == result['artifact_count']
+            assert replay['live_inference'] is None and replay['metrics']['functional_success'] is None
+            for excluded in (b'fixture-host-provider-key', b'REVIEWED_INPUT_6073', b'recursa-fixture.invalid',
+                             b'reviewed-root', b'export const titleValid'):
+                assert excluded not in replay_bytes
+            cases.append({**result, 'private_replay_verified': True, 'name': f'reviewed-{cap}', 'live_inference': False,
                           'scope': 'Reviewed specification through actual container and intercepted host worker'})
     summary = {'status': 'passed', 'runtime_image': runtime, 'cases': cases, 'live_inference': False,
                'host_sentinel_set_for_verification': True,

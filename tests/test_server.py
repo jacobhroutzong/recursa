@@ -18,6 +18,8 @@ class ServerTests(unittest.TestCase):
             run = run_smoke({"name": "Test", "requirements": [{"id": "R1", "text": "Test"}]})
             atomic_json(Path(tmp) / "run.json", run)
             atomic_json(Path(tmp) / "private/run.json", dict(run, id="private-should-not-be-served"))
+            atomic_json(Path(tmp) / "copied-replay.json", dict(run, id="private-copied", visibility="private"))
+            atomic_json(Path(tmp) / "artifacts/generated.json", dict(run, id="generated-record-shaped-source"))
             server = ThreadingHTTPServer(("127.0.0.1", 0), make_handler(Path(tmp)))
             thread = threading.Thread(target=server.serve_forever, daemon=True)
             thread.start()
@@ -32,7 +34,7 @@ class ServerTests(unittest.TestCase):
                 with urlopen(base + "/api/progress") as response:
                     self.assertEqual(response.headers["Cache-Control"], "no-store")
                     self.assertIn("phase", json.loads(response.read()))
-                for route in ("/../README.md", "/api/execute", "/api/runs/missing"):
+                for route in ("/../README.md", "/api/execute", "/api/runs/missing", "/api/runs/private-copied", "/api/runs/generated-record-shaped-source"):
                     with self.assertRaises(HTTPError) as error:
                         urlopen(base + route)
                     self.assertEqual(error.exception.code, 404)

@@ -11,13 +11,15 @@ ROOT = Path(__file__).resolve().parents[1]
 def load_runs(directory):
     runs = {}
     for path in sorted(directory.rglob("*.json")):
-        if "private" in path.relative_to(directory).parts:
+        if {"private", "artifacts"}.intersection(path.relative_to(directory).parts):
             continue
         if path.stat().st_size > 5_000_000:
             continue
         try:
             run = json.loads(path.read_text(encoding="utf-8"))
-            if isinstance(run, dict) and isinstance(run.get("id"), str) and isinstance(run.get("events"), list) and isinstance(run.get("artifacts"), list):
+            if (isinstance(run, dict) and run.get("visibility") != "private"
+                    and isinstance(run.get("id"), str) and isinstance(run.get("events"), list)
+                    and isinstance(run.get("artifacts"), list)):
                 runs[run["id"]] = run
         except (ValueError, OSError):
             continue

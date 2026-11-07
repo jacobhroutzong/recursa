@@ -24,7 +24,7 @@ The source response and token-usage values are controlled fixture data. The pare
 
 ## Remaining gate
 
-The remaining evidence gaps are private Studio replay export, an authorized model run, and model-backed application verification. Public Studio serves CPU replays and progress.
+The remaining evidence gaps are an authorized model run and model-backed application verification. Public Studio serves CPU replays and progress.
 
 
 ## Reviewed specifications
@@ -42,3 +42,10 @@ The container receives the specification, selected model names, and a local tran
 Specifications are limited to 200,000 encoded bytes and result frames to 128 KiB. The run permits up to 64 calls, 32 iterations, and 120 seconds. Browser verification and repair are separate from this runner. Provider responses and container streams remain under the private run directory. Do not publish the output directory.
 
 The offline verification runs a reviewed title-validator specification through an actual container and supervised worker. The host worker intercepts both model requests. A second case confirms that a one-call budget denies the subcall. [Verification record](evidence/reviewed-container-2026-11-07.json)
+
+
+## Open a private replay in Studio
+
+After the runner returns, select **Import run** in Studio and open `private/studio-replay.json` from that run directory. The file is loaded into the browser session. It includes host broker outcomes and budget counters, container policy and cleanup observations, and separately labeled context and subcall claims from the container. The trace is grouped by evidence source and has no event durations. Source remains in the run directory.
+
+The replay omits specification text, messages, endpoint settings, model aliases, provider response bodies, and source contents. The archive excludes private directories, generated artifact directories, and any run marked with private visibility. Fixture replays carry unknown inference provenance and unmeasured functional success. Chromium checks at widths of 1280 and 390 pixels verified file import, trace inspection, unavailable duration display, and browser-only handling. [Container replay verification](evidence/private-replay-2026-11-07.json)
