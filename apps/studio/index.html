@@ -4,39 +4,257 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Recursa Studio · Recursive Application Synthesis</title>
 <style>
-:root{color-scheme:dark;--bg:#09101c;--panel:#101a2a;--panel2:#142033;--line:#24324a;--muted:#99a9c2;--text:#eaf0fa;--cyan:#67e8d5;--indigo:#9cafff;--amber:#f5cc82}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 Inter,Segoe UI,system-ui,sans-serif}button,input,select{font:inherit}button,select,.button{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:8px;padding:9px 13px;cursor:pointer}button:hover,.button:hover{border-color:var(--cyan)}button:disabled{opacity:.45;cursor:default}a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}:focus-visible{outline:2px solid var(--cyan);outline-offset:4px}.shell{max-width:1536px;margin:auto;display:grid;grid-template-columns:228px minmax(0,1fr);min-height:100vh}.sidebar{padding:30px 22px;border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;background:#0c1422}.brand{font-size:24px;letter-spacing:-1px;font-weight:750;display:flex;align-items:center;gap:11px}.mark{border:1px solid #3c716e;color:var(--cyan);border-radius:10px;width:36px;height:36px;display:grid;place-items:center;font-family:monospace}.brand-sub{font-size:10px;color:var(--muted);letter-spacing:2px;margin:6px 0 34px 47px}.nav{display:grid;gap:7px}.nav button{text-align:left;background:none;border-color:transparent;color:var(--muted);display:flex;gap:11px}.nav button.active{background:#19302f;color:var(--cyan);border-color:#25463f}.nav span{width:21px;color:#6f819e}.sidebar-note{margin-top:auto;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:20px}.status-dot{display:inline-block;width:7px;height:7px;background:var(--cyan);border-radius:50%;margin-right:6px}.main{min-width:0}.topbar{height:77px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:0 40px;font-size:12px;color:var(--muted);gap:15px}.topbar strong{color:var(--text);font-weight:500}.topbar-right{display:flex;align-items:center;gap:15px}.tag{font:10px/1.3 ui-monospace,monospace;letter-spacing:.8px;border:1px solid #34465e;border-radius:5px;padding:5px 7px;color:var(--muted);display:inline-block}.tag.cyan{color:var(--cyan);border-color:#315e56;background:#122b29}.tag.amber{color:var(--amber);border-color:#665132;background:#2a241b}.content{padding:38px 40px 50px}.eyebrow{color:var(--cyan);font:11px ui-monospace,monospace;letter-spacing:2px;text-transform:uppercase}.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:28px}h1{font-size:40px;line-height:1.17;letter-spacing:-1.7px;font-weight:650;margin:14px 0}h1 span{color:var(--cyan)}.hero p{max-width:600px;color:var(--muted);margin:0;font-size:14px}.hero-actions{display:flex;gap:9px;flex-shrink:0}.primary{background:var(--cyan);border-color:var(--cyan);color:#08201d;font-weight:650}.notice{padding:13px 17px;border:1px solid #3a4659;border-radius:9px;background:#131e2e;color:#bdc9dc;font-size:12px;margin-bottom:24px}.notice strong{color:var(--amber)}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:26px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px}.stat-label{font-size:11px;color:var(--muted);display:flex;justify-content:space-between}.stat-value{font:27px/1.3 ui-monospace,monospace;margin-top:11px}.stat-note{font-size:10px;color:var(--muted);margin-top:5px}.grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(270px,1fr);gap:20px}.panel{border:1px solid var(--line);border-radius:11px;background:var(--panel);overflow:hidden;margin-bottom:20px}.panel-head{padding:17px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px}.panel-head h2{font-size:13px;font-weight:600;margin:0}.panel-head small{font-size:11px;color:var(--muted)}.panel-body{padding:20px}.run-select{min-width:0;max-width:100%;font-size:12px}.trace-tools{display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid var(--line)}.trace-tools button{padding:5px 9px;font-size:11px}.trace-tools select{font-size:11px;padding:5px 9px;margin-right:auto}.trace-scroll{height:340px;overflow:auto;background-color:#0e1726;background-image:radial-gradient(#26334a 1px,transparent 1px);background-size:18px 18px;padding:24px}.trace-tree{transform-origin:top left;min-width:300px}.node-row{display:flex;align-items:center;position:relative;margin-bottom:12px}.node-row:before{content:'';height:1px;width:17px;background:#3c5770}.trace-node{width:270px;max-width:90%;text-align:left;background:#152237;border:1px solid #33465f;padding:12px 14px;box-shadow:0 4px 18px #0002}.trace-node.selected{border-color:var(--cyan);background:#172e32}.node-type{font:9px ui-monospace,monospace;text-transform:uppercase;letter-spacing:1px;color:var(--cyan)}.node-title{display:block;font-size:12px;margin-top:4px}.node-meta{font:10px ui-monospace,monospace;color:var(--muted);margin-top:5px}.empty{padding:38px 22px;text-align:center;color:var(--muted);font-size:13px}.inspector{min-height:340px}.field{padding:11px 0;border-bottom:1px solid var(--line)}.field:first-child{padding-top:0}.field dt{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}.field dd{margin:4px 0 0;font-size:12px;overflow-wrap:anywhere}.details{white-space:pre-wrap;word-break:break-word;font:11px/1.8 ui-monospace,monospace;color:#b5c9de;max-height:200px;overflow:auto}.artifact-layout{display:grid;grid-template-columns:215px minmax(0,1fr);min-height:290px}.file-tree{border-right:1px solid var(--line);padding:13px 8px;max-height:380px;overflow:auto}.file-button{display:block;text-align:left;width:100%;background:none;border:0;font:11px ui-monospace,monospace;color:var(--muted);word-break:break-all;padding:11px}.file-button.active{background:#1c3044;color:var(--cyan)}.code-wrap{min-width:0;position:relative}pre.code{margin:0;padding:20px;overflow:auto;max-height:380px;min-height:270px;tab-size:2;font:12px/1.8 ui-monospace,Consolas,monospace;color:#c7d7ed}.code-toolbar{padding:9px 15px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;font-size:10px;color:var(--muted)}.code-toolbar button{padding:3px 8px;font-size:10px}.section-title{font-size:25px;letter-spacing:-.7px;margin:0 0 8px}.intro{color:var(--muted);font-size:13px;max-width:800px;margin:0 0 25px}.section[hidden]{display:none}.metric-table{width:100%;border-collapse:collapse;font-size:12px}.metric-table th,.metric-table td{text-align:left;border-bottom:1px solid var(--line);padding:12px 15px}.metric-table th{color:var(--muted);font-weight:400;font-size:10px;letter-spacing:.5px;text-transform:uppercase}.metric-table td:last-child{font-family:ui-monospace,monospace}.method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.method{padding:22px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}.method h3{font-size:14px;margin:12px 0 8px}.method p{font-size:12px;color:var(--muted);margin:0}.method-number{font:11px ui-monospace,monospace;color:var(--cyan)}.flow{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap;margin:24px 0}.flow div{flex:1;min-width:120px;border:1px solid var(--line);border-radius:8px;padding:16px;font-size:12px;background:var(--panel)}.flow b{color:var(--cyan);font-size:10px;display:block;margin-bottom:7px}.research-copy{max-width:850px;color:var(--muted);font-size:13px}.research-copy h3{color:var(--text);font-size:15px;margin-top:27px}.footer{color:#6f819e;font-size:10px;margin-top:25px;display:flex;justify-content:space-between;gap:15px}.error{color:#ffb8b8}.visually-hidden{position:absolute;left:-10000px}.import-label{display:inline-block}.run-info{font-size:11px;color:var(--muted);margin-bottom:15px}.all-runs{display:grid;gap:10px}.run-card{padding:15px;text-align:left;display:flex;justify-content:space-between;gap:12px}.run-card small{display:block;color:var(--muted);font-size:10px;margin-top:5px}.loading{color:var(--muted)}
-@media(min-width:1500px){h1{font-size:45px}}@media(max-width:1100px){.shell{grid-template-columns:190px minmax(0,1fr)}.sidebar{padding:26px 15px}.content{padding:28px 25px}.topbar{padding:0 25px}.hero{align-items:flex-start;flex-direction:column;gap:20px}.grid{grid-template-columns:minmax(0,1fr)}.inspector{min-height:150px}.method-grid{grid-template-columns:1fr}}@media(max-width:700px){.shell{display:block}.sidebar{position:static;height:auto;padding:15px;border-right:0;border-bottom:1px solid var(--line)}.brand{font-size:20px}.brand-sub,.sidebar-note{display:none}.nav{display:flex;overflow:auto;gap:3px;margin-top:13px}.nav button{white-space:nowrap;font-size:11px;padding:7px 9px}.nav span{display:none}.topbar{height:58px;padding:0 18px}.topbar-right .tag{display:none}.content{padding:25px 17px}h1{font-size:34px}.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat{padding:13px}.stat-value{font-size:23px}.artifact-layout{grid-template-columns:1fr}.file-tree{border-right:0;border-bottom:1px solid var(--line);max-height:120px}.file-button{padding:8px}.panel-head{padding:14px}.panel-head small{display:none}.hero-actions{flex-wrap:wrap}.footer{display:block}.topbar strong{font-size:11px}.trace-scroll{padding:18px}.metric-table th,.metric-table td{padding:10px 8px;font-size:10px}.tag{font-size:9px}}
+:root {
+  color-scheme: dark;
+  --bg:#0c1018; --panel:#131a25; --panel2:#1a2331; --line:#293547;
+  --muted:#a1aec2; --text:#f0f4fb; --cyan:#77e7d4; --indigo:#aab7ff; --amber:#f6ce89;
+  --mono:ui-monospace,Consolas,monospace;
+}
+* { box-sizing:border-box }
+body { margin:0; background:var(--bg); color:var(--text); font:15px/1.6 "Segoe UI",system-ui,sans-serif }
+button,input,select { font:inherit }
+button,select,.button { border:1px solid var(--line); background:var(--panel2); color:var(--text); border-radius:8px; padding:8px 13px; cursor:pointer }
+button:hover,.button:hover { border-color:#658496; background:#222e3e }
+button:disabled { opacity:.48; cursor:default }
+a { color:var(--cyan); text-decoration:none }
+a:hover { text-decoration:underline }
+:focus-visible { outline:2px solid var(--cyan); outline-offset:3px }
+[hidden] { display:none!important }
+.shell { max-width:1660px; margin:auto; display:grid; grid-template-columns:216px minmax(0,1fr); min-height:100vh }
+.sidebar { padding:26px 16px; border-right:1px solid var(--line); display:flex; flex-direction:column; position:sticky; top:0; height:100dvh; background:#101620 }
+.brand { color:var(--text); font-size:22px; font-weight:750; letter-spacing:-.9px; display:flex; align-items:center; gap:10px; padding:0 8px }
+.brand:hover { text-decoration:none }
+.mark { width:36px; height:36px; display:grid; place-items:center; border:1px solid #365b61; border-radius:9px; background:#172d33; color:var(--cyan) }
+.mark svg { width:20px; height:20px }
+.brand-sub { margin:6px 0 34px 54px; color:var(--muted); font:9px var(--mono); letter-spacing:1.55px }
+.nav { display:grid; gap:5px }
+.nav button { text-align:left; background:transparent; border-color:transparent; color:var(--muted); display:flex; align-items:center; gap:9px; font-size:13px; white-space:nowrap }
+.nav button:hover { background:#1a2331; color:var(--text) }
+.nav button.active { background:#192e35; color:var(--cyan); border-color:#2e4852 }
+.nav button span { width:16px; text-align:center; color:var(--indigo) }
+.sidebar-note { margin-top:auto; padding:18px 8px 0; border-top:1px solid var(--line); font-size:12px; color:var(--muted) }
+.status-dot { display:inline-block; width:7px; height:7px; background:var(--cyan); border-radius:50%; margin-right:6px }
+.main { min-width:0 }
+.topbar { min-height:65px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; padding:10px clamp(18px,3vw,42px); gap:10px; font-size:12px; color:var(--muted) }
+.topbar strong { color:var(--text); font-weight:600 }
+.topbar-right { display:flex; align-items:center; gap:12px }
+.tag,.eyebrow { font:10px/1.4 var(--mono); letter-spacing:1.2px; text-transform:uppercase }
+.tag { border:1px solid #354357; border-radius:5px; padding:5px 8px; color:#bbc8da; display:inline-block }
+.tag.cyan { color:var(--cyan); border-color:#315e56; background:#142a2b }
+.tag.amber { color:var(--amber); border-color:#665132; background:#292318 }
+.eyebrow { color:var(--cyan) }
+.content { padding:28px clamp(18px,3vw,42px) 42px }
+.hero { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr); align-items:center; min-height:360px; margin-bottom:20px; border:1px solid #314155; border-radius:16px; overflow:hidden; background:#141d2a }
+.hero-copy { padding:clamp(25px,4vw,56px) }
+h1 { font-size:clamp(38px,4.4vw,70px); line-height:1.02; letter-spacing:-.06em; font-weight:700; margin:17px 0 20px }
+h1 span { color:var(--cyan) }
+.hero p { max-width:490px; color:#bdc9db; margin:0; font-size:15px }
+.hero-actions { display:flex; flex-wrap:wrap; align-items:center; gap:9px; margin-top:25px }
+.primary { background:var(--cyan); border-color:var(--cyan); color:#102523; font-weight:700 }
+.primary:hover { background:#b0f6e9; color:#102523 }
+.hero-map { min-width:0; align-self:stretch; display:grid; align-content:center; padding:22px; border-left:1px solid #314155; background-color:#111a27; background-image:linear-gradient(#26334660 1px,transparent 1px),linear-gradient(90deg,#26334660 1px,transparent 1px); background-size:24px 24px }
+.hero-map svg { width:100%; height:auto; max-height:315px }
+.map-caption { text-align:center; font:10px var(--mono); letter-spacing:1.1px; color:#acbad0; margin:4px 0 0 }
+.notice { padding:10px 14px; border:1px solid #334155; border-radius:9px; background:#172130; color:#c0ccdd; font-size:12px; margin-bottom:15px; overflow-wrap:anywhere }
+.notice strong { color:var(--cyan) }
+#release-notice button { padding:3px 8px; margin-left:5px; font-size:11px }
+.stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:20px 0 }
+.stat { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:15px 17px; min-width:0 }
+.stat-label { display:flex; justify-content:space-between; gap:5px; color:var(--muted); font:10px/1.4 var(--mono); letter-spacing:.6px }
+.stat-label > span:last-child { color:var(--indigo) }
+.stat-value { font:26px/1.25 var(--mono); margin-top:8px; overflow-wrap:anywhere }
+.stat-note { font-size:11px; color:var(--muted); margin-top:4px }
+.grid { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(250px,1fr); gap:16px }
+#view-execution .grid { align-items:start }
+.panel { min-width:0; border:1px solid var(--line); border-radius:12px; background:var(--panel); overflow:hidden; margin-bottom:16px }
+.panel-head { padding:14px 17px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:8px }
+.panel-head h2 { font-size:14px; margin:0 }
+.panel-head small { font-size:11px; color:var(--muted) }
+.panel-body { padding:17px }
+.run-select { min-width:0; max-width:100%; font-size:13px }
+.trace-tools { display:flex; gap:6px; align-items:center; flex-wrap:wrap; padding:10px 13px; border-bottom:1px solid var(--line) }
+.trace-tools button,.trace-tools select { min-height:35px; padding:5px 9px; font-size:12px }
+.trace-tools select { margin-right:auto; max-width:100% }
+.trace-scroll { height:390px; overflow:auto; background-color:#101824; background-image:radial-gradient(#344155 1px,transparent 1px); background-size:19px 19px; padding:16px }
+.trace-tree { transform-origin:top left; width:max-content; min-width:100% }
+.node-row { display:flex; align-items:center; margin:0 0 8px; min-width:0; position:relative; padding-left:30px }
+.node-row:before { content:''; position:absolute; left:16px; width:13px; border-top:1px solid #6a859b }
+.node-row.root:before,.node-row:has(.branch-toggle):before { display:none }
+.trace-node { width:clamp(175px,26vw,300px); text-align:left; background:#192635; border:1px solid #3a4c63; padding:9px 12px; overflow-wrap:anywhere }
+.trace-node.selected { border-color:var(--cyan); background:#1b343a }
+.trace-node[data-status="failed"],.trace-node[data-status="denied"] { border-left:3px solid var(--amber) }
+.branch-toggle { position:absolute; left:0; width:24px; padding:3px; font:14px var(--mono) }
+.node-type { font:9px var(--mono); text-transform:uppercase; letter-spacing:1px; color:var(--cyan) }
+.node-title { display:block; font-size:13px; margin-top:3px }
+.node-meta { font:10px var(--mono); color:var(--muted); margin-top:4px }
+.empty { padding:26px 14px; text-align:center; color:var(--muted); font-size:13px }
+.inspector { min-height:340px }
+.inspector dl { margin:0 }
+.field { padding:9px 0; border-bottom:1px solid var(--line) }
+.field:first-child { padding-top:0 }
+.field:last-child { border-bottom:0 }
+.field dt { font:10px var(--mono); color:var(--muted); text-transform:uppercase; letter-spacing:.7px }
+.field dd { margin:4px 0 0; font-size:13px; overflow-wrap:anywhere }
+.details { white-space:pre-wrap; font:12px/1.65 var(--mono); color:#c9d8ec; max-height:250px; overflow:auto }
+.artifact-layout { display:grid; grid-template-columns:minmax(140px,210px) minmax(0,1fr); min-height:280px }
+.file-tree { border-right:1px solid var(--line); padding:8px; max-height:400px; overflow:auto }
+.file-button { display:block; text-align:left; width:100%; background:none; border-color:transparent; font:12px var(--mono); color:#c3cde0; overflow-wrap:anywhere; padding:10px }
+.file-button.active { background:#19323b; color:var(--cyan) }
+.code-wrap { min-width:0 }
+pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:250px; tab-size:2; font:12px/1.75 var(--mono); color:#cbdcf2 }
+.code-toolbar { padding:9px 13px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:8px; align-items:center; font:11px var(--mono); color:var(--muted) }
+.code-toolbar span { overflow-wrap:anywhere }
+.section-title { font-size:clamp(25px,3vw,39px); letter-spacing:-.04em; margin:0 0 7px }
+.intro { color:var(--muted); font-size:14px; max-width:730px; margin:0 0 17px }
+.metric-table { width:100%; border-collapse:collapse; font-size:13px; overflow-wrap:anywhere }
+.metric-table th,.metric-table td { text-align:left; border-bottom:1px solid var(--line); padding:10px 14px }
+.metric-table th { color:var(--muted); font:10px var(--mono); letter-spacing:.5px; text-transform:uppercase }
+.metric-table tr:last-child td { border-bottom:0 }
+.method-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px }
+.method { padding:16px; border:1px solid var(--line); border-radius:10px; background:var(--panel) }
+.method h3 { font-size:15px; margin:7px 0 }
+.method p,.research-copy { font-size:13px; color:var(--muted); margin:0 }
+.method-number { font:10px var(--mono); color:var(--cyan) }
+.flow { display:flex; gap:8px; align-items:stretch; flex-wrap:wrap; margin:17px 0 }
+.flow div { flex:1; min-width:120px; border:1px solid var(--line); border-radius:8px; padding:12px; font-size:12px; background:#192432 }
+.flow b { color:var(--cyan); font:10px var(--mono); display:block; margin-bottom:5px }
+.research-copy h3 { color:var(--text); font-size:15px; margin-top:22px }
+.footer { color:var(--muted); font:10px var(--mono); margin-top:25px; display:flex; justify-content:space-between; gap:10px; padding-top:13px; border-top:1px solid var(--line) }
+.error { color:#ffb8b8 }
+.visually-hidden { position:absolute; width:1px; height:1px; padding:0; margin:-1px; clip-path:inset(50%); overflow:hidden; white-space:nowrap }
+.run-info { display:flex; gap:8px; align-items:center; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-bottom:13px }
+.all-runs { display:grid; gap:8px }
+.run-card { padding:12px; text-align:left; display:flex; justify-content:space-between; gap:8px; overflow-wrap:anywhere }
+.run-card small { display:block; color:var(--muted); font-size:11px; margin-top:3px }
+.loading { color:var(--muted) }
+@media(max-width:1020px) {
+  .shell { grid-template-columns:182px minmax(0,1fr) }
+  .grid { grid-template-columns:minmax(0,1fr) }
+  .hero-copy { padding:27px }
+  .hero-map { padding:12px }
+  .inspector { min-height:0 }
+}
+@media(max-width:720px) {
+  .shell { display:block }
+  .sidebar { position:static; height:auto; padding:12px 14px; border-right:0; border-bottom:1px solid var(--line) }
+  .brand-sub,.sidebar-note,.topbar-right .tag { display:none }
+  .nav { display:flex; overflow:auto; margin-top:9px; position:relative }
+  .nav button { padding:7px 9px; font-size:12px }
+  .nav button span { display:none }
+  .topbar { min-height:48px }
+  .content { padding-top:17px }
+  .hero { grid-template-columns:minmax(0,1fr) }
+  .hero-copy { padding:24px }
+  .hero-map { border-left:0; border-top:1px solid #314155; padding:12px }
+  .hero-map svg { max-height:210px }
+  .stats { grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px }
+  .stat { padding:11px }
+  .stat-value { font-size:21px }
+  .artifact-layout,.method-grid { grid-template-columns:minmax(0,1fr) }
+  .file-tree { border-right:0; border-bottom:1px solid var(--line); max-height:135px }
+  .trace-scroll { height:315px }
+  .footer { flex-wrap:wrap }
+}
 </style>
 </head>
 <body>
-<div class="shell"><aside class="sidebar"><a class="brand" href="#overview" aria-label="Recursa Studio overview"><span class="mark">⌘</span>recursa<span style="color:var(--cyan)">.</span></a><div class="brand-sub">SYNTHESIS STUDIO</div><nav class="nav" aria-label="Studio sections"><button class="active" data-view="overview"><span>◈</span>Overview</button><button data-view="execution"><span>⌘</span>Execution explorer</button><button data-view="artifacts"><span>▤</span>Generated artifacts</button><button data-view="benchmarks"><span>▥</span>Benchmarks</button><button data-view="research"><span>◇</span>Research & architecture</button></nav><div class="sidebar-note"><span class="status-dot"></span> CPU-first · local & replay<br><br>Evidence before claims.<br>Every graph begins with a saved trace.</div></aside>
-<main class="main"><header class="topbar"><div>Workspace <span style="padding:0 10px;color:#43506a">/</span> <strong id="breadcrumb">Overview</strong></div><div class="topbar-right"><span class="tag">RESEARCH PREVIEW</span><a href="https://arxiv.org/abs/2512.24601" target="_blank" rel="noopener">Read the paper ↗</a></div></header>
-<div class="content"><section class="hero"><div><div class="eyebrow">Recursive Application Synthesis</div><h1>Build beyond the<br><span>context window.</span></h1><p>Explore how executable context, focused model calls, and verification can turn connected specifications into software. Inspect the evidence at every step.</p></div><div class="hero-actions"><button class="primary" id="explore">Explore execution ↗</button><label class="button import-label" for="import-run">Import run</label><input id="import-run" type="file" accept="application/json,.json" class="visually-hidden"></div></section>
+<div class="shell"><aside class="sidebar"><a class="brand" href="#overview" aria-label="Recursa Studio overview"><span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 4v6m-7 5v-3h14v3"/><circle cx="12" cy="4" r="2"/><rect x="2" y="15" width="6" height="6" rx="1"/><rect x="16" y="15" width="6" height="6" rx="1"/></svg></span>recursa<span style="color:var(--cyan)">.</span></a><div class="brand-sub">SYNTHESIS STUDIO</div><nav class="nav" aria-label="Studio sections"><button class="active" data-view="overview"><span>◈</span>Overview</button><button data-view="execution"><span>⌘</span>Execution explorer</button><button data-view="artifacts"><span>▤</span>Generated artifacts</button><button data-view="benchmarks"><span>▥</span>Benchmarks</button><button data-view="research"><span>◇</span>Research & architecture</button></nav><div class="sidebar-note"><span class="status-dot"></span> CPU-first · local & replay<br><br>Evidence before claims.<br>Every graph begins with a saved trace.</div></aside>
+<main class="main"><header class="topbar"><div>Workspace <span style="padding:0 10px;color:#43506a">/</span> <strong id="breadcrumb">Overview</strong></div><div class="topbar-right"><span class="tag">RESEARCH PREVIEW</span><button id="import-button" type="button">Import run</button><input id="import-run" type="file" accept="application/json,.json" hidden><a href="https://github.com/jacobhroutzong/recursa" target="_blank" rel="noopener">Source ↗</a></div></header>
+<div class="content">
+<section class="hero" id="overview-hero" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <div class="eyebrow">Research workspace / 01</div>
+    <h1 id="hero-title">Build beyond the<br><span>context window.</span></h1>
+    <p>Recursa studies how models can inspect large specifications, delegate focused tasks, and leave a trace you can verify.</p>
+    <div class="hero-actions">
+      <button class="primary" id="explore">Explore an execution ↗</button>
+      <button data-view="artifacts">Inspect source</button>
+      <button data-view="benchmarks">Compare methods</button>
+    </div>
+  </div>
+  <div class="hero-map">
+    <svg viewBox="0 0 428 276" role="img" aria-labelledby="map-title">
+      <title id="map-title">Architecture diagram showing a controller inspecting a specification, delegating a focused call, and producing a checked artifact</title>
+      <g fill="none" stroke="#56718b" stroke-width="1.4">
+        <path d="M214 66v31M214 151v22H104v21M214 173h110v21"/>
+        <path d="M209 89l5 6 5-6M99 186l5 6 5-6M319 186l5 6 5-6"/>
+        <path d="M178 219h72" stroke-dasharray="4 4"/>
+      </g>
+      <g fill="#172333" stroke="#405871">
+        <rect x="141" y="17" width="146" height="48" rx="8"/>
+        <rect x="30" y="194" width="148" height="50" rx="8"/>
+        <rect x="250" y="194" width="148" height="50" rx="8"/>
+      </g>
+      <rect x="128" y="97" width="172" height="54" rx="9" fill="#1b353c" stroke="#77e7d4"/>
+      <g text-anchor="middle" font-family="Consolas,monospace" font-size="10" letter-spacing="1.1" fill="#aab7ff">
+        <text x="214" y="35">01 / INPUT</text><text x="214" y="117" fill="#77e7d4">02 / CONTROL</text>
+        <text x="104" y="213">03 / DELEGATE</text><text x="324" y="213">04 / VERIFY</text>
+      </g>
+      <g text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="15" font-weight="600" fill="#f0f4fb">
+        <text x="214" y="54">Specification</text><text x="214" y="139">Inspect context</text>
+        <text x="104" y="232">Focused call</text><text x="324" y="232">Check source</text>
+      </g>
+    </svg>
+    <div class="map-caption">SYSTEM MAP · DESIGN OVERVIEW</div>
+  </div>
+</section>
 <div class="notice" id="evidence-notice" role="status"><strong>Loading local evidence.</strong> Connecting to the run archive…</div>
 <div class="notice" id="release-notice" role="status">Loading published development progress…</div>
 <div class="stats"><div class="stat"><div class="stat-label"><span id="stat-calls-label">MODEL CALLS</span><span>↗</span></div><div class="stat-value" id="stat-calls">—</div><div class="stat-note">Recorded calls in selected run</div></div><div class="stat"><div class="stat-label">ARTIFACTS <span>▤</span></div><div class="stat-value" id="stat-artifacts">—</div><div class="stat-note" id="stat-artifacts-note">Inspectable source files</div></div><div class="stat"><div class="stat-label">DURATION <span>◷</span></div><div class="stat-value" id="stat-duration">—</div><div class="stat-note">Measured wall-clock time</div></div><div class="stat"><div class="stat-label">EXECUTION MODE <span>◇</span></div><div class="stat-value" id="stat-mode" style="font-size:18px">—</div><div class="stat-note">Always labeled by provenance</div></div></div>
-<section class="section" id="view-overview"><div class="grid"><div><div class="panel"><div class="panel-head"><h2>Execution archive</h2><span class="tag cyan">LOCAL EVIDENCE</span></div><div class="panel-body"><p class="intro">Select a recorded run to inspect its execution relationships, artifacts, and measurements.</p><div id="run-cards" class="all-runs"><div class="loading">Loading saved runs…</div></div></div></div><div class="panel"><div class="panel-head"><h2>Designed for transparent research</h2><small>Three distinct comparison conditions</small></div><div class="panel-body"><div class="research-copy">Direct inference establishes a conventional baseline. A structured, nonrecursive workflow tests the value of decomposition. RLM execution adds programmatic inspection and actual model-backed recursion. Improvements must be measured under comparable budgets.</div></div></div></div><div class="panel"><div class="panel-head"><h2>The execution model</h2><span class="tag">RLM</span></div><div class="panel-body"><div class="flow" style="flex-direction:column;margin:0"><div><b>01 / EXTERNAL CONTEXT</b>Specifications stay outside the root conversation.</div><div><b>02 / PROGRAMMATIC INSPECTION</b>The controller selects relevant context using Python.</div><div><b>03 / FOCUSED INFERENCE</b>Real sub-model calls produce bounded outputs.</div><div><b>04 / VERIFIED ARTIFACTS</b>Saved code, diagnostics, and traces make results inspectable.</div></div></div></div></div></section>
-<section class="section" id="view-execution" hidden><h2 class="section-title">Follow the execution.</h2><p class="intro">Select a node to inspect recorded context, timing, and outputs. Parent relationships come directly from saved events.</p><div class="run-info"><label for="run-select">Recorded run </label><select class="run-select" id="run-select" aria-label="Select recorded run"></select></div><div class="grid"><div class="panel"><div class="panel-head"><h2>Execution graph</h2><span class="tag" id="trace-count">0 EVENTS</span></div><div class="trace-tools"><label class="visually-hidden" for="event-filter">Filter event type</label><select id="event-filter"><option value="all">All event types</option></select><button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-reset">Reset</button><button id="step-back" aria-label="Previous event">←</button><button id="step-next" aria-label="Next event">→</button></div><div class="trace-scroll" id="trace-scroll"><div class="trace-tree" id="trace-tree"></div></div></div><div class="panel"><div class="panel-head"><h2>Node inspector</h2><small>Recorded evidence</small></div><div class="panel-body inspector" id="inspector"><div class="empty">Select an execution node.</div></div></div></div></section>
-<section class="section" id="view-artifacts" hidden><h2 class="section-title">Inspect the output.</h2><p class="intro">Read and export saved artifacts. Source is displayed as text; imported code is never executed in Studio.</p><div class="panel"><div class="panel-head"><h2>Artifact explorer</h2><span class="tag" id="artifact-count">0 FILES</span></div><div class="artifact-layout"><div class="file-tree" id="file-tree"></div><div class="code-wrap"><div class="code-toolbar"><span id="file-path">Select a file</span><button id="download-file" disabled>Download source ↓</button></div><pre class="code"><code id="source-code">No artifact selected.</code></pre></div></div></div><div class="notice">Preview isolation is required before running generated applications. This source explorer intentionally renders artifact contents as inert text.</div></section>
-<section class="section" id="view-benchmarks" hidden><h2 class="section-title">Measure. Then compare.</h2><p class="intro">Only values present in the selected run are shown. CPU smoke checks establish infrastructure behavior; they do not establish model quality or RLM superiority.</p><div class="panel"><div class="panel-head"><h2>Selected run measurements</h2><span class="tag amber">NO INFERRED RESULTS</span></div><div style="overflow:auto"><table class="metric-table"><thead><tr><th>Metric</th><th>Recorded value</th></tr></thead><tbody id="metrics-table"></tbody></table></div></div><div class="method-grid"><article class="method"><div class="method-number">A / DIRECT LLM</div><h3>Conventional generation</h3><p>Provide the specification to one model-driven workflow. Record context limits and actual validation outcomes.</p></article><article class="method"><div class="method-number">B / STRUCTURED WORKFLOW</div><h3>Nonrecursive decomposition</h3><p>Use dependency-aware generation and verification without a recursive RLM controller.</p></article><article class="method"><div class="method-number">C / RECURSIVE LANGUAGE MODEL</div><h3>Externalized context</h3><p>Measure adaptive inspection and model-backed recursive calls using the same inputs and explicit budgets.</p></article></div><div class="notice" style="margin-top:20px">Comparative conclusions require genuine completed runs, comparable models and budgets, independently checkable requirements, and repeated trials. No comparative improvement is claimed here.</div></section>
+<section class="section" id="view-overview"><div class="grid"><div><div class="panel"><div class="panel-head"><h2>Execution archive</h2><span class="tag cyan">RECORDED RUNS</span></div><div class="panel-body"><p class="intro">Select a recorded run to inspect its execution relationships, artifacts, and measurements.</p><div id="run-cards" class="all-runs"><div class="loading">Loading saved runs…</div></div></div></div><div class="panel"><div class="panel-head"><h2>Designed for transparent research</h2><small>Three distinct comparison conditions</small></div><div class="panel-body"><div class="research-copy">Direct inference establishes a conventional baseline. A structured, nonrecursive workflow tests the value of decomposition. RLM execution adds programmatic inspection and actual model-backed recursion. Improvements must be measured under comparable budgets.</div></div></div></div><div class="panel"><div class="panel-head"><h2>The execution model</h2><span class="tag">RLM</span></div><div class="panel-body"><div class="flow" style="flex-direction:column;margin:0"><div><b>01 / EXTERNAL CONTEXT</b>Specifications stay outside the root conversation.</div><div><b>02 / PROGRAMMATIC INSPECTION</b>The controller selects relevant context using Python.</div><div><b>03 / FOCUSED INFERENCE</b>Real sub-model calls produce bounded outputs.</div><div><b>04 / VERIFIED ARTIFACTS</b>Saved code, diagnostics, and traces make results inspectable.</div></div></div></div></div></section>
+<section class="section" id="view-execution" hidden><h2 class="section-title">Execution explorer</h2><p class="intro">Select a node to inspect recorded context, timing, and outputs. Parent relationships come directly from saved events.</p><div class="run-info"><label for="run-select">Recorded run </label><select class="run-select" id="run-select" aria-label="Select recorded run"></select></div><div class="grid"><div class="panel"><div class="panel-head"><h2>Execution graph</h2><span class="tag" id="trace-count">0 EVENTS</span></div><div class="trace-tools"><label class="visually-hidden" for="event-filter">Filter event type</label><select id="event-filter"><option value="all">All event types</option></select><button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-reset" aria-label="Reset zoom">100%</button><button id="expand-all" disabled>Expand branches</button><button id="step-back" aria-label="Previous event">←</button><button id="step-next" aria-label="Next event">→</button></div><div class="trace-scroll" id="trace-scroll" tabindex="0" role="region" aria-label="Scrollable execution graph"><div class="trace-tree" id="trace-tree"></div></div></div><div class="panel"><div class="panel-head"><h2>Node inspector</h2><small>Recorded evidence</small></div><div class="panel-body inspector" id="inspector"><div class="empty">Select an execution node.</div></div></div></div></section>
+<section class="section" id="view-artifacts" hidden><h2 class="section-title">Artifact explorer</h2><p class="intro">Read and export saved artifacts. Source is displayed as text; imported code is never executed in Studio.</p><div class="panel"><div class="panel-head"><h2>Artifact explorer</h2><span class="tag" id="artifact-count">0 FILES</span></div><div class="artifact-layout"><div class="file-tree" id="file-tree"></div><div class="code-wrap"><div class="code-toolbar"><span id="file-path">Select a file</span><button id="download-file" disabled>Download source ↓</button></div><pre class="code"><code id="source-code">No artifact selected.</code></pre></div></div></div><div class="notice">Preview isolation is required before running generated applications. This source explorer intentionally renders artifact contents as inert text.</div></section>
+<section class="section" id="view-benchmarks" hidden><h2 class="section-title">Benchmarks</h2><p class="intro">Only values present in the selected run are shown. CPU smoke checks establish infrastructure behavior; they do not establish model quality or RLM superiority.</p><div class="panel"><div class="panel-head"><h2>Selected run measurements</h2><span class="tag amber">NO INFERRED RESULTS</span></div><div style="overflow:auto"><table class="metric-table"><thead><tr><th>Metric</th><th>Recorded value</th></tr></thead><tbody id="metrics-table"></tbody></table></div></div><div class="method-grid"><article class="method"><div class="method-number">A / DIRECT LLM</div><h3>Conventional generation</h3><p>Provide the specification to one model-driven workflow. Record context limits and actual validation outcomes.</p></article><article class="method"><div class="method-number">B / STRUCTURED WORKFLOW</div><h3>Nonrecursive decomposition</h3><p>Use dependency-aware generation and verification without a recursive RLM controller.</p></article><article class="method"><div class="method-number">C / RECURSIVE LANGUAGE MODEL</div><h3>Externalized context</h3><p>Measure adaptive inspection and model-backed recursive calls using the same inputs and explicit budgets.</p></article></div><div class="notice" style="margin-top:20px">Comparative conclusions require genuine completed runs, comparable models and budgets, independently checkable requirements, and repeated trials. No comparative improvement is claimed here.</div></section>
 <section class="section" id="view-research" hidden><h2 class="section-title">Context is an environment.</h2><p class="intro">Recursa applies Recursive Language Models to application synthesis. The research question is whether programmatic inspection helps preserve connected requirements as specifications grow.</p><div class="flow"><div><b>SPECIFICATION</b>Stable requirement IDs<br>Typed dependencies</div><div><b>RLM CONTROLLER</b>Python inspection<br>Adaptive model calls</div><div><b>ARTIFACT REGISTRY</b>Source and provenance<br>Dependency contracts</div><div><b>VERIFICATION</b>Tests and diagnostics<br>Bounded repair</div><div><b>STUDIO</b>Recorded traces<br>Inspectable evidence</div></div><div class="panel"><div class="panel-body research-copy"><h3 style="margin-top:0">The original method</h3><p>Recursive Language Models, by Alex L. Zhang, Tim Kraska, and Omar Khattab, let a model interact programmatically with external context and invoke sub-models. Recursa builds an application synthesis workflow around that idea; it does not claim authorship of RLMs.</p><p><a href="https://arxiv.org/abs/2512.24601" target="_blank" rel="noopener">Read the research paper ↗</a> · <a href="https://github.com/alexzhang13/rlm" target="_blank" rel="noopener">Explore the upstream runtime ↗</a></p><h3>Architectural honesty</h3><p>Deterministic parsing, orchestration, and verification are distinct from model inference. A graph is evidence of RLM behavior only when it records genuine context inspection and model-backed calls. Local smoke runs are labeled accordingly.</p><h3>Compute strategy</h3><p>Develop locally on CPU whenever practical. Public demonstrations use recorded runs without visitor API keys. Optional live experiments require explicit budgets. Substantial accelerator workloads should use the owner's existing Colab allocation; Hugging Face Pro is not assumed to include dedicated GPU hardware.</p><h3>What remains to be established</h3><p>Compilation alone does not prove functional correctness. Requirement satisfaction, interaction tests, actual token usage, execution time, and comparable baseline results are needed before drawing research conclusions. The benefit of recursion is a hypothesis to evaluate.</p></div></div></section>
-<section class="section" id="view-progress" hidden><h2 class="section-title">Build progress.</h2><p class="intro">The ordered 1–21 implementation record, updated with each published release. This view checks for updates every 15 seconds while visible. It does not stream private engineering sessions or live model inference.</p><div class="notice" id="progress-summary">Loading release evidence…</div><div class="panel"><div class="panel-head"><h2>Implementation and verification</h2><a href="https://github.com/jacobhroutzong/recursa" target="_blank" rel="noopener">View source ↗</a></div><div style="overflow:auto"><table class="metric-table"><thead><tr><th>Section</th><th>Status</th><th>Evidence and remaining work</th></tr></thead><tbody id="progress-rows"></tbody></table></div></div></section>
+<section class="section" id="view-progress" hidden><h2 class="section-title">Build progress</h2><p class="intro">The ordered 1–21 implementation record, updated with each published release. This view checks for updates every 15 seconds while visible. It does not stream private engineering sessions or live model inference.</p><div class="notice" id="progress-summary">Loading release evidence…</div><div class="panel"><div class="panel-head"><h2>Implementation and verification</h2><a href="https://github.com/jacobhroutzong/recursa" target="_blank" rel="noopener">View source ↗</a></div><div style="overflow:auto"><table class="metric-table"><thead><tr><th>Section</th><th>Status</th><th>Evidence and remaining work</th></tr></thead><tbody id="progress-rows"></tbody></table></div></div></section>
 <footer class="footer"><span>RECURSA STUDIO / Recursive Application Synthesis</span><span>Recorded evidence · CPU-first demonstration · No public inference endpoint</span></footer>
 </div></main></div>
 <script>
 'use strict';
-const $=id=>document.getElementById(id);let runs=[],run=null,selectedEvent=-1,selectedArtifact=null,zoom=1;const titles={overview:'Overview',execution:'Execution explorer',artifacts:'Generated artifacts',benchmarks:'Benchmarks',research:'Research & architecture',progress:'Build progress'};
+const $=id=>document.getElementById(id);let runs=[],run=null,selectedEvent=-1,selectedArtifact=null,zoom=1,loadVersion=0;
+const collapsed=new Set();const titles={overview:'Overview',execution:'Execution explorer',artifacts:'Generated artifacts',benchmarks:'Benchmarks',research:'Research & architecture',progress:'Build progress'};
 function element(tag,text,className){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e}
 const progressButton=element('button','Build progress');progressButton.dataset.view='progress';document.querySelector('.nav').append(progressButton);
-function showView(view){if(!titles[view])view='overview';document.querySelectorAll('.section').forEach(e=>e.hidden=e.id!=='view-'+view);document.querySelectorAll('[data-view]').forEach(e=>e.classList.toggle('active',e.dataset.view===view));$('breadcrumb').textContent=titles[view];location.hash=view}
-document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));$('explore').addEventListener('click',()=>showView('execution'));window.addEventListener('hashchange',()=>showView(location.hash.slice(1)));showView(location.hash.slice(1)||'overview');
+function showView(view){
+  if(!Object.hasOwn(titles,view))view='overview';
+  document.querySelectorAll('.section').forEach(section=>section.hidden=section.id!=='view-'+view);
+  document.querySelectorAll('.nav [data-view]').forEach(button=>{
+    const active=button.dataset.view===view;
+    button.classList.toggle('active',active);
+    if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');
+  });
+  $('overview-hero').hidden=view!=='overview';
+  document.querySelector('.stats').hidden=!['overview','execution'].includes(view);
+  $('release-notice').hidden=!['overview','progress'].includes(view);
+  $('breadcrumb').textContent=titles[view];
+  if(location.hash!=='#'+view)location.hash=view;
+  const active=document.querySelector('.nav [aria-current="page"]');
+  if(active&&matchMedia('(max-width:720px)').matches){
+    const nav=active.parentElement;
+    if(active.offsetLeft<nav.scrollLeft||active.offsetLeft+active.offsetWidth>nav.scrollLeft+nav.clientWidth){
+      nav.scrollLeft=active.offsetLeft;
+    }
+  }
+}
+document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>showView(button.dataset.view)));
+$('explore').addEventListener('click',()=>showView('execution'));
+$('import-button').addEventListener('click',()=>$('import-run').click());
+window.addEventListener('hashchange',()=>showView(location.hash.slice(1)));
+showView(location.hash.slice(1)||'overview');
 function format(v){if(v===null||v===undefined)return 'Not recorded';return typeof v==='object'?JSON.stringify(v,null,2):String(v)}
-function duration(ms){return ms!=null&&Number.isFinite(Number(ms))?(Number(ms)<1000?Number(ms).toFixed(0)+' ms':(Number(ms)/1000).toFixed(2)+' s'):'—'}
+function duration(ms){return ms!=null&&Number.isFinite(Number(ms))?(Number(ms)<1000?(Number(ms)>0&&Number(ms)<1?'<1 ms':Number(ms).toFixed(0)+' ms'):(Number(ms)/1000).toFixed(2)+' s'):'—'}
 function clear(e){e.replaceChildren()}
-function normalize(data){if(!data||typeof data!=='object'||Array.isArray(data))throw Error('Expected a run object.');if(!data.id)throw Error('Run must include an id.');if(!Array.isArray(data.events)||!Array.isArray(data.artifacts))throw Error('Run must include events and artifacts arrays.');if(data.events.length>2000||data.artifacts.length>1000)throw Error('Run exceeds the Studio display limit.');return {...data,metrics:data.metrics&&typeof data.metrics==='object'?data.metrics:{}}}
+function normalize(data){if(!data||typeof data!=='object'||Array.isArray(data))throw Error('Expected a run object.');if(!data.id)throw Error('Run must include an id.');if(!Array.isArray(data.events)||!Array.isArray(data.artifacts)||[...data.events,...data.artifacts].some(entry=>!entry||typeof entry!=='object'||Array.isArray(entry)))throw Error('Run must include events and artifacts arrays.');if(data.events.length>2000||data.artifacts.length>1000)throw Error('Run exceeds the Studio display limit.');return {...data,metrics:data.metrics&&typeof data.metrics==='object'?data.metrics:{}}}
 function renderArchive(){clear($('run-cards'));clear($('run-select'));runs.forEach(r=>{const opt=element('option',r.label||r.id);opt.value=r.id;$('run-select').append(opt);const b=element('button',undefined,'run-card');const title=element('div',r.label||r.id);title.append(element('small',(r.mode||'recorded')+' · '+(r.status||'status not recorded')));b.append(title,element('span','Open →'));b.addEventListener('click',()=>loadRun(r.id).then(()=>showView('execution')));$('run-cards').append(b)});if(!runs.length)$('run-cards').append(element('div','No saved runs yet. Run the local smoke command or import an exported run.','empty'))}
-async function loadRun(id){const entry=runs.find(r=>r.id===id);try{const data=entry?._local||await fetchJSON('/api/runs/'+encodeURIComponent(id));setRun(normalize(data.run||data))}catch(error){reportError('Could not load run: '+error.message)}}
-function setRun(data){run=data;selectedEvent=-1;selectedArtifact=null;zoom=1;$('run-select').value=data.id;const live=String(data.mode||'').toLowerCase();const isPrivate=data.mode==='private-reviewed-replay';const isModel=/rlm|live|direct|baseline/.test(live)&&!(/smoke|deterministic|sample/.test(live));const evidenceTitle=isPrivate?'Private replay. ':isModel?'Recorded experiment. ':'Deterministic infrastructure evidence. ';
+async function loadRun(id){
+  const version=++loadVersion;
+  const entry=runs.find(r=>r.id===id);
+  try{
+    const data=entry?._local||await fetchJSON('/api/runs/'+encodeURIComponent(id));
+    if(version===loadVersion)setRun(normalize(data.run||data));
+  }catch(error){if(version===loadVersion)reportError('Could not load run: '+error.message)}
+}
+function setRun(data){run=data;selectedEvent=-1;selectedArtifact=null;zoom=1;collapsed.clear();$('trace-scroll').scrollTo(0,0);$('evidence-notice').classList.remove('error');$('run-select').value=data.id;const live=String(data.mode||'').toLowerCase();const isPrivate=data.mode==='private-reviewed-replay';const isModel=/rlm|live|direct|baseline/.test(live)&&!(/smoke|deterministic|sample/.test(live));const evidenceTitle=isPrivate?'Private replay. ':isModel?'Recorded experiment. ':'Deterministic infrastructure evidence. ';
 const evidenceCopy=isPrivate?'This import stays in this browser session. Host broker events and container-reported observations have separate labels. Source files stay in the run directory.':isModel?'Inspect the saved events and validation outcomes before drawing conclusions.':'This run checks the local workflow. It does not demonstrate model-backed recursion or measure synthesis quality.';
 $('evidence-notice').replaceChildren(element('strong',evidenceTitle),document.createTextNode(evidenceCopy));
 $('stat-calls-label').textContent=isPrivate?'BROKER COMPLETIONS':'MODEL CALLS';
@@ -46,10 +264,102 @@ $('stat-artifacts-note').textContent=isPrivate?'Validated source files in the ru
 $('stat-duration').textContent=duration(data.metrics.duration_ms??(data.metrics.duration_seconds!=null?data.metrics.duration_seconds*1000:undefined));
 $('stat-mode').textContent=isPrivate?'Private replay':data.mode||'Recorded';
 $('trace-count').textContent=data.events.length+' EVENTS';$('artifact-count').textContent=data.artifacts.length+' FILES';const filter=$('event-filter');clear(filter);const all=element('option','All event types');all.value='all';filter.append(all);[...new Set(data.events.map(e=>String(e.type||'event')))].forEach(t=>{const op=element('option',t.replaceAll('_',' '));op.value=t;filter.append(op)});renderTrace();renderArtifacts();renderMetrics();if(data.events.length)inspectEvent(0);else $('inspector').replaceChildren(element('div','No events were recorded.','empty'))}
-function eventDepth(event){const visited=new Set([event.id]);let depth=0,current=event;while(current.parent_id&&depth<12){if(visited.has(current.parent_id))break;visited.add(current.parent_id);current=run.events.find(e=>e.id===current.parent_id);if(!current)break;depth++}return depth}
-function renderTrace(){const tree=$('trace-tree');clear(tree);if(!run)return;tree.style.transform='scale('+zoom+')';run.events.forEach((e,i)=>{if($('event-filter').value!=='all'&&e.type!==$('event-filter').value)return;const row=element('div',undefined,'node-row');row.style.marginLeft=(eventDepth(e)*24)+'px';const b=element('button',undefined,'trace-node'+(selectedEvent===i?' selected':''));b.setAttribute('aria-pressed',String(selectedEvent===i));b.append(element('span',String(e.type||'event').replaceAll('_',' '),'node-type'),element('span',e.label||e.id||'Event '+(i+1),'node-title'),element('span',(e.status||'recorded')+' · '+duration(e.duration_ms),'node-meta'));b.addEventListener('click',()=>inspectEvent(i));row.append(b);tree.append(row)});if(!tree.children.length)tree.append(element('div','No events match this filter.','empty'))}
-function inspectEvent(index){if(!run?.events[index])return;selectedEvent=index;const e=run.events[index],dl=element('dl');[['Event',e.label||e.id],['Type',e.type],['Status',e.status],['Parent',e.parent_id||'Root event'],['Duration',e.duration_ms===undefined?'Not recorded':duration(e.duration_ms)],['Evidence',e.details??e]].forEach(([label,value])=>{const field=element('div',undefined,'field');field.append(element('dt',label),element('dd',format(value),label==='Evidence'?'details':''));dl.append(field)});$('inspector').replaceChildren(dl);renderTrace();$('step-back').disabled=index===0;$('step-next').disabled=index===run.events.length-1}
-$('event-filter').addEventListener('change',renderTrace);$('zoom-in').addEventListener('click',()=>{zoom=Math.min(1.6,zoom+.1);renderTrace()});$('zoom-out').addEventListener('click',()=>{zoom=Math.max(.5,zoom-.1);renderTrace()});$('zoom-reset').addEventListener('click',()=>{zoom=1;renderTrace()});$('step-back').addEventListener('click',()=>inspectEvent(Math.max(0,selectedEvent-1)));$('step-next').addEventListener('click',()=>inspectEvent(Math.min((run?.events.length||1)-1,selectedEvent+1)));
+function traceRows(){
+  const byId=new Map(run.events.map((event,index)=>[event.id,index]));
+  const children=run.events.map(()=>[]);
+  const roots=[];
+  run.events.forEach((event,index)=>{
+    const parent=event.parent_id==null?undefined:byId.get(event.parent_id);
+    if(parent===undefined||parent===index)roots.push(index);else children[parent].push(index);
+  });
+  const rows=[],seen=new Set();
+  const visit=(start)=>{
+    const stack=[[start,0,false]];
+    while(stack.length){
+      const [index,depth,hidden]=stack.pop();
+      if(seen.has(index))continue;
+      seen.add(index);
+      rows.push({index,depth:Math.min(depth,12),hidden,hasChildren:children[index].length>0});
+      for(let i=children[index].length-1;i>=0;i--){
+        stack.push([children[index][i],depth+1,hidden||collapsed.has(index)]);
+      }
+    }
+  };
+  roots.forEach(visit);
+  run.events.forEach((_,index)=>visit(index));
+  return rows;
+}
+function visibleRows(){
+  const filter=$('event-filter').value;
+  return traceRows().filter(row=>filter==='all'?!row.hidden:run.events[row.index].type===filter);
+}
+function renderTrace(){
+  const tree=$('trace-tree');
+  const focusKey=tree.contains(document.activeElement)?document.activeElement.dataset.traceFocus:null;
+  clear(tree);
+  if(!run)return;
+  tree.style.zoom=String(zoom);
+  $('zoom-reset').textContent=Math.round(zoom*100)+'%';
+  $('expand-all').disabled=collapsed.size===0;
+  const rows=visibleRows();
+  const filter=$('event-filter').value;
+  for(const {index,depth,hasChildren} of rows){
+    const event=run.events[index];
+    const row=element('div',undefined,'node-row'+(depth===0?' root':''));
+    row.style.marginLeft=(depth*20)+'px';
+    if(hasChildren&&filter==='all'){
+      const toggle=element('button',collapsed.has(index)?'+':'−','branch-toggle');
+      toggle.dataset.traceFocus='branch-'+index;
+      toggle.setAttribute('aria-expanded',String(!collapsed.has(index)));
+      toggle.setAttribute('aria-label',(collapsed.has(index)?'Expand ':'Collapse ')+(event.label||'branch'));
+      toggle.addEventListener('click',()=>{
+        if(collapsed.has(index))collapsed.delete(index);else collapsed.add(index);
+        const visible=visibleRows();
+        if(!visible.some(item=>item.index===selectedEvent))inspectEvent(index);
+        else renderTrace();
+      });
+      row.append(toggle);
+    }
+    const node=element('button',undefined,'trace-node'+(selectedEvent===index?' selected':''));
+    node.dataset.traceFocus='node-'+index;
+    node.dataset.status=event.status||'recorded';
+    node.setAttribute('aria-pressed',String(selectedEvent===index));
+    node.append(element('span',String(event.type||'event').replaceAll('_',' '),'node-type'),
+      element('span',event.label||event.id||'Event '+(index+1),'node-title'),
+      element('span',(event.status||'recorded')+' · '+duration(event.duration_ms),'node-meta'));
+    node.addEventListener('click',()=>inspectEvent(index));
+    row.append(node);
+    tree.append(row);
+  }
+  if(!rows.length)tree.append(element('div','No events match this filter.','empty'));
+  if(focusKey)tree.querySelector('[data-trace-focus="'+focusKey+'"]')?.focus({preventScroll:true});
+  const position=rows.findIndex(row=>row.index===selectedEvent);
+  $('step-back').disabled=position<=0;
+  $('step-next').disabled=rows.length===0||position===rows.length-1;
+}
+function stepEvent(direction){
+  if(!run)return;
+  const rows=visibleRows();
+  const position=rows.findIndex(row=>row.index===selectedEvent);
+  const target=rows[position+direction];
+  if(target){
+    inspectEvent(target.index);
+    $('trace-tree').querySelector('[data-trace-focus="node-'+target.index+'"]')?.scrollIntoView({block:'nearest',inline:'nearest'});
+  }
+}
+function inspectEvent(index){if(!run?.events[index])return;selectedEvent=index;const e=run.events[index],dl=element('dl');[['Event',e.label||e.id],['Type',e.type],['Status',e.status],['Parent',e.parent_id||'Root event'],['Duration',e.duration_ms===undefined?'Not recorded':duration(e.duration_ms)],['Evidence',e.details??e]].forEach(([label,value])=>{const field=element('div',undefined,'field');field.append(element('dt',label),element('dd',format(value),label==='Evidence'?'details':''));dl.append(field)});$('inspector').replaceChildren(dl);renderTrace()}
+$('event-filter').addEventListener('change',()=>{
+  if(!run)return;
+  const rows=visibleRows();
+  if(rows.length&&!rows.some(row=>row.index===selectedEvent))inspectEvent(rows[0].index);
+  else renderTrace();
+});
+$('zoom-in').addEventListener('click',()=>{zoom=Math.min(1.6,zoom+.1);renderTrace()});
+$('zoom-out').addEventListener('click',()=>{zoom=Math.max(.5,zoom-.1);renderTrace()});
+$('zoom-reset').addEventListener('click',()=>{zoom=1;renderTrace()});
+$('expand-all').addEventListener('click',()=>{collapsed.clear();renderTrace();$('trace-scroll').focus()});
+$('step-back').addEventListener('click',()=>stepEvent(-1));
+$('step-next').addEventListener('click',()=>stepEvent(1));
 function renderArtifacts(){clear($('file-tree'));if(!run)return;run.artifacts.forEach((a,i)=>{const b=element('button','▤ '+(a.path||a.id||'Artifact '+(i+1)),'file-button');b.addEventListener('click',()=>selectArtifact(i));$('file-tree').append(b)});if(run.artifacts.length)selectArtifact(0);else{$('file-tree').append(element('div','No saved source files.','empty'));$('source-code').textContent='No artifacts were recorded.';$('file-path').textContent='No artifact selected';$('download-file').disabled=true}}
 function selectArtifact(index){selectedArtifact=run.artifacts[index];$('file-path').textContent=selectedArtifact.path||'artifact.txt';$('source-code').textContent=typeof selectedArtifact.content==='string'?selectedArtifact.content:format(selectedArtifact.content??selectedArtifact);$('download-file').disabled=false;[...$('file-tree').children].forEach((b,i)=>b.classList.toggle('active',i===index))}
 $('download-file').addEventListener('click',()=>{if(!selectedArtifact)return;const blob=new Blob([$('source-code').textContent],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=element('a');a.href=url;a.download=String(selectedArtifact.path||'artifact.txt').split(/[\\/]/).pop();a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
@@ -58,7 +368,7 @@ async function fetchJSON(url){const response=await fetch(url,{headers:{Accept:'a
 async function refreshProgress(){try{const p=await fetchJSON('/api/progress');const stamp=p.updated_at?new Date(p.updated_at).toLocaleString():'Not published';const checks=p.tests?p.tests.passed+' of '+p.tests.total+' offline checks passed'+(p.tests.skipped?' · '+p.tests.skipped+' skipped':''):'Test evidence not yet published';$('release-notice').replaceChildren(element('strong','Development preview · '),document.createTextNode(p.phase+' · '+checks+' · Updated '+stamp+' '));const open=element('button','View build progress');open.addEventListener('click',()=>showView('progress'));$('release-notice').append(open);$('progress-summary').textContent=checks+'. Published '+stamp+'. '+(p.notice||'');const rows=$('progress-rows');clear(rows);(p.sections||[]).forEach(s=>{const row=element('tr');row.append(element('td',s.name),element('td',s.status),element('td',s.evidence));rows.append(row)})}catch(error){if(!$('progress-rows').children.length)$('progress-summary').textContent='Progress refresh is unavailable. The recorded execution archive remains usable.'}}
 refreshProgress();setInterval(()=>{if(!document.hidden)refreshProgress()},15000);
 function reportError(message){$('evidence-notice').replaceChildren(element('strong','Archive unavailable. '),document.createTextNode(message+' You can still import a saved run JSON.'));$('evidence-notice').classList.add('error')}
-$('run-select').addEventListener('change',e=>loadRun(e.target.value));$('import-run').addEventListener('change',async e=>{try{const file=e.target.files[0];if(!file)return;if(file.size>10*1024*1024)throw Error('Import limit is 10 MB.');const parsed=JSON.parse(await file.text());const data=normalize(parsed.run||parsed);const existing=runs.findIndex(r=>r.id===data.id);const entry={id:data.id,label:data.label,mode:data.mode,status:data.status,_local:data};if(existing>=0)runs[existing]=entry;else runs.unshift(entry);renderArchive();setRun(data);$('evidence-notice').classList.remove('error');showView('execution')}catch(error){reportError('Import failed: '+error.message)}finally{e.target.value=''}});
-(async()=>{try{const data=await fetchJSON('/api/runs');runs=Array.isArray(data)?data:(data.runs||[]);renderArchive();if(runs.length)await loadRun(runs[0].id);else $('evidence-notice').replaceChildren(element('strong','No recorded runs yet. '),document.createTextNode('Create a local CPU smoke run or import a saved experiment to begin.'))}catch(error){runs=[];renderArchive();reportError(error.message)}})();
+$('run-select').addEventListener('change',e=>loadRun(e.target.value));$('import-run').addEventListener('change',async e=>{try{const file=e.target.files[0];if(!file)return;if(file.size>10*1024*1024)throw Error('Import limit is 10 MB.');const parsed=JSON.parse(await file.text());const data=normalize(parsed.run||parsed);++loadVersion;const existing=runs.findIndex(r=>r.id===data.id);const entry={id:data.id,label:data.label,mode:data.mode,status:data.status,_local:data};if(existing>=0)runs[existing]=entry;else runs.unshift(entry);renderArchive();setRun(data);$('evidence-notice').classList.remove('error');showView('execution')}catch(error){reportError('Import failed: '+error.message)}finally{e.target.value=''}});
+(async()=>{try{const data=await fetchJSON('/api/runs');const archived=Array.isArray(data)?data:(data.runs||[]);const local=runs.filter(entry=>entry._local);runs=[...local,...archived.filter(entry=>!local.some(item=>item.id===entry.id))];renderArchive();if(run)$('run-select').value=run.id;else if(runs.length)await loadRun(runs[0].id);else $('evidence-notice').replaceChildren(element('strong','No recorded runs yet. '),document.createTextNode('Create a local CPU smoke run or import a saved experiment to begin.'))}catch(error){runs=[];renderArchive();reportError(error.message)}})();
 </script>
 </body></html>

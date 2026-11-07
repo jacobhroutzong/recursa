@@ -38,7 +38,7 @@ def build_progress():
     if evidence is not None and evidence.get("source_digest") != identity:
         raise ValueError("Code changed after tests; rerun scripts/verify.py before publication")
     return {"schema_version": 1, "updated_at": datetime.now(timezone.utc).isoformat(),
-            "phase": "Section 5 · offline synthesis and verification", "source_digest": identity,
+            "phase": "Section 6 · Studio redesign and replay verification", "source_digest": identity,
             "tests": evidence, "sections": sections,
             "mode": "public-development-preview", "live_inference": False,
             "notice": "Auto-refresh shows the latest published release. This is development progress, not live model inference.",

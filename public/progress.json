@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T15:35:31.729641+00:00",
-  "phase": "Section 5 \u00b7 offline synthesis and verification",
-  "source_digest": "87e130057aeb05125a0899c6152e9aa4f6bd3cb43565a64d9442501d27f47ddf",
+  "updated_at": "2026-11-07T16:08:42.822950+00:00",
+  "phase": "Section 6 \u00b7 Studio redesign and replay verification",
+  "source_digest": "325f3e822c51113eefc0cc3313814092b4b0b2315f62d06762da032c1b123e80",
   "tests": {
     "total": 106,
     "passed": 106,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T15:35:26.250229+00:00",
-    "source_digest": "87e130057aeb05125a0899c6152e9aa4f6bd3cb43565a64d9442501d27f47ddf",
+    "verified_at": "2026-11-07T16:08:37.970665+00:00",
+    "source_digest": "325f3e822c51113eefc0cc3313814092b4b0b2315f62d06762da032c1b123e80",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -46,8 +46,8 @@
     {
       "number": 6,
       "name": "6. Studio",
-      "status": "Partial prior work",
-      "evidence": "CPU replay preview is published. The full Studio calls for a polished dark engineering dashboard, responsive and keyboard-accessible trace views, and generated application previews"
+      "status": "Redesigned replay preview",
+      "evidence": "Responsive workspace and architecture overview. The execution explorer supports branch collapse, filtering, zoom, keyboard navigation and private replay import. Specification playground and generated app previews remain open"
     },
     {
       "number": 7,
