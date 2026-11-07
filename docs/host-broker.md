@@ -29,4 +29,4 @@ The supervised integration adds two actual-container cases. One passes the scrip
 
 ## Remaining work
 
-The contained official RLM launcher currently uses a fixed specification fixture. A general runner for reviewed specifications, private trace export and model-backed application generation remain open. The genuine run requires explicit owner authorization and configured provider limits. Public hosting serves CPU replays and progress.
+The reviewed-specification runner uses this broker with the pinned official RLM. Its fixture verifies inspection and a subcall with intercepted responses. Private trace export and model-backed application generation remain open. [Contained runner](contained-rlm.md) The genuine run requires explicit owner authorization and configured provider limits. Public hosting serves CPU replays and progress.

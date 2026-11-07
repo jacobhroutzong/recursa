@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T15:18:11.405756+00:00",
+  "updated_at": "2026-11-07T15:25:10.363937+00:00",
   "phase": "Section 5 \u00b7 offline synthesis and verification",
-  "source_digest": "ae1a4293dc61f1e8cbed2cd6418273785f033a53224c54a0a9515fd0ff96bc03",
+  "source_digest": "55ef0c0b3af999c0f1fa608b0476932aa9cd526c3e6924cc4f99bd6ecf84f1ae",
   "tests": {
-    "total": 104,
-    "passed": 104,
+    "total": 106,
+    "passed": 106,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T15:18:06.750840+00:00",
-    "source_digest": "ae1a4293dc61f1e8cbed2cd6418273785f033a53224c54a0a9515fd0ff96bc03",
+    "verified_at": "2026-11-07T15:25:06.401137+00:00",
+    "source_digest": "55ef0c0b3af999c0f1fa608b0476932aa9cd526c3e6924cc4f99bd6ecf84f1ae",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -40,14 +40,14 @@
     {
       "number": 5,
       "name": "5. Application synthesis",
-      "status": "Offline provider broker integrated; incomplete",
-      "evidence": "The network-disabled container reaches the supervised host worker through validated pipes. Intercepted root/subcall and host budget denial exercise the integrated path. A general contained specification runner, private trace export and genuine synthesis remain open"
+      "status": "Reviewed-specification runner tested offline; incomplete",
+      "evidence": "The general runner accepts validated JSON and returns revalidated source. Actual container checks exercise requirement inspection, root and subcall forwarding, and budget denial with intercepted HTTP. Private replay export and a genuine synthesis run remain open"
     },
     {
       "number": 6,
       "name": "6. Studio",
       "status": "Partial prior work",
-      "evidence": "CPU replay UI only; full requested pages and generated app preview remain open"
+      "evidence": "CPU replay preview is published. The full Studio calls for a polished dark engineering dashboard, responsive and keyboard-accessible trace views, and generated application previews"
     },
     {
       "number": 7,

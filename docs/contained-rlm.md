@@ -1,6 +1,6 @@
 # Official RLM inside the offline container lane
 
-The official `rlms==0.1.3` adapter runs inside the constrained Python container for fixed scripted integration fixtures. This is actual container/REPL execution, **not genuine model inference**. In addition to intercepted HTTP transport inside the image, an [offline host broker](host-broker.md) now mediates completion requests over bounded pipes. The generic provider-enabled adapter still requires trusted local execution; no live host-side provider adapter exists.
+The official `rlms==0.1.3` adapter runs inside a constrained Python container. The host broker mediates completion requests over bounded pipes and owns provider access. The verification fixtures exercise the actual container and REPL with intercepted model responses. [Host broker](host-broker.md)
 
 ## Build once, then verify
 
@@ -24,4 +24,21 @@ The source response and token-usage values are controlled fixture data. The pare
 
 ## Remaining gate
 
-Fixed scripted fixture modes exist, including host-side mediation and reservations. A live provider backend, real credential handling, complete private trace export and genuinely authorized model-backed application generation remain unfinished. The public service remains read-only CPU replay, with no container-launch or live-inference endpoint. These controls are narrow measured isolation evidence, not universal kernel exploit protection or benchmark results.
+The remaining evidence gaps are private Studio replay export, an authorized model run, and model-backed application verification. Public Studio serves CPU replays and progress.
+
+
+## Reviewed specifications
+
+The local runner accepts a reviewed JSON specification and an explicit provider configuration. Use `configs/live.example.json` as a starting point for a private copy. Set the root and subcall models, endpoint, pricing estimates, and call, input, output, cost, and time limits. Store the credential in the named host environment variable. The contained runner supports one trial with zero repair attempts and uses the specification supplied on the command line.
+
+After reviewing the specification and authorizing model calls, build the pinned image with `python scripts/build_rlm_image.py` and run:
+
+```powershell
+python -m recursa.container_rlm --spec examples/specs/tasks.json --config private-config.json --image sha256:<local-image-id> --output runs/reviewed-001 --authorize-live
+```
+
+The container receives the specification, selected model names, and a local transport placeholder. The host broker owns the real endpoint, credential lookup, and call budget. The parent accepts a single bounded result, validates artifact paths and requirement IDs, and writes byte-preserving source files. `source-returned` means the source passed these checks and the run reported context inspection and a completed subcall. Functional success stays null. Container claims, broker observations, and provider-reported usage are kept distinct in `reviewed-report.json`.
+
+Specifications are limited to 200,000 encoded bytes and result frames to 128 KiB. The run permits up to 64 calls, 32 iterations, and 120 seconds. Browser verification and repair are separate from this runner. Provider responses and container streams remain under the private run directory. Do not publish the output directory.
+
+The offline verification runs a reviewed title-validator specification through an actual container and supervised worker. The host worker intercepts both model requests. A second case confirms that a one-call budget denies the subcall. [Verification record](evidence/reviewed-container-2026-11-07.json)

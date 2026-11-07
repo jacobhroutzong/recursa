@@ -46,6 +46,6 @@ def save_artifacts(directory, artifacts):
         if not target.is_relative_to(root):
             raise ValueError("Artifact escapes workspace")
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(artifact["content"], encoding="utf-8")
+        target.write_bytes(artifact["content"].encode("utf-8"))
     manifest = [{key: value for key, value in artifact.items() if key != "content"} for artifact in artifacts]
     (root / "artifact-manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")

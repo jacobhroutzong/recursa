@@ -24,6 +24,11 @@ def intercepted(request):
     if text == 'http-error':
         return httpx.Response(500, json={'error': 'private-provider-body'})
     replies = scripted_responses()
+    if body['model'] in {'reviewed-root', 'reviewed-sub'}:
+        sentinel = 'REVIEWED_INPUT_6073'
+        assert (sentinel in json.dumps(body['messages'])) == (body['model'] == 'reviewed-sub')
+        replies = {model.replace('scripted-', 'reviewed-'): reply.replace('R1', 'TITLE-1')
+                   for model, reply in replies.items()}
     if body['model'] in replies:
         assert request.headers['Authorization'] == 'Bearer fixture-host-provider-key'
     return httpx.Response(200, json={

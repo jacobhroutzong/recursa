@@ -1,0 +1,500 @@
+{
+  "status": "passed",
+  "runtime_image": {
+    "image_id": "sha256:e051d92168cf373551aae3bfb8b45fab3932c26e9f5b5916c209fcf555c1470f",
+    "base_image_repo_digest": "python@sha256:aa943ce411423c7582288f18707ff66eddcbaeb510502d747a72aeb34f30d159",
+    "platform": "linux/amd64",
+    "runtime_source_sha256": "34c55aa3608706f710e42e418b133b70b2274f05e50558e52f258b741fb3e07f",
+    "requirements_sha256": "35a5c43acbd902920529e5eda43ef85e570ab80dbebda37cb929d20e4974c76a",
+    "scope": "Local pinned SDK image for offline container fixtures; no provider gateway"
+  },
+  "cases": [
+    {
+      "name": "host-completion-path",
+      "status": "completed",
+      "mode": "offline-brokered-container",
+      "live_inference": false,
+      "artifact_count": 1,
+      "broker": {
+        "mode": "offline-scripted-broker",
+        "live_inference": false,
+        "reserved_calls": 2,
+        "scripted_dispatches": 2,
+        "output_tokens_reserved": 4096,
+        "estimated_cost_reserved_usd": 0.0,
+        "stop_reason": null,
+        "events": [
+          {
+            "status": "completed",
+            "id": 1,
+            "model": "scripted-root",
+            "prompt_sha256": "0160f1484f18cdfcb881bcc4a58cc5ddffcdaae1cab0d1516269fdff5b3301ef",
+            "estimated_cost_reserved_usd": 0.0,
+            "response_sha256": "852f2ecc01c46fc3fc9b69d75d7c10509f7e105ff07b2318a7665facab1a72a4"
+          },
+          {
+            "status": "completed",
+            "id": 2,
+            "model": "scripted-sub",
+            "prompt_sha256": "cc8647f1c4f4458122843b191f4a9aef7647753ebd1a17719205ae1d63bcd19a",
+            "estimated_cost_reserved_usd": 0.0,
+            "response_sha256": "9a6f27d512695f82d50869c5b4f2edcb23819263ea212ff985c3c195903dadef"
+          }
+        ],
+        "scope": "Host-observed scripted requests; no real provider or measured inference tokens"
+      },
+      "container": {
+        "status": "completed",
+        "image_id": "sha256:e051d92168cf373551aae3bfb8b45fab3932c26e9f5b5916c209fcf555c1470f",
+        "source_sha256": "9e63aff9443631bfb47b8127bf37f44bfc9e0c14526ec0ac3613d5bd181d1e58",
+        "live_inference": false,
+        "policy_verified": true,
+        "cleanup_verified": true,
+        "returncode": 0,
+        "functional_success": null,
+        "max_wall_seconds": 60,
+        "scope": "Local container process result only; untrusted output is not research evidence",
+        "container_id": "3f243c0a8c35932fcaf49cdc8f9b37a9ca85c1d67a9e29bd298786d735f897e5",
+        "oom_killed": false,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "f14d5083cc8d4c27a1085092d45faa2d44f5d775126f28ed75dcfe7e1b8fad4e",
+        "broker": {
+          "mode": "offline-scripted-broker",
+          "live_inference": false,
+          "reserved_calls": 2,
+          "scripted_dispatches": 2,
+          "output_tokens_reserved": 4096,
+          "estimated_cost_reserved_usd": 0.0,
+          "stop_reason": null,
+          "events": [
+            {
+              "status": "completed",
+              "id": 1,
+              "model": "scripted-root",
+              "prompt_sha256": "0160f1484f18cdfcb881bcc4a58cc5ddffcdaae1cab0d1516269fdff5b3301ef",
+              "estimated_cost_reserved_usd": 0.0,
+              "response_sha256": "852f2ecc01c46fc3fc9b69d75d7c10509f7e105ff07b2318a7665facab1a72a4"
+            },
+            {
+              "status": "completed",
+              "id": 2,
+              "model": "scripted-sub",
+              "prompt_sha256": "cc8647f1c4f4458122843b191f4a9aef7647753ebd1a17719205ae1d63bcd19a",
+              "estimated_cost_reserved_usd": 0.0,
+              "response_sha256": "9a6f27d512695f82d50869c5b4f2edcb23819263ea212ff985c3c195903dadef"
+            }
+          ],
+          "scope": "Host-observed scripted requests; no real provider or measured inference tokens"
+        }
+      },
+      "scope": "Host-observed scripted completions through bounded pipes; no real provider inference"
+    },
+    {
+      "name": "host-budget-denial",
+      "status": "budget-exhausted",
+      "mode": "offline-brokered-container",
+      "live_inference": false,
+      "artifact_count": 0,
+      "broker": {
+        "mode": "offline-scripted-broker",
+        "live_inference": false,
+        "reserved_calls": 1,
+        "scripted_dispatches": 1,
+        "output_tokens_reserved": 2048,
+        "estimated_cost_reserved_usd": 0.0,
+        "stop_reason": "BudgetExceeded",
+        "events": [
+          {
+            "status": "completed",
+            "id": 1,
+            "model": "scripted-root",
+            "prompt_sha256": "0160f1484f18cdfcb881bcc4a58cc5ddffcdaae1cab0d1516269fdff5b3301ef",
+            "estimated_cost_reserved_usd": 0.0,
+            "response_sha256": "852f2ecc01c46fc3fc9b69d75d7c10509f7e105ff07b2318a7665facab1a72a4"
+          },
+          {
+            "status": "denied",
+            "id": 2,
+            "model": "scripted-sub",
+            "prompt_sha256": "cc8647f1c4f4458122843b191f4a9aef7647753ebd1a17719205ae1d63bcd19a",
+            "error_classification": "BudgetExceeded"
+          }
+        ],
+        "scope": "Host-observed scripted requests; no real provider or measured inference tokens"
+      },
+      "container": {
+        "status": "completed",
+        "image_id": "sha256:e051d92168cf373551aae3bfb8b45fab3932c26e9f5b5916c209fcf555c1470f",
+        "source_sha256": "9e63aff9443631bfb47b8127bf37f44bfc9e0c14526ec0ac3613d5bd181d1e58",
+        "live_inference": false,
+        "policy_verified": true,
+        "cleanup_verified": true,
+        "returncode": 0,
+        "functional_success": null,
+        "max_wall_seconds": 60,
+        "scope": "Local container process result only; untrusted output is not research evidence",
+        "container_id": "2ee93c242e9397708b20b6008ebc001a4ad65723d0759454c3ccef5619f0f6f5",
+        "oom_killed": false,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "9259cad272c060f4918c6bcce4385b277a05276d62df3e5f6312f2cc39ff5f1a",
+        "broker": {
+          "mode": "offline-scripted-broker",
+          "live_inference": false,
+          "reserved_calls": 1,
+          "scripted_dispatches": 1,
+          "output_tokens_reserved": 2048,
+          "estimated_cost_reserved_usd": 0.0,
+          "stop_reason": "BudgetExceeded",
+          "events": [
+            {
+              "status": "completed",
+              "id": 1,
+              "model": "scripted-root",
+              "prompt_sha256": "0160f1484f18cdfcb881bcc4a58cc5ddffcdaae1cab0d1516269fdff5b3301ef",
+              "estimated_cost_reserved_usd": 0.0,
+              "response_sha256": "852f2ecc01c46fc3fc9b69d75d7c10509f7e105ff07b2318a7665facab1a72a4"
+            },
+            {
+              "status": "denied",
+              "id": 2,
+              "model": "scripted-sub",
+              "prompt_sha256": "cc8647f1c4f4458122843b191f4a9aef7647753ebd1a17719205ae1d63bcd19a",
+              "error_classification": "BudgetExceeded"
+            }
+          ],
+          "scope": "Host-observed scripted requests; no real provider or measured inference tokens"
+        }
+      },
+      "scope": "Host-observed scripted completions through bounded pipes; no real provider inference"
+    },
+    {
+      "name": "invalid-request",
+      "container": {
+        "status": "completed",
+        "image_id": "sha256:e051d92168cf373551aae3bfb8b45fab3932c26e9f5b5916c209fcf555c1470f",
+        "source_sha256": "6902b7ab105a7e8cebdbb81213709bb62d26a282fde9c9d3958fc852cb6416c2",
+        "live_inference": false,
+        "policy_verified": true,
+        "cleanup_verified": true,
+        "returncode": 0,
+        "functional_success": null,
+        "max_wall_seconds": 30,
+        "scope": "Local container process result only; untrusted output is not research evidence",
+        "container_id": "bf7e406344a6f4aaad7a2fa4a34474c14c3f878b07b889c978e479ccfaae4b93",
+        "oom_killed": false,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "9644db8d6f03a5b2a7221ec4fc87ea4fc1fe55a4e629f1ba97aef4af82dd9e30",
+        "broker": {
+          "mode": "offline-scripted-broker",
+          "live_inference": false,
+          "reserved_calls": 0,
+          "scripted_dispatches": 0,
+          "output_tokens_reserved": 0,
+          "estimated_cost_reserved_usd": 0.0,
+          "stop_reason": "ProtocolError",
+          "events": [
+            {
+              "status": "denied",
+              "error_classification": "ProtocolError"
+            }
+          ],
+          "scope": "Host-observed scripted requests; no real provider or measured inference tokens"
+        }
+      },
+      "broker": {
+        "mode": "offline-scripted-broker",
+        "live_inference": false,
+        "reserved_calls": 0,
+        "scripted_dispatches": 0,
+        "output_tokens_reserved": 0,
+        "estimated_cost_reserved_usd": 0.0,
+        "stop_reason": "ProtocolError",
+        "events": [
+          {
+            "status": "denied",
+            "error_classification": "ProtocolError"
+          }
+        ],
+        "scope": "Host-observed scripted requests; no real provider or measured inference tokens"
+      }
+    },
+    {
+      "status": "source-returned",
+      "mode": "contained-reviewed-spec",
+      "live_inference": false,
+      "artifact_count": 1,
+      "functional_success": null,
+      "context_reported": true,
+      "subcall_reported": true,
+      "spec_sha256": "4f65b0d2eb28e91d6f5dbbda79f3cd1c8aa178a5d2c1552584e9b1e188755d09",
+      "container": {
+        "status": "completed",
+        "image_id": "sha256:e051d92168cf373551aae3bfb8b45fab3932c26e9f5b5916c209fcf555c1470f",
+        "source_sha256": "e7cf107403cec96a22e4dd9ddff6c66ab21f41dbfd27f2f5dafaaf80c210e04d",
+        "live_inference": null,
+        "policy_verified": true,
+        "cleanup_verified": true,
+        "returncode": 0,
+        "functional_success": null,
+        "max_wall_seconds": 45,
+        "scope": "Local container process result only; untrusted output is not research evidence",
+        "container_id": "ed3ef62ea1a9757704abf298bb7a89783ba355b0cf420787aa9d05d3c8b65a1a",
+        "oom_killed": false,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "5def9d019356a71500457dfd3be63fa83645ae52a056b4bdc451823fe8175407",
+        "broker": {
+          "mode": "supervised-provider-broker",
+          "live_inference": null,
+          "stop_reason": null,
+          "events": [
+            {
+              "status": "completed",
+              "id": 1,
+              "model": "reviewed-root",
+              "prompt_sha256": "28115aa4b3ce18bcba991a18e30ff1b4029929e9675c3234df1c2f2ad53cdcaf",
+              "response_sha256": "952354deaba549155558d3b143111f846750b8359a06a84af04458f1e7c1d96d"
+            },
+            {
+              "status": "completed",
+              "id": 2,
+              "model": "reviewed-sub",
+              "prompt_sha256": "4c2b1127b6c55585e4a93ba2ea7be66990ac50f28c645799c3b09b8d3d1ac78b",
+              "response_sha256": "bd8250da7638c0ef1b0236cfb2828e46d31b89956b7171779052ba4670a99c48"
+            }
+          ],
+          "provider": {
+            "mode": "supervised-host-provider-adapter",
+            "reserved_calls": 2,
+            "output_tokens_reserved": 4096,
+            "estimated_cost_committed_usd": 0.014247999999999999,
+            "stop_reason": null,
+            "events": [
+              {
+                "status": "completed",
+                "model": "reviewed-root",
+                "prompt_sha256": "49118f562e20e02f6cb182b75592ce3ea922c537b4791c29d1116db3d965674b",
+                "estimated_cost_reserved_usd": 0.011031,
+                "provider_reported_usage": {
+                  "prompt_tokens": 5,
+                  "completion_tokens": 3,
+                  "total_tokens": 8
+                },
+                "provider_reported_cost_estimate_usd": 8e-06,
+                "response_sha256": "952354deaba549155558d3b143111f846750b8359a06a84af04458f1e7c1d96d"
+              },
+              {
+                "status": "completed",
+                "model": "reviewed-sub",
+                "prompt_sha256": "4a07707fa96d12c2e33d319db58534cdae201727ca093e71f243194f3050c16e",
+                "estimated_cost_reserved_usd": 0.003217,
+                "provider_reported_usage": {
+                  "prompt_tokens": 5,
+                  "completion_tokens": 3,
+                  "total_tokens": 8
+                },
+                "provider_reported_cost_estimate_usd": 8e-06,
+                "response_sha256": "bd8250da7638c0ef1b0236cfb2828e46d31b89956b7171779052ba4670a99c48"
+              }
+            ],
+            "billing_cost_usd": null,
+            "scope": "Transport observations; provider usage is reported, not independently measured"
+          },
+          "scope": "Host transport observations with provider-reported usage and estimated cost"
+        }
+      },
+      "broker": {
+        "mode": "supervised-provider-broker",
+        "live_inference": null,
+        "stop_reason": null,
+        "events": [
+          {
+            "status": "completed",
+            "id": 1,
+            "model": "reviewed-root",
+            "prompt_sha256": "28115aa4b3ce18bcba991a18e30ff1b4029929e9675c3234df1c2f2ad53cdcaf",
+            "response_sha256": "952354deaba549155558d3b143111f846750b8359a06a84af04458f1e7c1d96d"
+          },
+          {
+            "status": "completed",
+            "id": 2,
+            "model": "reviewed-sub",
+            "prompt_sha256": "4c2b1127b6c55585e4a93ba2ea7be66990ac50f28c645799c3b09b8d3d1ac78b",
+            "response_sha256": "bd8250da7638c0ef1b0236cfb2828e46d31b89956b7171779052ba4670a99c48"
+          }
+        ],
+        "provider": {
+          "mode": "supervised-host-provider-adapter",
+          "reserved_calls": 2,
+          "output_tokens_reserved": 4096,
+          "estimated_cost_committed_usd": 0.014247999999999999,
+          "stop_reason": null,
+          "events": [
+            {
+              "status": "completed",
+              "model": "reviewed-root",
+              "prompt_sha256": "49118f562e20e02f6cb182b75592ce3ea922c537b4791c29d1116db3d965674b",
+              "estimated_cost_reserved_usd": 0.011031,
+              "provider_reported_usage": {
+                "prompt_tokens": 5,
+                "completion_tokens": 3,
+                "total_tokens": 8
+              },
+              "provider_reported_cost_estimate_usd": 8e-06,
+              "response_sha256": "952354deaba549155558d3b143111f846750b8359a06a84af04458f1e7c1d96d"
+            },
+            {
+              "status": "completed",
+              "model": "reviewed-sub",
+              "prompt_sha256": "4a07707fa96d12c2e33d319db58534cdae201727ca093e71f243194f3050c16e",
+              "estimated_cost_reserved_usd": 0.003217,
+              "provider_reported_usage": {
+                "prompt_tokens": 5,
+                "completion_tokens": 3,
+                "total_tokens": 8
+              },
+              "provider_reported_cost_estimate_usd": 8e-06,
+              "response_sha256": "bd8250da7638c0ef1b0236cfb2828e46d31b89956b7171779052ba4670a99c48"
+            }
+          ],
+          "billing_cost_usd": null,
+          "scope": "Transport observations; provider usage is reported, not independently measured"
+        },
+        "scope": "Host transport observations with provider-reported usage and estimated cost"
+      },
+      "name": "reviewed-2",
+      "scope": "Reviewed specification through actual container and intercepted host worker"
+    },
+    {
+      "status": "budget-exhausted",
+      "mode": "contained-reviewed-spec",
+      "live_inference": false,
+      "artifact_count": 0,
+      "functional_success": null,
+      "context_reported": true,
+      "subcall_reported": false,
+      "spec_sha256": "4f65b0d2eb28e91d6f5dbbda79f3cd1c8aa178a5d2c1552584e9b1e188755d09",
+      "container": {
+        "status": "completed",
+        "image_id": "sha256:e051d92168cf373551aae3bfb8b45fab3932c26e9f5b5916c209fcf555c1470f",
+        "source_sha256": "e7cf107403cec96a22e4dd9ddff6c66ab21f41dbfd27f2f5dafaaf80c210e04d",
+        "live_inference": null,
+        "policy_verified": true,
+        "cleanup_verified": true,
+        "returncode": 0,
+        "functional_success": null,
+        "max_wall_seconds": 45,
+        "scope": "Local container process result only; untrusted output is not research evidence",
+        "container_id": "84931178d1ce78f910c3993f7c9842abc8090742ab5eeb84af75719537aa833c",
+        "oom_killed": false,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "18176422ba7ccfbadea45919ceba0c50dc4f8ecc42a2ecf6fd82c30f527cf122",
+        "broker": {
+          "mode": "supervised-provider-broker",
+          "live_inference": null,
+          "stop_reason": "BudgetExceeded",
+          "events": [
+            {
+              "status": "completed",
+              "id": 1,
+              "model": "reviewed-root",
+              "prompt_sha256": "28115aa4b3ce18bcba991a18e30ff1b4029929e9675c3234df1c2f2ad53cdcaf",
+              "response_sha256": "952354deaba549155558d3b143111f846750b8359a06a84af04458f1e7c1d96d"
+            },
+            {
+              "status": "denied",
+              "id": 2,
+              "model": "reviewed-sub",
+              "prompt_sha256": "4c2b1127b6c55585e4a93ba2ea7be66990ac50f28c645799c3b09b8d3d1ac78b",
+              "error_classification": "BudgetExceeded"
+            }
+          ],
+          "provider": {
+            "mode": "supervised-host-provider-adapter",
+            "reserved_calls": 1,
+            "output_tokens_reserved": 2048,
+            "estimated_cost_committed_usd": 0.011031,
+            "stop_reason": "BudgetExceeded",
+            "events": [
+              {
+                "status": "completed",
+                "model": "reviewed-root",
+                "prompt_sha256": "49118f562e20e02f6cb182b75592ce3ea922c537b4791c29d1116db3d965674b",
+                "estimated_cost_reserved_usd": 0.011031,
+                "provider_reported_usage": {
+                  "prompt_tokens": 5,
+                  "completion_tokens": 3,
+                  "total_tokens": 8
+                },
+                "provider_reported_cost_estimate_usd": 8e-06,
+                "response_sha256": "952354deaba549155558d3b143111f846750b8359a06a84af04458f1e7c1d96d"
+              },
+              {
+                "status": "denied",
+                "error_classification": "BudgetExceeded"
+              }
+            ],
+            "billing_cost_usd": null,
+            "scope": "Transport observations; provider usage is reported, not independently measured"
+          },
+          "scope": "Host transport observations with provider-reported usage and estimated cost"
+        }
+      },
+      "broker": {
+        "mode": "supervised-provider-broker",
+        "live_inference": null,
+        "stop_reason": "BudgetExceeded",
+        "events": [
+          {
+            "status": "completed",
+            "id": 1,
+            "model": "reviewed-root",
+            "prompt_sha256": "28115aa4b3ce18bcba991a18e30ff1b4029929e9675c3234df1c2f2ad53cdcaf",
+            "response_sha256": "952354deaba549155558d3b143111f846750b8359a06a84af04458f1e7c1d96d"
+          },
+          {
+            "status": "denied",
+            "id": 2,
+            "model": "reviewed-sub",
+            "prompt_sha256": "4c2b1127b6c55585e4a93ba2ea7be66990ac50f28c645799c3b09b8d3d1ac78b",
+            "error_classification": "BudgetExceeded"
+          }
+        ],
+        "provider": {
+          "mode": "supervised-host-provider-adapter",
+          "reserved_calls": 1,
+          "output_tokens_reserved": 2048,
+          "estimated_cost_committed_usd": 0.011031,
+          "stop_reason": "BudgetExceeded",
+          "events": [
+            {
+              "status": "completed",
+              "model": "reviewed-root",
+              "prompt_sha256": "49118f562e20e02f6cb182b75592ce3ea922c537b4791c29d1116db3d965674b",
+              "estimated_cost_reserved_usd": 0.011031,
+              "provider_reported_usage": {
+                "prompt_tokens": 5,
+                "completion_tokens": 3,
+                "total_tokens": 8
+              },
+              "provider_reported_cost_estimate_usd": 8e-06,
+              "response_sha256": "952354deaba549155558d3b143111f846750b8359a06a84af04458f1e7c1d96d"
+            },
+            {
+              "status": "denied",
+              "error_classification": "BudgetExceeded"
+            }
+          ],
+          "billing_cost_usd": null,
+          "scope": "Transport observations; provider usage is reported, not independently measured"
+        },
+        "scope": "Host transport observations with provider-reported usage and estimated cost"
+      },
+      "name": "reviewed-1",
+      "scope": "Reviewed specification through actual container and intercepted host worker"
+    }
+  ],
+  "live_inference": false,
+  "host_sentinel_set_for_verification": true,
+  "verified_at": "2026-11-07T15:24:21.133789+00:00",
+  "scope": "Five actual container IPC fixtures, including two reviewed-specification runs with intercepted host transport"
+}

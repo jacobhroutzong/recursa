@@ -1,4 +1,4 @@
-"""Scripted official-RLM fixture inside the container. No real-provider mode."""
+"""Contained official-RLM runtime and scripted verification fixtures."""
 from contextlib import redirect_stdout, redirect_stderr
 import hashlib
 import json
@@ -9,12 +9,15 @@ import sys
 import threading
 
 from recursa.artifacts import save_artifacts, validate_artifacts
+from recursa.broker import FRAME_LIMIT, PREFIX, ProviderBroker
+from recursa.engine import validate_spec
 from recursa.experiments import atomic_json
 from recursa.sandbox import run_python
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = "from recursa.container_rlm import scripted_fixture; import json; print(json.dumps(scripted_fixture(context)))"
 MEDIATED_SOURCE = "from recursa.container_rlm import mediated_fixture; import json; print(json.dumps(mediated_fixture(context)))"
+REVIEWED_SOURCE = "from recursa.container_rlm import reviewed_completion; reviewed_completion(context)"
 _wire_lock = threading.RLock()
 _wire_id = 0
 
@@ -37,7 +40,6 @@ def mediated_fixture(options):
 
 
 def wire_completion(model, messages):
-    from recursa.broker import PREFIX, FRAME_LIMIT
     from recursa.budget import BudgetExceeded
     global _wire_id
     with _wire_lock:
@@ -110,6 +112,136 @@ def _fixture(options, *, mediated):
             'transport_models': seen, 'host_sentinel_absent': True, 'run': run}
 
 
+def reviewed_completion(options):
+    """Forward the pinned runtime's model requests through the host pipe."""
+    import httpx
+    import openai
+    from unittest.mock import patch
+    from recursa.live import run_live
+
+    spec, config = options['spec'], options['config']
+    original = openai.OpenAI
+
+    def transport(request):
+        body = json.loads(request.content)
+        content = wire_completion(body['model'], body['messages'])
+        return httpx.Response(200, json={
+            'id': 'host-pipe', 'object': 'chat.completion', 'created': 0, 'model': body['model'],
+            'choices': [{'index': 0, 'message': {'role': 'assistant', 'content': content}, 'finish_reason': 'stop'}],
+            # The SDK requires usage fields. Only the host has provider-reported usage.
+            'usage': {'prompt_tokens': 0, 'completion_tokens': 0, 'total_tokens': 0},
+        })
+
+    def factory(**kwargs):
+        return original(**kwargs, http_client=httpx.Client(transport=httpx.MockTransport(transport)))
+
+    with (tempfile.TemporaryDirectory(dir='/work') as tmp, open(os.devnull, 'w') as log,
+          redirect_stdout(log), redirect_stderr(log),
+          patch.dict(os.environ, {'RECURSA_PIPE_PLACEHOLDER': 'container-placeholder'}),
+          patch('openai.OpenAI', side_effect=factory)):
+        run = run_live(spec, Path(tmp), config, authorize_live=True)
+    envelope = {'kind': 'reviewed-spec-result', 'status': run['status'], 'artifacts': run['artifacts'],
+                'context_reported': any(event['type'] == 'context' for event in run['events']),
+                'subcall_reported': any(event['type'] == 'subcall' and event['status'] == 'completed'
+                                        for event in run['events'])}
+    encoded = json.dumps(envelope, allow_nan=False)
+    if len(encoded.encode()) > FRAME_LIMIT:
+        encoded = json.dumps({'kind': 'reviewed-spec-result', 'status': 'result-too-large',
+                              'artifacts': [], 'context_reported': None, 'subcall_reported': None})
+    sys.__stdout__.write(encoded + '\n')
+    sys.__stdout__.flush()
+
+
+def _reviewed_result(stdout, requirement_ids):
+    lines = [line for line in stdout.split(b'\n') if line and not line.startswith(PREFIX)]
+    if len(lines) != 1 or len(lines[0]) > FRAME_LIMIT:
+        raise ValueError('Expected one bounded result')
+    data = json.loads(lines[0])
+    if (not isinstance(data, dict)
+            or set(data) != {'kind', 'status', 'artifacts', 'context_reported', 'subcall_reported'}
+            or data['kind'] != 'reviewed-spec-result'
+            or data['status'] not in {'completed', 'incomplete-evidence', 'verification-failed',
+                                      'budget-exhausted', 'failed', 'result-too-large'}
+            or not isinstance(data['artifacts'], list)
+            or any(value is not None and type(value) is not bool
+                   for value in (data['context_reported'], data['subcall_reported']))):
+        raise ValueError('Invalid contained result')
+    artifacts = validate_artifacts({'artifacts': data['artifacts']}, requirement_ids) if data['artifacts'] else []
+    return data, artifacts
+
+
+def run_reviewed(spec, config, image, output_dir, *, authorize_live=False, runtime_record=None):
+    """Run a reviewed specification through the contained RLM with a host provider."""
+    if authorize_live is not True:
+        raise ValueError('Contained provider execution requires explicit authorization')
+    validate_spec(spec)
+    if len(json.dumps(spec, allow_nan=False).encode()) > 200000:
+        raise ValueError('Reviewed specification exceeds 200000 bytes')
+    required = {'models', 'provider', 'rates', 'budget', 'per_call_output_tokens', 'max_iterations'}
+    if (not isinstance(config, dict) or not required <= config.keys()
+            or config.keys() - required - {'name', 'spec', 'mode', 'trials', 'trusted_local_execution'}
+            or config.get('trusted_local_execution', False) is not False):
+        raise ValueError('Use a contained synthesis configuration')
+    models = config['models']
+    if (not isinstance(models, dict) or set(models) != {'root', 'sub'}
+            or any(not isinstance(model, str) or not model.strip() for model in models.values())):
+        raise ValueError('Configure root and sub models')
+    provider, limits, rates = config['provider'], config['budget'], config['rates']
+    if (not isinstance(provider, dict) or set(provider) != {'base_url', 'api_key_env'}
+            or not isinstance(rates, dict) or set(rates) != set(models.values())):
+        raise ValueError('Configure a fixed provider and pricing for the selected models')
+    budget_fields = {'max_calls', 'max_output_tokens', 'max_input_bytes', 'max_wall_seconds',
+                     'max_cost_usd', 'max_depth', 'max_concurrency', 'max_repairs'}
+    if (not isinstance(limits, dict) or set(limits) != budget_fields or limits['max_repairs'] != 0
+            or type(limits.get('max_calls')) is not int or not 1 <= limits['max_calls'] <= 64
+            or type(limits.get('max_wall_seconds')) not in (int, float) or not 0 < limits['max_wall_seconds'] <= 120
+            or type(config['max_iterations']) is not int or not 1 <= config['max_iterations'] <= 32):
+        raise ValueError('Contained synthesis requires bounded calls, wall time and iterations, with zero repairs')
+    _validate_runtime_image(image, runtime_record)
+    directory = Path(output_dir).resolve()
+    if directory.exists():
+        raise ValueError('Use a fresh output directory')
+    broker = ProviderBroker({**provider, 'rates': rates, 'budget': limits,
+                             'output_tokens': config['per_call_output_tokens']},
+                            directory / 'private/provider', authorize_live=True)
+    child_config = {'trusted_local_execution': True, 'models': models,
+                    'provider': {'base_url': 'http://127.0.0.1:9999/v1', 'api_key_env': 'RECURSA_PIPE_PLACEHOLDER'},
+                    'rates': {model: {'input_per_million': 0, 'output_per_million': 0} for model in rates},
+                    'budget': {**limits, 'max_cost_usd': 0},
+                    'max_iterations': config['max_iterations'], 'per_call_output_tokens': config['per_call_output_tokens']}
+    # The host enforces the live call cap. The local copy permits the first
+    # over-cap request to reach the broker so the denial is recorded there.
+    child_config['budget']['max_calls'] += 1
+    child_config['budget']['max_output_tokens'] += config['per_call_output_tokens']
+    sandbox_dir = directory / 'private/container'
+    container = run_python(REVIEWED_SOURCE, image, sandbox_dir, context={'spec': spec, 'config': child_config},
+                           broker=broker, max_wall_seconds=limits['max_wall_seconds'])
+    report = {'status': 'container-failed', 'mode': 'contained-reviewed-spec', 'live_inference': None,
+              'artifact_count': 0, 'functional_success': None, 'context_reported': None, 'subcall_reported': None,
+              'spec_sha256': hashlib.sha256(json.dumps(spec, sort_keys=True).encode()).hexdigest(),
+              'container': container, 'broker': broker.summary()}
+    if container['status'] == 'completed' and container['policy_verified'] and container['cleanup_verified']:
+        try:
+            stdout = (sandbox_dir / 'private/stdout.bin').read_bytes()
+            data, artifacts = _reviewed_result(stdout, {r['id'] for r in spec['requirements']})
+        except (ValueError, TypeError, OSError, RecursionError):
+            report['status'] = 'invalid-result'
+        else:
+            report.update(status=data['status'], context_reported=data['context_reported'],
+                          subcall_reported=data['subcall_reported'])
+            if broker.closed_reason:
+                report['status'] = 'budget-exhausted' if broker.closed_reason == 'BudgetExceeded' else 'broker-rejected'
+            if report['status'] == 'completed':
+                if (not artifacts or data['context_reported'] is not True or data['subcall_reported'] is not True
+                        or sum(event['status'] == 'completed' for event in report['broker']['events']) < 2):
+                    report['status'] = 'incomplete-evidence'
+                else:
+                    save_artifacts(directory / 'artifacts', artifacts)
+                    report.update(status='source-returned', artifact_count=len(artifacts))
+    atomic_json(directory / 'reviewed-report.json', report)
+    return report
+
+
 def scripted_responses():
     root = '''```repl
 import json
@@ -126,14 +258,18 @@ answer["ready"] = True
     return {'scripted-root': root, 'scripted-sub': json.dumps(manifest)}
 
 
-def run_fixture(image, output_dir, *, max_calls=2, runtime_record=None):
-    """Parent accepts fixed offline fixture output, never executes returned code."""
-    if type(max_calls) is not int or not 1 <= max_calls <= 3:
-        raise ValueError('Fixture call budget must be 1–3')
+def _validate_runtime_image(image, runtime_record):
     record = runtime_record if runtime_record is not None else json.loads((ROOT / '.cache/rlm-runtime-image.json').read_text(encoding='utf-8'))
     if (record.get('image_id') != image or record.get('runtime_source_sha256') != runtime_source_hash()
             or record.get('platform') != 'linux/amd64'):
         raise ValueError('Runtime image does not match current source; rebuild with scripts/build_rlm_image.py')
+
+
+def run_fixture(image, output_dir, *, max_calls=2, runtime_record=None):
+    """Parent accepts fixed offline fixture output, never executes returned code."""
+    if type(max_calls) is not int or not 1 <= max_calls <= 3:
+        raise ValueError('Fixture call budget must be 1–3')
+    _validate_runtime_image(image, runtime_record)
     directory = Path(output_dir)
     report = run_python(SOURCE, image, directory, context={'max_calls': max_calls}, max_wall_seconds=60)
     if report['status'] != 'completed' or not report['policy_verified'] or not report['cleanup_verified']:
@@ -162,10 +298,7 @@ def run_mediated_fixture(image, output_dir, *, max_calls=2, runtime_record=None)
     from recursa.broker import OfflineBroker, PREFIX
     if type(max_calls) is not int or not 1 <= max_calls <= 2:
         raise ValueError('Host fixture budget must be 1–2')
-    record = runtime_record if runtime_record is not None else json.loads((ROOT / '.cache/rlm-runtime-image.json').read_text(encoding='utf-8'))
-    if (record.get('image_id') != image or record.get('runtime_source_sha256') != runtime_source_hash()
-            or record.get('platform') != 'linux/amd64'):
-        raise ValueError('Runtime image does not match current source; rebuild it')
+    _validate_runtime_image(image, runtime_record)
     limits = {'max_calls': max_calls, 'max_output_tokens': 4096, 'max_input_bytes': 100000,
               'max_wall_seconds': 60, 'max_cost_usd': 0, 'max_depth': 1, 'max_concurrency': 1, 'max_repairs': 0}
     broker = OfflineBroker(scripted_responses(), limits)
@@ -191,3 +324,23 @@ def run_mediated_fixture(image, output_dir, *, max_calls=2, runtime_record=None)
                'scope': 'Host-observed scripted completions through bounded pipes; no real provider inference'}
     atomic_json(directory / 'fixture-report.json', summary)
     return summary
+
+
+def main():
+    import argparse
+    parser = argparse.ArgumentParser(description='Run a reviewed specification with a contained RLM and authorized host provider.')
+    parser.add_argument('--spec', type=Path, required=True)
+    parser.add_argument('--config', type=Path, required=True)
+    parser.add_argument('--image', required=True)
+    parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--authorize-live', action='store_true', required=True)
+    args = parser.parse_args()
+    spec = json.loads(args.spec.read_text(encoding='utf-8'))
+    config = json.loads(args.config.read_text(encoding='utf-8'))
+    report = run_reviewed(spec, config, args.image, args.output, authorize_live=args.authorize_live)
+    print(json.dumps({'status': report['status'], 'artifact_count': report['artifact_count']}))
+    return 0 if report['status'] == 'source-returned' else 1
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

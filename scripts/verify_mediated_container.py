@@ -9,9 +9,8 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from recursa.container_rlm import MEDIATED_SOURCE, run_mediated_fixture
-from recursa.broker import OfflineBroker, ProviderBroker, PREFIX
-from recursa.artifacts import validate_artifacts
+from recursa.container_rlm import run_mediated_fixture, run_reviewed
+from recursa.broker import OfflineBroker, PREFIX
 from recursa.experiments import atomic_json
 from recursa.processes import run_worker
 from recursa.sandbox import run_python
@@ -60,43 +59,41 @@ def _verify(output):
         return run_worker([sys.executable, str(fixture)], payload, **options)
 
     with patch('recursa.provider_worker.run_worker', side_effect=intercepted_worker) as launch:
+        spec = {'name': 'Reviewed title validator', 'requirements': [
+            {'id': 'TITLE-1', 'text': 'REVIEWED_INPUT_6073: reject blank titles'}]}
         for cap in (2, 1):
-            config = {'base_url': 'https://recursa-fixture.invalid/v1', 'api_key_env': 'RECURSA_FIXTURE_PROVIDER_KEY',
-                      'output_tokens': 2048, 'rates': {model: {'input_per_million': 1, 'output_per_million': 1}
-                                                      for model in ('scripted-root', 'scripted-sub')},
-                      'budget': {**limits, 'max_calls': cap, 'max_wall_seconds': 60,
+            models = {'root': 'reviewed-root', 'sub': 'reviewed-sub'}
+            config = {'provider': {'base_url': 'https://recursa-fixture.invalid/v1',
+                                   'api_key_env': 'RECURSA_FIXTURE_PROVIDER_KEY'},
+                      'models': models, 'max_iterations': 2, 'per_call_output_tokens': 2048,
+                      'rates': {model: {'input_per_million': 1, 'output_per_million': 1} for model in models.values()},
+                      'budget': {**limits, 'max_calls': cap, 'max_wall_seconds': 45,
                                  'max_input_bytes': 100000, 'max_cost_usd': 0.1}}
-            case_dir = directory / f'supervised-{cap}'
-            broker = ProviderBroker(config, case_dir / 'provider-private', authorize_live=True)
-            container = run_python(MEDIATED_SOURCE, runtime['image_id'], case_dir / 'container',
-                                   context={'max_calls': 2}, broker=broker, max_wall_seconds=45)
-            assert container['status'] == 'completed' and container['policy_verified'] and container['cleanup_verified'], container
-            stdout = (case_dir / 'container/private/stdout.bin').read_bytes()
-            assert b'fixture-host-provider-key' not in stdout
-            lines = [line for line in stdout.splitlines() if line and not line.startswith(PREFIX)]
-            assert len(lines) == 1
-            envelope = json.loads(lines[0])
-            assert envelope['kind'] == 'offline-brokered-container' and envelope['live_inference'] is False
-            assert envelope['host_sentinel_absent']
-            run = envelope['run']
-            artifacts = validate_artifacts({'artifacts': run['artifacts']}, {'R1'}) if run.get('artifacts') else []
-            summary = broker.summary()
+            case_dir = directory / f'reviewed-{cap}'
+            result = run_reviewed(spec, config, runtime['image_id'], case_dir, authorize_live=True)
+            container = result['container']
+            assert container['status'] == 'completed' and container['policy_verified'] and container['cleanup_verified'], result
+            sandbox = case_dir / 'private/container'
+            for path in (sandbox / 'input.json', sandbox / 'private/stdout.bin'):
+                assert not any(secret in path.read_bytes() for secret in
+                               (b'fixture-host-provider-key', b'RECURSA_FIXTURE_PROVIDER_KEY', b'recursa-fixture.invalid'))
+            summary = result['broker']
             assert summary['provider']['reserved_calls'] == cap
             assert launch.call_count == (2 if cap == 2 else 3)
             if cap == 2:
-                assert len(artifacts) == 1 and run['status'] == 'completed'
-                assert [event['model'] for event in summary['events']] == ['scripted-root', 'scripted-sub']
+                assert result['artifact_count'] == 1 and result['status'] == 'source-returned', result
+                assert result['context_reported'] and result['subcall_reported']
+                assert [event['model'] for event in summary['events']] == ['reviewed-root', 'reviewed-sub']
+                manifest = json.loads((case_dir / 'artifacts/artifact-manifest.json').read_text())
+                assert manifest[0]['requirements'] == ['TITLE-1']
             else:
-                assert not artifacts and summary['stop_reason'] == 'BudgetExceeded'
-            for report in (case_dir / 'provider-private').rglob('*.json'):
-                assert b'fixture-host-provider-key' not in report.read_bytes()
-            cases.append({'name': f'supervised-{cap}', 'container': container, 'broker': summary,
-                          'artifact_count': len(artifacts), 'live_inference': False,
-                          'scope': 'Actual container and supervised worker with intercepted HTTP responses'})
+                assert result['artifact_count'] == 0 and result['status'] == 'budget-exhausted', result
+            cases.append({**result, 'name': f'reviewed-{cap}', 'live_inference': False,
+                          'scope': 'Reviewed specification through actual container and intercepted host worker'})
     summary = {'status': 'passed', 'runtime_image': runtime, 'cases': cases, 'live_inference': False,
                'host_sentinel_set_for_verification': True,
                'verified_at': datetime.now(timezone.utc).isoformat(),
-               'scope': 'Five actual container IPC fixtures, including two with intercepted supervised transport'}
+               'scope': 'Five actual container IPC fixtures, including two reviewed-specification runs with intercepted host transport'}
     atomic_json(directory / 'verification.json', summary)
     print(json.dumps({'status': 'passed', 'cases': len(cases), 'live_inference': False}))
     return summary
