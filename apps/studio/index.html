@@ -292,6 +292,21 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
 </div></div></section>
 <section class="section" id="view-benchmarks" hidden>
   <h2 class="section-title">Benchmarks</h2>
+  <p class="intro" id="repair-series-status" role="status">Loading paired repair trials…</p>
+  <div class="panel" id="repair-series-results" hidden>
+    <div class="panel-head"><h2>Before and after bounded repair</h2><span class="tag cyan">MATCHED PAIRS</span></div>
+    <div class="panel-body">
+      <div class="spec-actions"><label for="repair-case">Repair specification</label><select id="repair-case"></select></div>
+      <p class="intro" id="repair-summary"></p>
+    </div>
+    <div class="pilot-scroll" tabindex="0" role="region" aria-label="Paired repair outcomes">
+      <table class="metric-table">
+        <thead><tr><th scope="col">Seed</th><th scope="col">Method</th><th scope="col">Repair outcome</th><th scope="col">Build before → after</th><th scope="col">Browser before → after</th><th scope="col">Trace</th></tr></thead>
+        <tbody id="repair-trials"></tbody>
+      </table>
+    </div>
+    <div class="panel-body"><p class="intro">The same repair policy allows one model call on a source candidate with failed verification. An unmeasured value means the check did not produce an accepted measurement. Browser counts cover the declared scenarios.</p><a href="/api/repair-series" target="_blank" rel="noopener">Open paired measurements ↗</a></div>
+  </div>
   <p class="intro" id="series-status" role="status">Loading repeated local trials…</p>
   <div id="series-results" hidden>
     <div class="panel">
@@ -342,6 +357,7 @@ const workflowPath='/assets/task-replay/';
 let workflowPromise=null,workflowChapters=[],workflowFrame=0,workflowTimer=null;
 let comparisonPromise=null;
 let seriesPromise=null;
+let repairSeriesPromise=null;
 const collapsed=new Set();const titles={overview:'Overview',playground:'Specification playground',execution:'Execution explorer',artifacts:'Generated artifacts',benchmarks:'Benchmarks',research:'Research & architecture',progress:'Build progress'};
 function element(tag,text,className){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e}
 const progressButton=element('button','Build progress');progressButton.dataset.view='progress';document.querySelector('.nav').append(progressButton);
@@ -359,7 +375,7 @@ function showView(view){
   $('evidence-notice').hidden=view==='benchmarks';
   $('breadcrumb').textContent=titles[view];
   if(view==='playground')loadPlayground();
-  if(view==='benchmarks'){loadSeries();loadComparison();}
+  if(view==='benchmarks'){loadRepairSeries();loadSeries();loadComparison();}
   if(view==='artifacts')getCatalog().catch(()=>{});
   else stopWorkflow();
   if(location.hash!=='#'+view)location.hash=view;
@@ -389,7 +405,7 @@ async function loadRun(id){
     if(version===loadVersion)setRun(normalize(data.run||data), entry?._preview);
   }catch(error){if(version===loadVersion)reportError('Could not load run: '+error.message)}
 }
-function setRun(data, preview=null){run=data;previewKey=preview;const reference=preview==='reference';selectedEvent=-1;selectedArtifact=null;zoom=1;collapsed.clear();$('trace-scroll').scrollTo(0,0);$('evidence-notice').classList.remove('error');$('run-select').value=data.id;const live=String(data.mode||'').toLowerCase();const isPrivate=data.mode==='private-reviewed-replay';const isModel=/rlm|live|direct|baseline/.test(live)&&!(/smoke|deterministic|sample/.test(live));const evidenceTitle=preview==='generated'?'Verified model-generated build. ':reference?'Verified reference app. ':isPrivate?'Private replay. ':isModel?'Recorded experiment. ':'Deterministic infrastructure evidence. ';
+function setRun(data, preview=null){run=data;previewKey=preview;const reference=preview==='reference';selectedEvent=-1;selectedArtifact=null;zoom=1;collapsed.clear();$('trace-scroll').scrollTo(0,0);$('evidence-notice').classList.remove('error');$('run-select').value=data.id;const live=String(data.mode||'').toLowerCase();const isPrivate=data.mode==='private-reviewed-replay';const isModel=live==='paired-repair-replay'||(/rlm|live|direct|baseline/.test(live)&&!(/smoke|deterministic|sample/.test(live)));const evidenceTitle=preview==='generated'?'Verified model-generated build. ':reference?'Verified reference app. ':isPrivate?'Private replay. ':isModel?'Recorded experiment. ':'Deterministic infrastructure evidence. ';
 const evidenceCopy=preview==='generated'?'Source from a contained local model run. The captured build passed the recorded Task Management acceptance checks.':reference?'This human-authored example passed the local build and browser checks. The preview is a captured screenshot.':isPrivate?'This import stays in this browser session. Host broker events and container-reported observations have separate labels. Source files stay in the run directory.':isModel?'Inspect the saved events and validation outcomes before drawing conclusions.':'This run checks the local workflow. It does not demonstrate model-backed recursion or measure synthesis quality.';
 $('evidence-notice').replaceChildren(element('strong',evidenceTitle),document.createTextNode(evidenceCopy));
 $('stat-calls-label').textContent=isPrivate?'BROKER COMPLETIONS':'MODEL CALLS';
@@ -578,6 +594,70 @@ $('download-file').addEventListener('click',()=>{if(!selectedArtifact)return;con
 function renderMetrics(){const body=$('metrics-table');clear(body);const metrics=Object.entries(run?.metrics||{});if(!metrics.length){const row=element('tr'),cell=element('td','No measurements recorded.');cell.colSpan=2;row.append(cell);body.append(row)}metrics.forEach(([key,value])=>{const row=element('tr');row.append(element('td',key.replaceAll('_',' ')),element('td',format(value)));body.append(row)})}
 async function fetchJSON(url){const response=await fetch(url,{headers:{Accept:'application/json'}});if(!response.ok)throw Error('Archive returned HTTP '+response.status);return response.json()}
 const methodNames={direct:'Direct LLM',structured:'Structured',rlm:'Contained RLM'};
+function loadRepairSeries(){
+  if(repairSeriesPromise)return;
+  repairSeriesPromise=fetchJSON('/api/repair-series').then(series=>{
+    const selector=$('repair-case');
+    selector.replaceChildren(...series.cases.map(item=>{
+      const option=element('option',item.label);option.value=item.id;return option;
+    }));
+    selector.onchange=()=>renderRepairSeries(series);
+    $('repair-series-status').textContent=series.total_trials+' fresh trials · '+series.model+
+      ' · up to one repair call and '+series.repair_budget.max_wall_seconds+' seconds for repair and recheck.';
+    $('repair-series-results').hidden=false;
+    renderRepairSeries(series);
+  }).catch(()=>{
+    $('repair-series-status').textContent='The paired repair record is unavailable.';
+    repairSeriesPromise=null;
+  });
+}
+function renderRepairSeries(series){
+  const selected=series.cases.find(item=>item.id===$('repair-case').value);
+  const trials=selected.blocks.flatMap(block=>block.trials.map(trial=>({...trial,seed:block.settings.seed})));
+  const build=outcome=>outcome?.build_success==null?'Unmeasured':outcome.build_success?'Passed':'Failed';
+  const browser=outcome=>outcome?.end_to_end_pass_rate==null?'Unmeasured':
+    outcome.scenarios.filter(check=>check.status==='passed').length+' / '+outcome.scenarios.length;
+  const repairLabels={'no-verified-candidate':'No measured source candidate','no-failed-checks':'No failed checks',
+    'still-failing':'Rechecked · checks still failing','rechecked':'Rechecked',
+    'invalid-output':'Invalid repair manifest','callback-failed':'Repair call or response failed'};
+  $('repair-summary').textContent=trials.filter(trial=>trial.repair.attempts>0).length+' attempted repairs · '+
+    trials.filter(trial=>trial.repair.after!=null).length+' rechecked candidates across '+trials.length+' trials.';
+  $('repair-trials').replaceChildren(...trials.map(trial=>{
+    const row=element('tr');
+    const label=element('th',String(trial.seed));label.scope='row';
+    const repair=trial.repair;
+    row.append(label,element('td',methodNames[trial.method]),
+      element('td',repairLabels[repair.status]||repair.status.replaceAll('-',' ')),
+      element('td',build(trial)+' → '+build(repair.after)),element('td',browser(trial)+' → '+browser(repair.after)));
+    const trace=element('button','Inspect phases');
+    trace.addEventListener('click',()=>openRepairTrace(selected,trial,series.model));
+    const action=element('td');action.append(trace);row.append(action);
+    return row;
+  }));
+}
+function openRepairTrace(selected,trial,model){
+  const repair=trial.repair;
+  const events=[
+    {id:'trial',parent_id:null,type:'execution',label:'Matched local trial',status:'recorded',
+      details:{specification:selected.label,method:methodNames[trial.method],seed:trial.seed,model}},
+    {id:'first-pass',parent_id:'trial',type:'validation',label:'First-pass generation and verification',
+      status:trial.status,duration_ms:trial.wall_ms,details:{...trial.usage,build_success:trial.build_success,
+        end_to_end_pass_rate:trial.end_to_end_pass_rate,error_classification:trial.error_classification}},
+    {id:'repair',parent_id:'trial',type:'repair',label:'Bounded repair and recheck',
+      status:repair.status,duration_ms:repair.wall_ms,details:{attempts:repair.attempts,changed_files:repair.changed_files}}
+  ];
+  if(repair.inference_wall_ms!=null)events.push({id:'repair-call',parent_id:'repair',type:'model_call',
+    label:'Repair model call',status:repair.usage.completed_calls?'completed':'no completed response',
+    duration_ms:repair.inference_wall_ms,details:repair.usage});
+  if(repair.recheck_wall_ms!=null)events.push({id:'recheck',parent_id:'repair',type:'validation',
+    label:'Reverification',status:repair.after?.status||repair.status,duration_ms:repair.recheck_wall_ms,
+    details:{build_success:repair.after?.build_success??null,end_to_end_pass_rate:repair.after?.end_to_end_pass_rate??null}});
+  openCatalogRun({schema_version:1,id:'paired-'+selected.id+'-'+trial.seed+'-'+trial.method,
+    label:selected.label+' · '+methodNames[trial.method]+' · seed '+trial.seed,
+    mode:'paired-repair-replay',status:'recorded',live_inference:false,events,artifacts:[],
+    metrics:{first_pass_wall_ms:trial.wall_ms,repair_wall_ms:repair.wall_ms,
+      model_calls:trial.usage.completed_calls+(repair.usage?.completed_calls||0)}},'execution');
+}
 function loadSeries(){
   if(seriesPromise)return;
   seriesPromise=fetchJSON('/api/comparison-series').then(series=>{

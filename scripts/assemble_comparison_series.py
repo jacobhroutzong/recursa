@@ -18,11 +18,13 @@ def assemble(paths):
     blocks = [json.loads(path.read_bytes()) for path in paths]
     first = blocks[0]
     settings = {k: v for k, v in first["settings"].items() if k != "seed"}
+    repair_budget = first.get("repair_budget")
     cases = {case: {} for case in LABELS}
     for block in blocks:
         if (any(block[key] != first[key] for key in MATCHED_FIELDS)
                 or {k: v for k, v in block["settings"].items() if k != "seed"} != settings
-                or block["paid_api_calls"] != 0 or block["budget"]["max_repairs"] != 0):
+                or block["paid_api_calls"] != 0 or block["budget"]["max_repairs"] != 0
+                or block.get("repair_budget") != repair_budget):
             raise ValueError("Incompatible model, runtime, settings or budget")
         case = block["case_id"]
         seed = block["settings"]["seed"]
@@ -50,17 +52,30 @@ def assemble(paths):
             if any(block[key] != value for key, value in expected.items()):
                 raise ValueError(f"{case} block does not match the reviewed inputs")
             for trial in block["trials"]:
-                checks = trial["scenarios"]
-                rate = trial["end_to_end_pass_rate"]
-                if rate is not None and (
-                    [check["id"] for check in checks] != ids
-                    or rate != sum(check["status"] == "passed" for check in checks) / len(ids)
-                ):
-                    raise ValueError("Browser measurement does not match its scenario outcomes")
+                outcomes = [trial]
+                if repair_budget:
+                    repair = trial["repair"]
+                    usage = repair["usage"]
+                    if (not 0 <= repair["attempts"] <= 1 or (usage and usage["reserved_calls"] > 1)
+                            or (repair["after"] is not None and repair["status"] not in {"rechecked", "still-failing"})):
+                        raise ValueError("Invalid bounded repair observation")
+                    if repair["after"] is not None:
+                        outcomes.append(repair["after"])
+                for outcome in outcomes:
+                    checks = outcome["scenarios"]
+                    rate = outcome["end_to_end_pass_rate"]
+                    if rate is not None and (
+                        [check["id"] for check in checks] != ids
+                        or rate != sum(check["status"] == "passed" for check in checks) / len(ids)
+                    ):
+                        raise ValueError("Browser measurement does not match its scenario outcomes")
         published.append({"id": case, "label": label, "requirement_count": expected["requirement_count"],
                           "scenario_count": len(ids), "blocks": [cases[case][seed] for seed in sorted(cases[case])]})
-    return {"schema_version": 1, "kind": "matched-local-series", "model": first["model"],
-            "total_trials": sum(len(block["trials"]) for block in blocks), "cases": published}
+    result = {"schema_version": 1, "kind": "matched-local-series", "model": first["model"],
+              "total_trials": sum(len(block["trials"]) for block in blocks), "cases": published}
+    if repair_budget:
+        result.update(kind="matched-local-repair-series", repair_budget=repair_budget)
+    return result
 
 
 def main():

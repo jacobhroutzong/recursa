@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T18:24:27.593846+00:00",
-  "phase": "Section 8 \u00b7 Repeated local trials across two specifications",
-  "source_digest": "5aa39981031ca6c60df0533a7a265b325f524a428362a77e2fee86b340a445ae",
+  "updated_at": "2026-11-07T18:49:32.475401+00:00",
+  "phase": "Sections 8\u20139 \u00b7 Paired repair trials and phase traces",
+  "source_digest": "6732abe41878c224f670af9a77ecf5492b6870340920fc9a46adb63b5cf7afe6",
   "tests": {
-    "total": 108,
-    "passed": 108,
+    "total": 109,
+    "passed": 109,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T18:24:10.812895+00:00",
-    "source_digest": "5aa39981031ca6c60df0533a7a265b325f524a428362a77e2fee86b340a445ae",
+    "verified_at": "2026-11-07T18:49:17.916810+00:00",
+    "source_digest": "6732abe41878c224f670af9a77ecf5492b6870340920fc9a46adb63b5cf7afe6",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -58,14 +58,14 @@
     {
       "number": 8,
       "name": "8. Evaluation harness",
-      "status": "Repeated local trials measured",
-      "evidence": "Twelve fresh trials span Task Management and Operations Analytics under shared settings and limits. Three Task Management builds reached Chromium and passed 0 of 12 measured scenarios. Operations stopped before browser verification"
+      "status": "Paired repair trials measured",
+      "evidence": "Twelve fresh trials across two specifications produced seven repair attempts and three rechecks. Both direct Task Management repairs fixed the build. The three repaired builds passed 0 of 12 measured browser checks. Operations produced no after measurement"
     },
     {
       "number": 9,
       "name": "9. Tracing",
-      "status": "Partial prior work",
-      "evidence": "CPU and sanitized local model replays are available. Richer timing and full benchmark traces remain open"
+      "status": "Paired trial phase inspection started",
+      "evidence": "Studio opens first-pass, repair call, and recheck timing from the recorded measurements. Per-call timing inside the initial synthesis and full versioned benchmark traces remain open"
     },
     {
       "number": 10,

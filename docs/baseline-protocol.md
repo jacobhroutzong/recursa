@@ -52,3 +52,17 @@ The runner writes a private checkpoint after every arm. The series assembler tak
 | Operations Analytics | Contained RLM | 0 / 1 | Unmeasured |
 
 Both direct Operations runs ended at the 2,304-token output cap. Both structured Operations runs stopped on invalid manifest JSON in the state stage. The seed-17 Operations RLM returned source that failed the build. For seed 73, the broker rejected an incomplete model response. Overall, three Task Management builds reached Chromium, and all 12 measured scenarios failed. The original repaired Task Management showcase is separate. [Series record](../apps/studio/comparison-series.json)
+
+## Paired repair trials
+
+The paired series reruns both seed blocks with the same first-pass generation settings and budgets. After each arm, the runner saves its first-pass measurement before attempting repair. Every method uses the same host-side policy and model for repair. The contained RLM still generates through the isolated runtime.
+
+Eligible source must have recorded failed verification. A trial that stops before producing a measurable candidate, or one with no failed checks, skips repair. The model sees the reviewed specification, the existing files, and measured failure diagnostics. Browser diagnostics include scenario IDs, requirement IDs, completed step counts, and blocked activity. The repair can replace existing files with the same requirement provenance. The small-app scope permits neighboring files after a known diagnostic implicates the app. It forbids adding paths and limits the candidate to 16 files.
+
+Repair and recheck share a separate 90-second allowance. Repair inference has at most one call, 2,304 output tokens, and 32,000 input bytes, with an earlier 24,000-character bound on the repair context. A malformed response, unchanged source, or unavailable recheck leaves the after measurement null. Every changed candidate goes through the original build and browser verifier. The repaired showcase and historical first-pass series remain separate.
+
+To reproduce, run the two seed commands above with fresh output directories and add `--repair`. Assemble those four case-and-seed records into `apps/studio/repair-series.json` using `scripts/assemble_comparison_series.py`.
+
+Seven of the 12 fresh trials had a failed source candidate eligible for repair. Three produced accepted edits and a completed recheck. Both direct Task Management repairs took failed builds to passing builds, with 0 of 4 Chromium scenarios passing each time. The seed-73 Task Management RLM repair kept its passing build and remained at 0 of 4 browser passes. Two structured Task Management replies and the seed-17 Task Management RLM reply failed manifest validation. The one eligible Operations Analytics repair stopped on an incomplete response. The five other Operations trials had no source candidate eligible for repair.
+
+The Benchmarks view links each row to measured phase timing in the Execution Explorer. First-pass wall time includes generation and verification. Repair-call and recheck timings are child phases of repair wall time. Initial per-call timings and any phase that never ran remain unavailable. [Paired record](../apps/studio/repair-series.json)

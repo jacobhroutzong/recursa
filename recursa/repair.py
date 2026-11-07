@@ -38,9 +38,9 @@ def _report(value):
 
 
 def repair_artifacts(artifacts, requirement_ids, verification, repair_callback, verify_callback,
-                     *, max_attempts=2, implicated_paths=None, contracts=None,
+                     *, max_attempts=2, implicated_paths=None, include_related=False, contracts=None,
                      max_context_chars=32768, output_dir=None, record=lambda *args: None):
-    """Repair only diagnosed, allowlisted existing files and return measured state.
+    """Repair diagnosed existing files, optionally with their allowlisted companions.
 
     ``repair_callback(context)`` returns ``{"artifacts": [replacement records]}``.
     ``verify_callback(artifacts)`` returns a report in check_sources format.
@@ -84,6 +84,8 @@ def repair_artifacts(artifacts, requirement_ids, verification, repair_callback, 
         implicated = _failed_paths(measured, known) & allowlist
         if not implicated:
             return finish("no-allowlisted-diagnostic")
+        if include_related:
+            implicated = allowlist
         diagnostics = []
         for check in measured["checks"]:
             path = check.get("path")

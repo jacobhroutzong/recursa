@@ -61,6 +61,22 @@ class RepairTests(unittest.TestCase):
             self.assertEqual(result["status"], "invalid-output")
             self.assertEqual(result["artifacts"][0]["content"], "const = ;")
 
+    def test_related_sources_require_a_known_failure_and_respect_allowlist(self):
+        contexts = []
+
+        def callback(context):
+            contexts.append(context)
+            return self.replacement(path="other.js", requirements=["R2"])
+
+        result = self.invoke(callback, lambda _: self.failure, include_related=True, max_attempts=1)
+        self.assertEqual(result["attempts"][0]["changed_paths"], ["other.js"])
+        self.assertEqual(contexts[0]["allowed_paths"], ["app.js", "other.js"])
+        self.assertEqual([item["path"] for item in contexts[0]["diagnostics"]], ["app.js"])
+        self.assertEqual(self.invoke(callback, lambda _: self.failure, include_related=True,
+                                     implicated_paths=["app.js"])["status"], "invalid-output")
+        self.assertEqual(self.invoke(callback, lambda _: self.failure, include_related=True,
+                                     implicated_paths=["other.js"])["status"], "no-allowlisted-diagnostic")
+
     def test_unknown_verification_keeps_last_measured_source(self):
         result = self.invoke(lambda c: self.replacement(), lambda a: {"status": "not-checked", "checks": []})
         self.assertEqual(result["status"], "verification-incomplete")

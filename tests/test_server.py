@@ -125,6 +125,33 @@ class ServerTests(unittest.TestCase):
                             self.assertIsNone(trial["requirement_satisfaction"])
                             if trial["end_to_end_pass_rate"] is not None:
                                 self.assertEqual([check["id"] for check in trial["scenarios"]], ids)
+                with urlopen(base + "/api/repair-series") as response:
+                    paired = json.load(response)
+                self.assertEqual(paired["kind"], "matched-local-repair-series")
+                self.assertEqual(paired["total_trials"], 12)
+                self.assertEqual(paired["repair_budget"]["max_calls"], 1)
+                self.assertEqual(paired["repair_budget"]["max_cost_usd"], 0)
+                for old_case, case in zip(series["cases"], paired["cases"], strict=True):
+                    self.assertEqual(case["id"], old_case["id"])
+                    for old, block in zip(old_case["blocks"], case["blocks"], strict=True):
+                        for field in ("spec_sha256", "scenarios_sha256", "budget", "settings", "weights_sha256"):
+                            self.assertEqual(block[field], old[field])
+                        self.assertEqual(block["repair_budget"], paired["repair_budget"])
+                        self.assertCountEqual([trial["method"] for trial in block["trials"]],
+                                              ["direct", "structured", "rlm"])
+                        for trial in block["trials"]:
+                            repair = trial["repair"]
+                            self.assertIn(repair["attempts"], (0, 1))
+                            if repair["usage"] is not None:
+                                self.assertLessEqual(repair["usage"]["reserved_calls"], 1)
+                            if repair["after"] is not None:
+                                self.assertEqual(repair["attempts"], 1)
+                                self.assertGreater(repair["changed_files"], 0)
+                                self.assertIsNotNone(repair["recheck_wall_ms"])
+                                self.assertIsNone(repair["after"]["requirement_satisfaction"])
+                            if repair["status"] == "no-verified-candidate":
+                                self.assertEqual(repair["attempts"], 0)
+                                self.assertIsNone(repair["after"])
                 for route in ("/../README.md", "/api/execute", "/assets/unknown.png", "/assets/task-replay/../generated-task-preview.png", "/api/runs/missing", "/api/runs/private-copied", "/api/runs/generated-record-shaped-source"):
                     with self.assertRaises(HTTPError) as error:
                         urlopen(base + route)
