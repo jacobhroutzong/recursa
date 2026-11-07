@@ -4,7 +4,7 @@ The public Studio is a working development preview. The engineering path has a g
 
 | Area | Checkpoint | Completion gate |
 | --- | --- | --- |
-| Engineering | Local RLM, host broker, artifact registry, build and acceptance pipeline, budget and cleanup checks are exercised | Reproduce the pinned workflow from a fresh checkout and run the supported verification matrix in CI |
+| Engineering | Local RLM, host broker, artifact registry, build and acceptance pipeline, budget and cleanup checks are exercised. The portable gate passed from fresh Windows checkouts using both Git line-ending settings | Confirm the hosted Windows and Linux verification jobs, finish setup and troubleshooting notes, and review licensing and attribution |
 | Demonstration | Three of three examples are verified within their declared scenarios. Public Studio serves read-only previews, replay and trace inspection | Recheck the final release and embedded portfolio path after the remaining documentation and research changes |
 | Research | Direct, structured and contained RLM have measured Task Management and Operations trials. The paired repair series exposed first-pass and repair failures | Freeze a three-case protocol, run Aviation under matched conditions, widen independent coverage, and report repeated outcomes and limits |
 | Portfolio and handoff | The hosted Studio and portfolio project page are available, with screenshots and technical notes | Finish the case study, reproducible setup, licensing and attribution review, and final evidence handoff |
@@ -12,7 +12,7 @@ The public Studio is a working development preview. The engineering path has a g
 
 ## Roadmap
 
-1. **Repository and release quality.** Add a clean-checkout verification path with pinned dependencies, portable CPU replay checks, and an isolated Docker/browser verification job. Review upstream licensing and finish repository setup and troubleshooting.
+1. **Repository and release quality.** `python -S scripts/verify_checkout.py` verifies CPU replay and resume from a clean checkout. The [Verification workflow](https://github.com/jacobhroutzong/recursa/actions/workflows/verification.yml) tracks hosted Windows and Linux checks and an isolated Docker and Chromium job. Review upstream licensing and finish repository setup and troubleshooting.
 2. **Research evaluation.** Keep the three repaired showcases separate from experiments. Add matched Aviation runs using the same model, acceptance definitions, and declared budgets across methods. Cover the higher-value unmeasured behaviors, then run enough predeclared trials to report measured denominators, failures, and timing variation. A favorable result is unnecessary for completion.
 3. **Final demonstration and case study.** Recheck desktop and mobile Studio, portfolio links and embedding, and artifact downloads. Finish the architecture diagram, screenshots, technical narrative, method comparison, and documented limitations.
 4. **Reproduction and handoff.** Exercise the one-command local workflow and interactive Colab entry point, including interrupted-batch resume and artifact export. Record any Colab availability gap. Close the definition-of-done checklist with links to evidence and deliver the final handoff.

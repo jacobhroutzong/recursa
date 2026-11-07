@@ -9,9 +9,9 @@ app_port: 7860
 
 # Recursa — Recursive Application Synthesis
 
-A CPU-first research workbench for inspecting application specifications, execution traces, and artifacts. Studio shows the repaired Task Management build, recorded frames from four passing browser workflows, and a separate matched first-pass pilot with direct, structured, and contained RLM methods.
+A CPU-first research workbench for inspecting application specifications, execution traces, and artifacts. Studio shows three model-assisted builds with verified browser workflows, alongside separate matched experiments with direct, structured, and contained RLM methods.
 
-Implementation follows the [ordered 1–21 progress record](docs/implementation-progress.md). Sections 1–3 have been reviewed; section 4 has offline integration evidence, and section 5's source-verification foundation is being implemented. Real-model verification remains open. Earlier frontend/compute work does not bypass P0.
+Implementation follows the [ordered 1–21 progress record](docs/implementation-progress.md). An authorized contained Qwen run recorded context inspection and a synthesis subcall. The [completion checkpoint](docs/completion-checkpoint.md) tracks release verification, broader evaluation, and the final handoff.
 
 ![Recursa Studio showing a recorded CPU validation](docs/screenshots/studio.png)
 
@@ -48,6 +48,14 @@ This notebook was generated and structurally checked locally; execution inside a
 
 ## Verification
 
+From a fresh checkout, run the standard-library gate with Python 3.11+:
+
+```powershell
+python -S scripts/verify_checkout.py
+```
+
+This exercises CPU checkpoint creation, export, resume, and read-only HTTP replay. [GitHub Actions Verification](https://github.com/jacobhroutzong/recursa/actions/workflows/verification.yml) runs the portable gate on Windows and Linux and separately exercises locked tooling, Chromium, and Linux container containment with offline fixtures.
+
 ```powershell
 python -m unittest discover -s tests -v
 ```
@@ -83,6 +91,8 @@ To publish an updated Space release after authorization, run `python scripts/ver
 `recursa.engine` validates external structured specifications. `recursa.experiments` executes bounded worker processes and preserves per-trial evidence. `recursa.server` exposes recorded evidence to `apps/studio/index.html`. The Studio provides trace filtering, inspection, stepping, zoom, source export and run import. Source and config hashes identify reproducibility inputs; output timings naturally vary across machines.
 
 The target research runtime is the official [RLM project](https://github.com/alexzhang13/rlm), based on [Recursive Language Models](https://arxiv.org/abs/2512.24601) by Alex L. Zhang, Tim Kraska and Omar Khattab. The first contained local model case recorded external context inspection and a completed synthesis subcall. The default CPU validator is deterministic orchestration, not RLM inference. The local upstream REPL must not be exposed publicly or considered a sandbox.
+
+The pinned `rlms` package and local `llama.cpp` server are MIT-licensed upstream. The Qwen3-4B GGUF weights are Apache-2.0. The public Studio payload excludes the model weights, inference server binary, and `rlms` package. These upstream licenses apply to their respective components. [RLM license](https://github.com/alexzhang13/rlm/blob/main/LICENSE) · [llama.cpp license](https://github.com/ggml-org/llama.cpp/blob/master/LICENSE) · [Qwen model card](https://huggingface.co/Qwen/Qwen3-4B-GGUF)
 
 The adapter supports reviewed application verification and focused repair under shared call/token/cost reservations and an elapsed-time deadline; an intercepted-transport regression proves the wiring without genuine inference. The offline fixture command accepts `--max-wall-seconds`, runs in a worker with a parent deadline, and retains measured partial stages on exhaustion. Windows kill-on-close job tests verify descendant cleanup even when a scripted upstream REPL blocks. This controls lifetime and is not filesystem/network sandboxing; the shipped worker has no provider execution mode. The Task Management run used local open weights and has a sanitized model replay. Fair direct and structured baselines, GPU checkpoint continuation, fine-tuning, and statistical evaluation remain open. Current resume is **between trials**, not inside an interrupted model/training process.
 

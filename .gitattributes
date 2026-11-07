@@ -1,0 +1,4 @@
+# The public workflow manifests hash the original reviewed scenario bytes.
+examples/specs/tasks-local-acceptance.json text eol=crlf
+examples/specs/operations-local-acceptance.json text eol=lf
+examples/specs/aviation-local-acceptance.json text eol=lf

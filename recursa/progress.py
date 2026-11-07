@@ -16,6 +16,7 @@ def source_digest():
     for name in ("frontend", "browser"):
         files.extend(ROOT / 'tooling' / name / file for file in ('package.json', 'package-lock.json'))
     files.extend(ROOT / name for name in ("requirements-live.lock", "pyproject.toml", "tooling/typecheck/package.json", "tooling/typecheck/package-lock.json"))
+    files.extend(ROOT / name for name in (".gitattributes", ".github/workflows/verification.yml"))
     for path in sorted(files):
         if path.exists():
             digest.update(path.relative_to(ROOT).as_posix().encode())
@@ -39,7 +40,7 @@ def build_progress():
     if evidence is not None and evidence.get("source_digest") != identity:
         raise ValueError("Code changed after tests; rerun scripts/verify.py before publication")
     return {"schema_version": 1, "updated_at": datetime.now(timezone.utc).isoformat(),
-            "phase": "Section 11 · Three verified showcase replays", "source_digest": identity,
+            "phase": "Section 12 · Clean-checkout verification and CI", "source_digest": identity,
             "tests": evidence, "sections": sections,
             "mode": "public-development-preview", "live_inference": False,
             "notice": "Auto-refresh shows the latest published release. This is development progress, not live model inference.",

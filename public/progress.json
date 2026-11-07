@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T21:49:26.568729+00:00",
-  "phase": "Section 11 \u00b7 Three verified showcase replays",
-  "source_digest": "23982bc4eff50a4212611318bdc00b3eef16fb9f93de278cd14e2eda37c314d6",
+  "updated_at": "2026-11-07T22:11:52.077554+00:00",
+  "phase": "Section 12 \u00b7 Clean-checkout verification and CI",
+  "source_digest": "eababb7023f3f1c9702ea1877f9c21d2a53cc4310d33d979e6bfd49f4df131be",
   "tests": {
     "total": 109,
     "passed": 109,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T21:49:11.329606+00:00",
-    "source_digest": "23982bc4eff50a4212611318bdc00b3eef16fb9f93de278cd14e2eda37c314d6",
+    "verified_at": "2026-11-07T22:11:40.085297+00:00",
+    "source_digest": "eababb7023f3f1c9702ea1877f9c21d2a53cc4310d33d979e6bfd49f4df131be",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -82,8 +82,8 @@
     {
       "number": 12,
       "name": "12. Repository structure",
-      "status": "Partial",
-      "evidence": "Existing useful modules only; final organization/license/CI pending"
+      "status": "Clean-checkout gate verified locally",
+      "evidence": "Five CPU and replay checks passed from fresh Windows checkouts with Git line-ending conversion both enabled and disabled. Windows and Linux CI and an isolated Linux Chromium and Docker job are configured. Hosted verification and licensing review remain release gates"
     },
     {
       "number": 13,
