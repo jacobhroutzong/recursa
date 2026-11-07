@@ -27,12 +27,27 @@ def load_runs(directory):
     return runs
 
 
+def load_benchmark_traces():
+    path = ROOT / "apps/studio/benchmark-traces.json"
+    if not path.is_file():
+        return {}
+    archive = json.loads(path.read_bytes())
+    if archive["schema_version"] != 1:
+        return {}
+    return {trace["id"]: trace for trace in archive["traces"]}
+
+
 def make_handler(directory):
     class Handler(BaseHTTPRequestHandler):
         def do_GET(self):
             route = urlparse(self.path).path
             if route == "/api/runs":
                 self.send_data(200, list(load_runs(directory).values()))
+            elif route == "/api/benchmark-traces":
+                fields = ("id", "label", "mode", "status", "trace_group", "trace_schema_version")
+                self.send_data(200, {"schema_version": 1, "traces": [
+                    {key: trace[key] for key in fields} for trace in load_benchmark_traces().values()
+                ]})
             elif route == "/api/playground":
                 studio = ROOT / "apps/studio"
                 catalog = json.loads((studio / "playground.json").read_bytes())
@@ -68,7 +83,9 @@ def make_handler(directory):
                                          "updated_at": None, "tests": None,
                                          "notice": "Release evidence has not been generated for this checkout."})
             elif route.startswith("/api/runs/"):
-                run = load_runs(directory).get(route[len("/api/runs/"):])
+                identifier = route[len("/api/runs/"):]
+                run = (load_benchmark_traces() if identifier.startswith("benchmark-") else
+                       load_runs(directory)).get(identifier)
                 self.send_data(200 if run else 404, run or {"error": "Run not found"})
             elif route in ("/", "/index.html"):
                 body = (ROOT / "apps/studio/index.html").read_bytes()

@@ -162,6 +162,32 @@ class ServerTests(unittest.TestCase):
                             if repair["status"] == "no-verified-candidate":
                                 self.assertEqual(repair["attempts"], 0)
                                 self.assertIsNone(repair["after"])
+                with urlopen(base + "/api/benchmark-traces") as response:
+                    trace_index = json.load(response)
+                self.assertEqual(trace_index["schema_version"], 1)
+                entries = trace_index["traces"]
+                self.assertEqual(len({entry["id"] for entry in entries}), 27)
+                self.assertEqual({entry["trace_group"] for entry in entries},
+                                 {"Original pilot", "Repeated first pass", "Paired repair"})
+                timed = 0
+                for entry in entries:
+                    with urlopen(base + "/api/runs/" + entry["id"]) as response:
+                        trace = json.load(response)
+                    self.assertEqual(trace["trace_schema_version"], 1)
+                    self.assertEqual(trace["id"], entry["id"])
+                    self.assertFalse(trace["live_inference"])
+                    self.assertEqual(trace["artifacts"], [])
+                    seen = {None}
+                    for event in trace["events"]:
+                        self.assertNotIn(event["id"], seen)
+                        self.assertIn(event["parent_id"], seen)
+                        self.assertNotIn("diagnostic", event["details"])
+                        self.assertNotIn("content", event["details"])
+                        seen.add(event["id"])
+                        if event["id"].startswith("first-call-") and event["duration_ms"] is not None:
+                            timed += 1
+                    self.assertIn("first-pass", seen)
+                self.assertEqual(timed, 22)
                 for route in ("/../README.md", "/api/execute", "/assets/unknown.png", "/assets/task-replay/../generated-task-preview.png", "/api/runs/missing", "/api/runs/private-copied", "/api/runs/generated-record-shaped-source"):
                     with self.assertRaises(HTTPError) as error:
                         urlopen(base + route)

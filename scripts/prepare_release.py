@@ -19,6 +19,7 @@ if __name__ == "__main__":
     destination = ROOT / ".cache/space-releases" / progress["source_digest"][:16]
     paths = [ROOT / "Dockerfile", ROOT / "apps/studio/index.html", public / "progress.json"]
     paths.extend(ROOT / "apps/studio" / name for name in ("playground.json", "generated-task.json", "task-comparison.json", "comparison-series.json", "repair-series.json", "assets/task-preview.png", "assets/generated-task-preview.png"))
+    paths.append(ROOT / "apps/studio/benchmark-traces.json")
     replay = ROOT / "apps/studio/assets/task-replay"
     paths.append(replay / "manifest.json")
     paths.extend(replay.glob("*.png"))

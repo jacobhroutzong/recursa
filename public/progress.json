@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T20:13:05.326094+00:00",
-  "phase": "Section 9 \u00b7 Initial synthesis call timing",
-  "source_digest": "27be83998d0ba71e2fff8ea4d1a074f87fdd1e532f78e70bc32ace89229d8adb",
+  "updated_at": "2026-11-07T20:27:22.610566+00:00",
+  "phase": "Section 9 \u00b7 Versioned benchmark traces",
+  "source_digest": "31a2e5854bcc5dfe59ced14d99198f8e1c5e5288c68e942d70c52c92ca86e5dc",
   "tests": {
     "total": 109,
     "passed": 109,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T20:12:50.691857+00:00",
-    "source_digest": "27be83998d0ba71e2fff8ea4d1a074f87fdd1e532f78e70bc32ace89229d8adb",
+    "verified_at": "2026-11-07T20:27:08.320834+00:00",
+    "source_digest": "31a2e5854bcc5dfe59ced14d99198f8e1c5e5288c68e942d70c52c92ca86e5dc",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -64,8 +64,8 @@
     {
       "number": 9,
       "name": "9. Tracing",
-      "status": "Initial synthesis call timing published",
-      "evidence": "Studio opens 22 measured first-pass model calls across the 12 paired trials. Historical times come from matched local server logs. New runs record host request wall time. Full versioned benchmark traces remain open"
+      "status": "Versioned benchmark traces published",
+      "evidence": "Execution Explorer lists 27 benchmark traces with stable IDs, input and source hashes, recorded call and verification events, and repair outcomes. The paired series has 22 measured first-pass call durations"
     },
     {
       "number": 10,

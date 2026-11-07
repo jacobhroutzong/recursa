@@ -70,3 +70,15 @@ The Benchmarks view links each row to measured phase timing in the Execution Exp
 The historical call nodes show llama-server prompt evaluation plus token generation. They exclude transport, model orchestration, and verification. The recovery script aligns private provider reservations and server timing rows in original single-slot execution order and checks token counts for completed responses. Incomplete responses are matched against the configured output cap. Earlier archives without this timing evidence continue to show no per-call measurement.
 
 New runs measure host request wall time around the transport, including worker overhead for supervised calls, and label that source separately. A request denied before transport has no duration. The public timing records contain durations, token counts, and classifications. Provider bodies and prompts stay private.
+
+## Versioned benchmark traces
+
+Execution Explorer groups the 27 traces by **Original pilot**, **Repeated first pass**, and **Paired repair**. Each trace has a stable ID of the form `benchmark-<archive>-<case>-<seed>-<method>`. The public index is `/api/benchmark-traces`. The Explorer's **Trace JSON** link opens the selected record at `/api/runs/<id>`.
+
+The archive and index use `schema_version: 1`. A trace uses the existing replay envelope and declares `trace_schema_version: 1`. Its ordered `events` have unique IDs, parent IDs, event types, labels, observed statuses, nullable durations in milliseconds, and stage-specific details. Nodes include source hashes and requirement references, initial calls, measured verification and scenario outcomes, and repair evidence where it exists. Missing durations remain null. Parent links describe the evidence hierarchy. They do not imply timestamps or unrecorded model-call nesting.
+
+The exporter reconciles private runs with their published inputs, outcomes, and call counts. It projects selected fields and excludes source bodies, raw diagnostics, prompts, responses, and private filesystem paths. The paired table's **Inspect phases** button opens the same versioned trace as the Explorer selector.
+
+```powershell
+python scripts/build_benchmark_traces.py --runs <private-benchmark-directory> --output apps/studio/benchmark-traces.json
+```

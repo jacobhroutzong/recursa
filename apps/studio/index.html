@@ -262,7 +262,7 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
     </div>
   </div>
 </section>
-<section class="section" id="view-execution" hidden><h2 class="section-title">Execution explorer</h2><p class="intro">Select a node to inspect recorded context, timing, and outputs. Parent relationships come directly from saved events.</p><div class="run-info"><label for="run-select">Recorded run </label><select class="run-select" id="run-select" aria-label="Select recorded run"></select></div><div class="grid"><div class="panel"><div class="panel-head"><h2>Execution graph</h2><span class="tag" id="trace-count">0 EVENTS</span></div><div class="trace-tools"><label class="visually-hidden" for="event-filter">Filter event type</label><select id="event-filter"><option value="all">All event types</option></select><button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-reset" aria-label="Reset zoom">100%</button><button id="expand-all" disabled>Expand branches</button><button id="step-back" aria-label="Previous event">←</button><button id="step-next" aria-label="Next event">→</button></div><div class="trace-scroll" id="trace-scroll" tabindex="0" role="region" aria-label="Scrollable execution graph"><div class="trace-tree" id="trace-tree"></div></div></div><div class="panel"><div class="panel-head"><h2>Node inspector</h2><small>Recorded evidence</small></div><div class="panel-body inspector" id="inspector"><div class="empty">Select an execution node.</div></div></div></div></section>
+<section class="section" id="view-execution" hidden><h2 class="section-title">Execution explorer</h2><p class="intro">Select a node to inspect recorded context, timing, and outputs. Parent relationships come directly from saved events.</p><div class="run-info"><label for="run-select">Recorded run </label><select class="run-select" id="run-select" aria-label="Select recorded run"></select><a id="run-json" target="_blank" rel="noopener" hidden>Trace JSON</a></div><div class="grid"><div class="panel"><div class="panel-head"><h2>Execution graph</h2><span class="tag" id="trace-count">0 EVENTS</span></div><div class="trace-tools"><label class="visually-hidden" for="event-filter">Filter event type</label><select id="event-filter"><option value="all">All event types</option></select><button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-reset" aria-label="Reset zoom">100%</button><button id="expand-all" disabled>Expand branches</button><button id="step-back" aria-label="Previous event">←</button><button id="step-next" aria-label="Next event">→</button></div><div class="trace-scroll" id="trace-scroll" tabindex="0" role="region" aria-label="Scrollable execution graph"><div class="trace-tree" id="trace-tree"></div></div></div><div class="panel"><div class="panel-head"><h2>Node inspector</h2><small>Recorded evidence</small></div><div class="panel-body inspector" id="inspector"><div class="empty">Select an execution node.</div></div></div></div></section>
 <section class="section" id="view-artifacts" hidden><h2 class="section-title">Artifact explorer</h2><p class="intro">Inspect source files and view captured previews of verified builds.</p><div class="spec-actions"><button id="open-generated" class="primary" hidden>Open generated Task Management app</button><button id="open-reference">Open Task Management reference app</button><button id="watch-workflows" aria-controls="workflow-player" aria-expanded="false" hidden>Watch verified workflows</button></div><p id="reference-status" class="intro" role="status"></p>
 <div class="panel" id="workflow-player" hidden>
   <div class="panel-head"><h2>Task Management workflow replay</h2><span class="tag">CHROMIUM CAPTURE</span></div>
@@ -396,16 +396,49 @@ function format(v){if(v===null||v===undefined)return 'Not recorded';return typeo
 function duration(ms){return ms!=null&&Number.isFinite(Number(ms))?(Number(ms)<1000?(Number(ms)>0&&Number(ms)<1?'<1 ms':Number(ms).toFixed(0)+' ms'):(Number(ms)/1000).toFixed(2)+' s'):'—'}
 function clear(e){e.replaceChildren()}
 function normalize(data){if(!data||typeof data!=='object'||Array.isArray(data))throw Error('Expected a run object.');if(!data.id)throw Error('Run must include an id.');if(!Array.isArray(data.events)||!Array.isArray(data.artifacts)||[...data.events,...data.artifacts].some(entry=>!entry||typeof entry!=='object'||Array.isArray(entry)))throw Error('Run must include events and artifacts arrays.');if(data.events.length>2000||data.artifacts.length>1000)throw Error('Run exceeds the Studio display limit.');return {...data,metrics:data.metrics&&typeof data.metrics==='object'?data.metrics:{}}}
-function renderArchive(){clear($('run-cards'));clear($('run-select'));runs.forEach(r=>{const opt=element('option',r.label||r.id);opt.value=r.id;$('run-select').append(opt);const b=element('button',undefined,'run-card');const title=element('div',r.label||r.id);title.append(element('small',(r.mode||'recorded')+' · '+(r.status||'status not recorded')));b.append(title,element('span','Open →'));b.addEventListener('click',()=>loadRun(r.id).then(()=>showView('execution')));$('run-cards').append(b)});if(!runs.length)$('run-cards').append(element('div','No saved runs yet. Run the local smoke command or import an exported run.','empty'))}
+function renderArchive(){
+  const select=$('run-select'),cards=$('run-cards'),groups=new Map();
+  clear(cards);clear(select);
+  for(const r of runs){
+    const option=element('option',r.label||r.id);option.value=r.id;
+    if(r.trace_group){
+      if(!groups.has(r.trace_group)){
+        const group=element('optgroup');group.label=r.trace_group;groups.set(r.trace_group,group);select.append(group);
+      }
+      groups.get(r.trace_group).append(option);
+      continue;
+    }
+    select.append(option);
+    const button=element('button',undefined,'run-card');
+    const title=element('div',r.label||r.id);
+    title.append(element('small',(r.mode||'recorded')+' · '+(r.status||'status not recorded')));
+    button.append(title,element('span','Open →'));
+    button.addEventListener('click',()=>loadRun(r.id).then(loaded=>{if(loaded)showView('execution');}));
+    cards.append(button);
+  }
+  if(groups.size){
+    const button=element('button','Browse benchmark traces →','run-card');
+    button.addEventListener('click',()=>showView('execution'));cards.append(button);
+  }
+  if(!runs.length)cards.append(element('div','No saved runs yet. Run the local smoke command or import an exported run.','empty'));
+}
 async function loadRun(id){
   const version=++loadVersion;
   const entry=runs.find(r=>r.id===id);
   try{
     const data=entry?._local||await fetchJSON('/api/runs/'+encodeURIComponent(id));
-    if(version===loadVersion)setRun(normalize(data.run||data), entry?._preview);
+    if(version!==loadVersion)return false;
+    const normalized=normalize(data.run||data);
+    setRun(normalized,entry?._preview,normalized.mode==='benchmark-trace'&&!entry?._local);
+    return true;
   }catch(error){if(version===loadVersion)reportError('Could not load run: '+error.message)}
 }
-function setRun(data, preview=null){run=data;previewKey=preview;const reference=preview==='reference';selectedEvent=-1;selectedArtifact=null;zoom=1;collapsed.clear();$('trace-scroll').scrollTo(0,0);$('evidence-notice').classList.remove('error');$('run-select').value=data.id;const live=String(data.mode||'').toLowerCase();const isPrivate=data.mode==='private-reviewed-replay';const isModel=live==='paired-repair-replay'||(/rlm|live|direct|baseline/.test(live)&&!(/smoke|deterministic|sample/.test(live)));const evidenceTitle=preview==='generated'?'Verified model-generated build. ':reference?'Verified reference app. ':isPrivate?'Private replay. ':isModel?'Recorded experiment. ':'Deterministic infrastructure evidence. ';
+function setRun(data, preview=null, publicBenchmark=false){run=data;previewKey=preview;const reference=preview==='reference';selectedEvent=-1;selectedArtifact=null;zoom=1;collapsed.clear();$('trace-scroll').scrollTo(0,0);$('evidence-notice').classList.remove('error');$('run-select').value=data.id;const live=String(data.mode||'').toLowerCase();const isPrivate=data.mode==='private-reviewed-replay';const isModel=live==='benchmark-trace'||live==='paired-repair-replay'||(/rlm|live|direct|baseline/.test(live)&&!(/smoke|deterministic|sample/.test(live)));const evidenceTitle=preview==='generated'?'Verified model-generated build. ':reference?'Verified reference app. ':isPrivate?'Private replay. ':isModel?'Recorded experiment. ':'Deterministic infrastructure evidence. ';
+const raw=$('run-json');raw.hidden=!publicBenchmark;
+if(publicBenchmark){raw.href='/api/runs/'+encodeURIComponent(data.id);raw.textContent='Trace JSON · v'+data.trace_schema_version;}
+const url=new URL(location.href);
+if(publicBenchmark)url.searchParams.set('run',data.id);else url.searchParams.delete('run');
+if(url.href!==location.href)history.replaceState(history.state,'',url);
 const evidenceCopy=preview==='generated'?'Source from a contained local model run. The captured build passed the recorded Task Management acceptance checks.':reference?'This human-authored example passed the local build and browser checks. The preview is a captured screenshot.':isPrivate?'This import stays in this browser session. Host broker events and container-reported observations have separate labels. Source files stay in the run directory.':isModel?'Inspect the saved events and validation outcomes before drawing conclusions.':'This run checks the local workflow. It does not demonstrate model-backed recursion or measure synthesis quality.';
 $('evidence-notice').replaceChildren(element('strong',evidenceTitle),document.createTextNode(evidenceCopy));
 $('stat-calls-label').textContent=isPrivate?'BROKER COMPLETIONS':'MODEL CALLS';
@@ -630,42 +663,13 @@ function renderRepairSeries(series){
       element('td',repairLabels[repair.status]||repair.status.replaceAll('-',' ')),
       element('td',build(trial)+' → '+build(repair.after)),element('td',browser(trial)+' → '+browser(repair.after)));
     const trace=element('button','Inspect phases');
-    trace.addEventListener('click',()=>openRepairTrace(selected,trial,series.model));
+    trace.addEventListener('click',async()=>{
+      const id='benchmark-paired-'+selected.id+'-'+trial.seed+'-'+trial.method;
+      if(await loadRun(id))showView('execution');
+    });
     const action=element('td');action.append(trace);row.append(action);
     return row;
   }));
-}
-function openRepairTrace(selected,trial,model){
-  const repair=trial.repair;
-  const events=[
-    {id:'trial',parent_id:null,type:'execution',label:'Matched local trial',status:'recorded',
-      details:{specification:selected.label,method:methodNames[trial.method],seed:trial.seed,model}},
-    {id:'first-pass',parent_id:'trial',type:'validation',label:'First-pass generation and verification',
-      status:trial.status,duration_ms:trial.wall_ms,details:{...trial.usage,build_success:trial.build_success,
-        end_to_end_pass_rate:trial.end_to_end_pass_rate,error_classification:trial.error_classification,
-        recorded_call_timings:trial.initial_calls?.length??null}},
-    {id:'repair',parent_id:'trial',type:'repair',label:'Bounded repair and recheck',
-      status:repair.status,duration_ms:repair.wall_ms,details:{attempts:repair.attempts,changed_files:repair.changed_files}}
-  ];
-  for(const call of trial.initial_calls??[]){
-    const server=call.timing_source==='llama-server-evaluation';
-    events.push({id:'first-call-'+call.number,parent_id:'first-pass',type:'model_call',
-      label:'Initial model call '+call.number,status:call.status,duration_ms:call.duration_ms,
-      details:{timing_source:server?'llama-server prompt evaluation and token generation':'Host provider request wall time',
-        ...(server?{prompt_eval_ms:call.prompt_eval_ms,generation_ms:call.generation_ms}:{}),
-        tokens:call.tokens,error_classification:call.error_classification}});
-  }
-  if(repair.inference_wall_ms!=null)events.push({id:'repair-call',parent_id:'repair',type:'model_call',
-    label:'Repair model call',status:repair.usage.completed_calls?'completed':'no completed response',
-    duration_ms:repair.inference_wall_ms,details:repair.usage});
-  if(repair.recheck_wall_ms!=null)events.push({id:'recheck',parent_id:'repair',type:'validation',
-    label:'Reverification',status:repair.after?.status||repair.status,duration_ms:repair.recheck_wall_ms,
-    details:{build_success:repair.after?.build_success??null,end_to_end_pass_rate:repair.after?.end_to_end_pass_rate??null}});
-  openCatalogRun({schema_version:1,id:'paired-'+selected.id+'-'+trial.seed+'-'+trial.method,
-    label:selected.label+' · '+methodNames[trial.method]+' · seed '+trial.seed,
-    mode:'paired-repair-replay',status:'recorded',live_inference:false,events,artifacts:[],
-    metrics:{first_pass_wall_ms:trial.wall_ms,repair_wall_ms:repair.wall_ms,
-      model_calls:trial.usage.completed_calls+(repair.usage?.completed_calls||0)}},'execution');
 }
 function loadSeries(){
   if(seriesPromise)return;
@@ -868,6 +872,22 @@ async function refreshProgress(){try{const p=await fetchJSON('/api/progress');co
 refreshProgress();setInterval(()=>{if(!document.hidden)refreshProgress()},15000);
 function reportError(message){$('evidence-notice').replaceChildren(element('strong','Archive unavailable. '),document.createTextNode(message+' You can still import a saved run JSON.'));$('evidence-notice').classList.add('error')}
 $('run-select').addEventListener('change',e=>loadRun(e.target.value));$('import-run').addEventListener('change',async e=>{try{const file=e.target.files[0];if(!file)return;if(file.size>10*1024*1024)throw Error('Import limit is 10 MB.');const parsed=JSON.parse(await file.text());const data=normalize(parsed.run||parsed);++loadVersion;const existing=runs.findIndex(r=>r.id===data.id);const entry={id:data.id,label:data.label,mode:data.mode,status:data.status,_local:data};if(existing>=0)runs[existing]=entry;else runs.unshift(entry);renderArchive();setRun(data);$('evidence-notice').classList.remove('error');showView('execution')}catch(error){reportError('Import failed: '+error.message)}finally{e.target.value=''}});
-(async()=>{try{const data=await fetchJSON('/api/runs');const archived=Array.isArray(data)?data:(data.runs||[]);const local=runs.filter(entry=>entry._local);runs=[...local,...archived.filter(entry=>!local.some(item=>item.id===entry.id))];renderArchive();if(run)$('run-select').value=run.id;else if(runs.length)await loadRun(runs[0].id);else $('evidence-notice').replaceChildren(element('strong','No recorded runs yet. '),document.createTextNode('Create a local CPU smoke run or import a saved experiment to begin.'))}catch(error){runs=[];renderArchive();reportError(error.message)}})();
+(async()=>{
+  try{
+    const [archive,benchmarks]=await Promise.all([
+      fetchJSON('/api/runs'),fetchJSON('/api/benchmark-traces').catch(()=>({traces:[]}))
+    ]);
+    const archived=Array.isArray(archive)?archive:(archive.runs||[]);
+    const local=runs.filter(entry=>entry._local);
+    runs=[...local,...[...archived,...benchmarks.traces].filter(entry=>!local.some(item=>item.id===entry.id))];
+    renderArchive();
+    const requested=new URLSearchParams(location.search).get('run');
+    if(run)$('run-select').value=run.id;
+    else if(requested&&runs.some(entry=>entry.id===requested))await loadRun(requested);
+    else if(runs.length)await loadRun(runs[0].id);
+    else $('evidence-notice').replaceChildren(element('strong','No recorded runs yet. '),
+      document.createTextNode('Create a local CPU smoke run or import a saved experiment to begin.'));
+  }catch(error){runs=[];renderArchive();reportError(error.message);}
+})();
 </script>
 </body></html>
