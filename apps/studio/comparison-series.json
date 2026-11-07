@@ -1,0 +1,535 @@
+{
+  "schema_version": 1,
+  "kind": "matched-local-series",
+  "model": "Qwen/Qwen3-4B-GGUF",
+  "total_trials": 12,
+  "cases": [
+    {
+      "id": "tasks",
+      "label": "Task Management",
+      "requirement_count": 5,
+      "scenario_count": 4,
+      "blocks": [
+        {
+          "schema_version": 1,
+          "kind": "matched-local-pilot",
+          "case": "Task management",
+          "case_id": "tasks",
+          "requirement_count": 5,
+          "scenario_ids": [
+            "required-title",
+            "toggle-and-persist",
+            "combined-filters",
+            "keyboard-mobile-task-controls"
+          ],
+          "model": "Qwen/Qwen3-4B-GGUF",
+          "revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+          "weights_sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+          "runtime_binary_sha256": "7b0e5e30ef372f4eb237a0a09e0197909bdaf7e9c2867e8d02a15bdceaca840d",
+          "rlm_runtime_source_sha256": "78a18098ee25fa82f87aec5edab5d4d4e2a186c202d108ce572974e4c4d53727",
+          "settings": {
+            "context_tokens": 8192,
+            "temperature": 0.2,
+            "seed": 17,
+            "top_k": 40,
+            "top_p": 0.95,
+            "min_p": 0.05,
+            "reasoning": false,
+            "prompt_cache": false
+          },
+          "budget": {
+            "max_wall_seconds": 120,
+            "max_calls": 6,
+            "max_output_tokens": 13824,
+            "max_input_bytes": 100000,
+            "max_cost_usd": 0,
+            "max_depth": 1,
+            "max_concurrency": 1,
+            "max_repairs": 0
+          },
+          "output_tokens_per_call": 2304,
+          "spec_sha256": "782b821ee4cb333f377cf2c360799c4381a908f242f96374cfe9414e1204f88c",
+          "original_scenarios_sha256": "59beb608683d76af7c2357f898ad23dc45a357f4a014b512f2abade68170c794",
+          "scenarios_sha256": "038ca79c397a530c94ddccc5b45d250886d25e5aecdd9207226c60284e9bba94",
+          "diagnostic_source_path": "index.html",
+          "paid_api_calls": 0,
+          "trials_per_method": 1,
+          "trials": [
+            {
+              "method": "direct",
+              "status": "failed",
+              "error_classification": null,
+              "build_success": false,
+              "lint_success": true,
+              "accessibility_success": null,
+              "end_to_end_pass_rate": null,
+              "requirement_satisfaction": null,
+              "billing_cost_usd": null,
+              "scenarios": [],
+              "wall_ms": 20796,
+              "usage": {
+                "reserved_calls": 1,
+                "completed_calls": 1,
+                "input_tokens": 488,
+                "output_tokens": 1250
+              },
+              "rlm_observations": null
+            },
+            {
+              "method": "structured",
+              "status": "failed",
+              "error_classification": null,
+              "build_success": true,
+              "lint_success": true,
+              "accessibility_success": null,
+              "end_to_end_pass_rate": 0,
+              "requirement_satisfaction": null,
+              "billing_cost_usd": null,
+              "scenarios": [
+                {
+                  "id": "required-title",
+                  "status": "failed",
+                  "completed_steps": 1
+                },
+                {
+                  "id": "toggle-and-persist",
+                  "status": "failed",
+                  "completed_steps": 2
+                },
+                {
+                  "id": "combined-filters",
+                  "status": "failed",
+                  "completed_steps": 2
+                },
+                {
+                  "id": "keyboard-mobile-task-controls",
+                  "status": "failed",
+                  "completed_steps": 3
+                }
+              ],
+              "wall_ms": 32235,
+              "usage": {
+                "reserved_calls": 2,
+                "completed_calls": 2,
+                "input_tokens": 1198,
+                "output_tokens": 1128
+              },
+              "rlm_observations": null
+            },
+            {
+              "method": "rlm",
+              "status": "failed",
+              "error_classification": null,
+              "build_success": false,
+              "lint_success": false,
+              "accessibility_success": null,
+              "end_to_end_pass_rate": null,
+              "requirement_satisfaction": null,
+              "billing_cost_usd": null,
+              "scenarios": [],
+              "wall_ms": 38156,
+              "usage": {
+                "reserved_calls": 3,
+                "completed_calls": 3,
+                "input_tokens": 2077,
+                "output_tokens": 1649
+              },
+              "rlm_observations": {
+                "context_reported": true,
+                "subcall_reported": true,
+                "policy_verified": true,
+                "cleanup_verified": true
+              }
+            }
+          ]
+        },
+        {
+          "schema_version": 1,
+          "kind": "matched-local-pilot",
+          "case": "Task management",
+          "case_id": "tasks",
+          "requirement_count": 5,
+          "scenario_ids": [
+            "required-title",
+            "toggle-and-persist",
+            "combined-filters",
+            "keyboard-mobile-task-controls"
+          ],
+          "model": "Qwen/Qwen3-4B-GGUF",
+          "revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+          "weights_sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+          "runtime_binary_sha256": "7b0e5e30ef372f4eb237a0a09e0197909bdaf7e9c2867e8d02a15bdceaca840d",
+          "rlm_runtime_source_sha256": "78a18098ee25fa82f87aec5edab5d4d4e2a186c202d108ce572974e4c4d53727",
+          "settings": {
+            "context_tokens": 8192,
+            "temperature": 0.2,
+            "seed": 73,
+            "top_k": 40,
+            "top_p": 0.95,
+            "min_p": 0.05,
+            "reasoning": false,
+            "prompt_cache": false
+          },
+          "budget": {
+            "max_wall_seconds": 120,
+            "max_calls": 6,
+            "max_output_tokens": 13824,
+            "max_input_bytes": 100000,
+            "max_cost_usd": 0,
+            "max_depth": 1,
+            "max_concurrency": 1,
+            "max_repairs": 0
+          },
+          "output_tokens_per_call": 2304,
+          "spec_sha256": "782b821ee4cb333f377cf2c360799c4381a908f242f96374cfe9414e1204f88c",
+          "original_scenarios_sha256": "59beb608683d76af7c2357f898ad23dc45a357f4a014b512f2abade68170c794",
+          "scenarios_sha256": "038ca79c397a530c94ddccc5b45d250886d25e5aecdd9207226c60284e9bba94",
+          "diagnostic_source_path": "index.html",
+          "paid_api_calls": 0,
+          "trials_per_method": 1,
+          "trials": [
+            {
+              "method": "rlm",
+              "status": "failed",
+              "error_classification": null,
+              "build_success": true,
+              "lint_success": true,
+              "accessibility_success": null,
+              "end_to_end_pass_rate": 0,
+              "requirement_satisfaction": null,
+              "billing_cost_usd": null,
+              "scenarios": [
+                {
+                  "id": "required-title",
+                  "status": "failed",
+                  "completed_steps": 1
+                },
+                {
+                  "id": "toggle-and-persist",
+                  "status": "failed",
+                  "completed_steps": 2
+                },
+                {
+                  "id": "combined-filters",
+                  "status": "failed",
+                  "completed_steps": 2
+                },
+                {
+                  "id": "keyboard-mobile-task-controls",
+                  "status": "failed",
+                  "completed_steps": 3
+                }
+              ],
+              "wall_ms": 48875,
+              "usage": {
+                "reserved_calls": 3,
+                "completed_calls": 3,
+                "input_tokens": 2077,
+                "output_tokens": 1736
+              },
+              "rlm_observations": {
+                "context_reported": true,
+                "subcall_reported": true,
+                "policy_verified": true,
+                "cleanup_verified": true
+              }
+            },
+            {
+              "method": "structured",
+              "status": "failed",
+              "error_classification": null,
+              "build_success": true,
+              "lint_success": true,
+              "accessibility_success": null,
+              "end_to_end_pass_rate": 0,
+              "requirement_satisfaction": null,
+              "billing_cost_usd": null,
+              "scenarios": [
+                {
+                  "id": "required-title",
+                  "status": "failed",
+                  "completed_steps": 1
+                },
+                {
+                  "id": "toggle-and-persist",
+                  "status": "failed",
+                  "completed_steps": 2
+                },
+                {
+                  "id": "combined-filters",
+                  "status": "failed",
+                  "completed_steps": 2
+                },
+                {
+                  "id": "keyboard-mobile-task-controls",
+                  "status": "failed",
+                  "completed_steps": 3
+                }
+              ],
+              "wall_ms": 32734,
+              "usage": {
+                "reserved_calls": 2,
+                "completed_calls": 2,
+                "input_tokens": 1198,
+                "output_tokens": 1142
+              },
+              "rlm_observations": null
+            },
+            {
+              "method": "direct",
+              "status": "failed",
+              "error_classification": null,
+              "build_success": false,
+              "lint_success": true,
+              "accessibility_success": null,
+              "end_to_end_pass_rate": null,
+              "requirement_satisfaction": null,
+              "billing_cost_usd": null,
+              "scenarios": [],
+              "wall_ms": 21891,
+              "usage": {
+                "reserved_calls": 1,
+                "completed_calls": 1,
+                "input_tokens": 488,
+                "output_tokens": 1255
+              },
+              "rlm_observations": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "operations",
+      "label": "Operations Analytics",
+      "requirement_count": 10,
+      "scenario_count": 4,
+      "blocks": [
+        {
+          "schema_version": 1,
+          "kind": "matched-local-pilot",
+          "case": "Operations Analytics Dashboard",
+          "case_id": "operations",
+          "requirement_count": 10,
+          "scenario_ids": [
+            "ops-valid-aggregates",
+            "ops-team-period",
+            "ops-drilldown",
+            "ops-saved-view"
+          ],
+          "model": "Qwen/Qwen3-4B-GGUF",
+          "revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+          "weights_sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+          "runtime_binary_sha256": "7b0e5e30ef372f4eb237a0a09e0197909bdaf7e9c2867e8d02a15bdceaca840d",
+          "rlm_runtime_source_sha256": "78a18098ee25fa82f87aec5edab5d4d4e2a186c202d108ce572974e4c4d53727",
+          "settings": {
+            "context_tokens": 8192,
+            "temperature": 0.2,
+            "seed": 17,
+            "top_k": 40,
+            "top_p": 0.95,
+            "min_p": 0.05,
+            "reasoning": false,
+            "prompt_cache": false
+          },
+          "budget": {
+            "max_wall_seconds": 120,
+            "max_calls": 6,
+            "max_output_tokens": 13824,
+            "max_input_bytes": 100000,
+            "max_cost_usd": 0,
+            "max_depth": 1,
+            "max_concurrency": 1,
+            "max_repairs": 0
+          },
+          "output_tokens_per_call": 2304,
+          "spec_sha256": "19bcebd1eeb769824ead9ecaf2021766f0b7422ac996ac890e206c097f732320",
+          "original_scenarios_sha256": "e01b94db56c21effae12a9b70396218a014ccb3713703ce55849f7fcf3975927",
+          "scenarios_sha256": "3dc1b477b378d643d98769b5f1d643ae219482d4e6859c2083d759af06ca3d33",
+          "diagnostic_source_path": "index.html",
+          "paid_api_calls": 0,
+          "trials_per_method": 1,
+          "trials": [
+            {
+              "method": "direct",
+              "status": "failed",
+              "error_classification": "IncompleteResponse",
+              "build_success": null,
+              "lint_success": null,
+              "accessibility_success": null,
+              "end_to_end_pass_rate": null,
+              "requirement_satisfaction": null,
+              "billing_cost_usd": null,
+              "scenarios": [],
+              "wall_ms": 39984,
+              "usage": {
+                "reserved_calls": 1,
+                "completed_calls": 0,
+                "input_tokens": null,
+                "output_tokens": null
+              },
+              "rlm_observations": null
+            },
+            {
+              "method": "structured",
+              "status": "failed",
+              "error_classification": "JSONDecodeError",
+              "build_success": null,
+              "lint_success": null,
+              "accessibility_success": null,
+              "end_to_end_pass_rate": null,
+              "requirement_satisfaction": null,
+              "billing_cost_usd": null,
+              "scenarios": [],
+              "wall_ms": 14422,
+              "usage": {
+                "reserved_calls": 1,
+                "completed_calls": 1,
+                "input_tokens": 1067,
+                "output_tokens": 804
+              },
+              "rlm_observations": null
+            },
+            {
+              "method": "rlm",
+              "status": "failed",
+              "error_classification": null,
+              "build_success": false,
+              "lint_success": true,
+              "accessibility_success": null,
+              "end_to_end_pass_rate": null,
+              "requirement_satisfaction": null,
+              "billing_cost_usd": null,
+              "scenarios": [],
+              "wall_ms": 51063,
+              "usage": {
+                "reserved_calls": 3,
+                "completed_calls": 3,
+                "input_tokens": 3284,
+                "output_tokens": 2455
+              },
+              "rlm_observations": {
+                "context_reported": true,
+                "subcall_reported": true,
+                "policy_verified": true,
+                "cleanup_verified": true
+              }
+            }
+          ]
+        },
+        {
+          "schema_version": 1,
+          "kind": "matched-local-pilot",
+          "case": "Operations Analytics Dashboard",
+          "case_id": "operations",
+          "requirement_count": 10,
+          "scenario_ids": [
+            "ops-valid-aggregates",
+            "ops-team-period",
+            "ops-drilldown",
+            "ops-saved-view"
+          ],
+          "model": "Qwen/Qwen3-4B-GGUF",
+          "revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+          "weights_sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+          "runtime_binary_sha256": "7b0e5e30ef372f4eb237a0a09e0197909bdaf7e9c2867e8d02a15bdceaca840d",
+          "rlm_runtime_source_sha256": "78a18098ee25fa82f87aec5edab5d4d4e2a186c202d108ce572974e4c4d53727",
+          "settings": {
+            "context_tokens": 8192,
+            "temperature": 0.2,
+            "seed": 73,
+            "top_k": 40,
+            "top_p": 0.95,
+            "min_p": 0.05,
+            "reasoning": false,
+            "prompt_cache": false
+          },
+          "budget": {
+            "max_wall_seconds": 120,
+            "max_calls": 6,
+            "max_output_tokens": 13824,
+            "max_input_bytes": 100000,
+            "max_cost_usd": 0,
+            "max_depth": 1,
+            "max_concurrency": 1,
+            "max_repairs": 0
+          },
+          "output_tokens_per_call": 2304,
+          "spec_sha256": "19bcebd1eeb769824ead9ecaf2021766f0b7422ac996ac890e206c097f732320",
+          "original_scenarios_sha256": "e01b94db56c21effae12a9b70396218a014ccb3713703ce55849f7fcf3975927",
+          "scenarios_sha256": "3dc1b477b378d643d98769b5f1d643ae219482d4e6859c2083d759af06ca3d33",
+          "diagnostic_source_path": "index.html",
+          "paid_api_calls": 0,
+          "trials_per_method": 1,
+          "trials": [
+            {
+              "method": "rlm",
+              "status": "broker-rejected",
+              "error_classification": null,
+              "build_success": null,
+              "lint_success": null,
+              "accessibility_success": null,
+              "end_to_end_pass_rate": null,
+              "requirement_satisfaction": null,
+              "billing_cost_usd": null,
+              "scenarios": [],
+              "wall_ms": 52562,
+              "usage": {
+                "reserved_calls": 3,
+                "completed_calls": 2,
+                "input_tokens": 2240,
+                "output_tokens": 240
+              },
+              "rlm_observations": {
+                "context_reported": true,
+                "subcall_reported": false,
+                "policy_verified": true,
+                "cleanup_verified": true
+              }
+            },
+            {
+              "method": "structured",
+              "status": "failed",
+              "error_classification": "JSONDecodeError",
+              "build_success": null,
+              "lint_success": null,
+              "accessibility_success": null,
+              "end_to_end_pass_rate": null,
+              "requirement_satisfaction": null,
+              "billing_cost_usd": null,
+              "scenarios": [],
+              "wall_ms": 9094,
+              "usage": {
+                "reserved_calls": 1,
+                "completed_calls": 1,
+                "input_tokens": 1067,
+                "output_tokens": 470
+              },
+              "rlm_observations": null
+            },
+            {
+              "method": "direct",
+              "status": "failed",
+              "error_classification": "IncompleteResponse",
+              "build_success": null,
+              "lint_success": null,
+              "accessibility_success": null,
+              "end_to_end_pass_rate": null,
+              "requirement_satisfaction": null,
+              "billing_cost_usd": null,
+              "scenarios": [],
+              "wall_ms": 39625,
+              "usage": {
+                "reserved_calls": 1,
+                "completed_calls": 0,
+                "input_tokens": null,
+                "output_tokens": null
+              },
+              "rlm_observations": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

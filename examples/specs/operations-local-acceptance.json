@@ -1,0 +1,236 @@
+[
+  {
+    "id": "ops-valid-aggregates",
+    "requirements": [
+      "OPS-02",
+      "OPS-03"
+    ],
+    "source_path": "index.html",
+    "steps": [
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "Excluded records: 2"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "Volume: 5"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "Completion rate: 60%"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "Median turnaround: 30 min"
+      }
+    ]
+  },
+  {
+    "id": "ops-team-period",
+    "requirements": [
+      "OPS-01",
+      "OPS-03",
+      "OPS-05"
+    ],
+    "source_path": "index.html",
+    "steps": [
+      {
+        "action": "select",
+        "target": {
+          "role": "combobox",
+          "name": "Team"
+        },
+        "value": "North"
+      },
+      {
+        "action": "select",
+        "target": {
+          "role": "combobox",
+          "name": "Reporting period"
+        },
+        "value": "Jan 2"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "Volume: 2"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "Completion rate: 50%"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "Median turnaround: 50 min"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "table",
+          "name": "Staffing comparison"
+        },
+        "value": "North"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "table",
+          "name": "Orders"
+        },
+        "value": "N2"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "table",
+          "name": "Orders"
+        },
+        "value": "N3"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "table",
+          "name": "Staffing comparison"
+        },
+        "value": "Staffing hours: 5"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "table",
+          "name": "Staffing comparison"
+        },
+        "value": "Completed orders: 1"
+      }
+    ]
+  },
+  {
+    "id": "ops-drilldown",
+    "requirements": [
+      "OPS-04",
+      "OPS-06"
+    ],
+    "source_path": "index.html",
+    "steps": [
+      {
+        "action": "select",
+        "target": {
+          "role": "combobox",
+          "name": "Team"
+        },
+        "value": "North"
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "Jan 2"
+        }
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "table",
+          "name": "Orders"
+        },
+        "value": "N2"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "table",
+          "name": "Orders"
+        },
+        "value": "N3"
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "cell",
+          "name": "N1"
+        },
+        "count": 0
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "cell",
+          "name": "S1"
+        },
+        "count": 0
+      }
+    ]
+  },
+  {
+    "id": "ops-saved-view",
+    "requirements": [
+      "OPS-01",
+      "OPS-08",
+      "OPS-10"
+    ],
+    "source_path": "index.html",
+    "steps": [
+      {
+        "action": "select",
+        "target": {
+          "role": "combobox",
+          "name": "Team"
+        },
+        "value": "South"
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "Save view"
+        }
+      },
+      {
+        "action": "reload"
+      },
+      {
+        "action": "expect_value",
+        "target": {
+          "role": "combobox",
+          "name": "Team"
+        },
+        "value": "South"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "Volume: 2"
+      },
+      {
+        "action": "expect_text",
+        "target": {
+          "role": "main"
+        },
+        "value": "Staffing data incomplete"
+      }
+    ]
+  }
+]

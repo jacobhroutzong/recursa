@@ -1,4 +1,4 @@
-"""Run the three-arm Task Management pilot with a local llama-server and no spend."""
+"""Run matched Recursa trials with a local llama-server and no spend."""
 import argparse
 from hashlib import file_digest, sha256
 import json
@@ -15,8 +15,10 @@ from urllib.request import ProxyHandler, build_opener
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from recursa.baseline import run_direct, run_structured
+from recursa.browser_checks import validate_scenarios
 from recursa.budget import BudgetExceeded, Deadline
 from recursa.container_rlm import run_reviewed, runtime_source_hash
+from recursa.engine import validate_spec
 from recursa.experiments import atomic_json
 from recursa.pipeline import verify_application
 
@@ -57,26 +59,40 @@ def verify_rlm(spec, scenarios, directory, config, record, deadline):
                                     scenarios=scenarios, deadline=deadline)
     except BudgetExceeded:
         return "verification-budget-exhausted", reviewed["broker"]["provider"], None, observations
+    except ValueError:
+        return "verification-input-rejected", reviewed["broker"]["provider"], None, observations
     return result["status"], reviewed["broker"]["provider"], result["verification"], observations
 
 
-def run_pilot(output, port, record, runtime_hash):
+def load_case(case):
     known = json.loads((ROOT / "apps/studio/generated-task.json").read_bytes())
-    spec = known["spec"]
-    scenario_bytes = (ROOT / "examples/specs/tasks-local-acceptance.json").read_bytes()
+    directory = ROOT / "examples/specs"
+    spec = known["spec"] if case == "tasks" else json.loads((directory / "operations-local-reviewed.json").read_bytes())
+    scenario_bytes = (directory / f"{case}-local-acceptance.json").read_bytes()
     # The original repair diagnostic points at app.js. The benchmark compares
     # applications with arbitrary module names and uses the common entry point.
     scenarios = [{**scenario, "source_path": "index.html"} for scenario in json.loads(scenario_bytes)]
+    ids = set(validate_spec(spec))
+    validate_scenarios(scenarios)
+    if any(set(scenario["requirements"]) - ids for scenario in scenarios):
+        raise ValueError("Scenario references an unknown requirement")
+    return spec, scenario_bytes, scenarios
+
+
+def run_pilot(output, port, record, runtime_hash, *, case="tasks", seed=42, reverse=False):
+    known = json.loads((ROOT / "apps/studio/generated-task.json").read_bytes())
+    spec, scenario_bytes, scenarios = load_case(case)
     provider = {"base_url": f"http://127.0.0.1:{port}/v1", "api_key_env": KEY_ENV}
     rates = {MODEL: {"input_per_million": 0, "output_per_million": 0}}
     baseline_config = {**provider, "rates": rates, "budget": BUDGET, "output_tokens": OUTPUT_PER_CALL}
     rlm_config = {"provider": provider, "rates": rates, "budget": BUDGET, "models": {"root": MODEL, "sub": MODEL},
                   "max_iterations": 5, "per_call_output_tokens": OUTPUT_PER_CALL}
     report = {
-        "schema_version": 1, "kind": "matched-local-pilot", "case": "Task Management",
+        "schema_version": 1, "kind": "matched-local-pilot", "case": spec["name"], "case_id": case,
+        "requirement_count": len(spec["requirements"]), "scenario_ids": [scenario["id"] for scenario in scenarios],
         "model": known["provenance"]["model"], "revision": known["provenance"]["revision"],
         "weights_sha256": known["provenance"]["model_file_sha256"], "runtime_binary_sha256": runtime_hash,
-        "rlm_runtime_source_sha256": record["runtime_source_sha256"], "settings": SETTINGS,
+        "rlm_runtime_source_sha256": record["runtime_source_sha256"], "settings": {**SETTINGS, "seed": seed},
         "budget": BUDGET, "output_tokens_per_call": OUTPUT_PER_CALL,
         "spec_sha256": sha256(json.dumps(spec, sort_keys=True).encode()).hexdigest(),
         "original_scenarios_sha256": sha256(scenario_bytes).hexdigest(),
@@ -84,9 +100,10 @@ def run_pilot(output, port, record, runtime_hash):
         "diagnostic_source_path": "index.html", "paid_api_calls": 0,
         "trials_per_method": 1, "trials": [],
     }
-    for name, runner in (("direct", run_direct), ("structured", run_structured), ("rlm", None)):
+    methods = (("direct", run_direct), ("structured", run_structured), ("rlm", None))
+    for name, runner in reversed(methods) if reverse else methods:
         directory = output / name
-        print(f"Running {name} on the local model", flush=True)
+        print(f"Running {case} / seed {seed} / {name} on the local model", flush=True)
         started = time.monotonic()
         observations = None
         classification = None
@@ -127,9 +144,16 @@ def main():
     for flag in ("server", "weights", "output"):
         parser.add_argument("--" + flag, type=Path, required=True)
     parser.add_argument("--authorize-live", action="store_true")
+    parser.add_argument("--cases", nargs="+", choices=("tasks", "operations"), default=["tasks"])
+    parser.add_argument("--seed", type=int, default=SETTINGS["seed"])
+    parser.add_argument("--reverse", action="store_true", help="Reverse method order for this block")
     args = parser.parse_args()
     if not args.authorize_live:
         parser.error("--authorize-live is required")
+    if not 0 <= args.seed < 2**31 or len(args.cases) != len(set(args.cases)):
+        parser.error("Provide a nonnegative 31-bit seed and unique cases")
+    for case in args.cases:
+        load_case(case)
     record = json.loads((ROOT / ".cache/rlm-runtime-image.json").read_bytes())
     if record["runtime_source_sha256"] != runtime_source_hash():
         parser.error("Build the current runtime first with scripts/build_rlm_image.py")
@@ -147,7 +171,7 @@ def main():
     environment["LLAMA_API_KEY"] = environment.pop(KEY_ENV)
     command = [str(args.server.resolve()), "-m", str(args.weights.resolve()), "--host", "127.0.0.1",
                "--port", str(port), "--alias", MODEL, "-c", str(SETTINGS["context_tokens"]), "-ngl", "99",
-               "--parallel", "1", "--temp", str(SETTINGS["temperature"]), "--seed", str(SETTINGS["seed"]),
+               "--parallel", "1", "--temp", str(SETTINGS["temperature"]), "--seed", str(args.seed),
                "--top-k", str(SETTINGS["top_k"]), "--top-p", str(SETTINGS["top_p"]), "--min-p", str(SETTINGS["min_p"]),
                "--reasoning", "off", "--reasoning-budget", "0", "--no-cache-prompt", "--no-webui",
                "--no-slots", "-n", str(OUTPUT_PER_CALL)]
@@ -167,7 +191,9 @@ def main():
                 time.sleep(0.5)
             else:
                 raise RuntimeError("Local model did not start; see the private runtime log")
-            run_pilot(args.output, port, record, runtime_hash)
+            for case in args.cases:
+                directory = args.output if len(args.cases) == 1 else args.output / case
+                run_pilot(directory, port, record, runtime_hash, case=case, seed=args.seed, reverse=args.reverse)
         finally:
             if server.poll() is None:
                 server.terminate()

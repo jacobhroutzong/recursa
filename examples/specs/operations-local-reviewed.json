@@ -1,0 +1,85 @@
+{
+  "name": "Operations Analytics Dashboard",
+  "description": "Compare synthetic fulfillment and staffing metrics across teams and reporting periods.",
+  "requirements": [
+    {
+      "id": "OPS-01",
+      "text": "Choose a date range and team for the dashboard. Use labeled select controls Team (All teams, North, South) and Reporting period (Jan 1–3, Jan 2), default All teams and Jan 1–3. Dates are January 2025. Option values must equal their visible labels.",
+      "acceptance": "Every panel uses the same date range and team."
+    },
+    {
+      "id": "OPS-02",
+      "text": "Validate records against the typed order and staffing contracts. Use this fixed synthetic dataset. Orders are (id, day in January, team, minutes, completed): (N1,1,North,20,true), (N2,2,North,40,false), (N3,2,North,60,true), (S1,2,South,10,true), (S2,3,South,30,false), (X1,2,empty team,15,true), (X2,2,North,-5,true). Staffing hours are (1,North,4), (2,North,5), (2,South,3). Other entries are missing. Report the number of invalid records across the whole input in text using “Excluded records: N”.",
+      "acceptance": "Rows with missing team IDs or negative durations are excluded and counted."
+    },
+    {
+      "id": "OPS-03",
+      "text": "Show volume, completion rate, and median turnaround cards. Volume counts valid matching orders. Rate is completed divided by volume as a whole percent. Median uses all valid matching order durations in minutes, including incomplete orders. Include visible text “Volume: N”, “Completion rate: N%”, and “Median turnaround: N min” for nonempty results.",
+      "acceptance": "Card totals match the filtered records and zero denominators show an empty value.",
+      "depends_on": [
+        "OPS-01",
+        "OPS-02"
+      ]
+    },
+    {
+      "id": "OPS-04",
+      "text": "Plot daily volume and completion rate. Provide selectable days with accessible buttons named Jan 1, Jan 2, Jan 3 in the full-period chart.",
+      "acceptance": "Days without records appear as gaps or explicit zero volume.",
+      "depends_on": [
+        "OPS-01",
+        "OPS-02"
+      ]
+    },
+    {
+      "id": "OPS-05",
+      "text": "Compare staffing hours with completed work by team. Provide an accessible table named Staffing comparison and show team, total staffing hours, and completed order count. Sum the known staffing hours in the selected window and label incomplete totals. Use cell text Staffing hours: N and Completed orders: N.",
+      "acceptance": "Changing the reporting period updates both axes and accessible table values.",
+      "depends_on": [
+        "OPS-01",
+        "OPS-02"
+      ]
+    },
+    {
+      "id": "OPS-06",
+      "text": "Open the underlying order table from a chart selection. Expose the filtered results in an accessible table named Orders with the order IDs.",
+      "acceptance": "Selecting a day applies its date constraint and preserves the team filter.",
+      "depends_on": [
+        "OPS-04"
+      ]
+    },
+    {
+      "id": "OPS-07",
+      "text": "Sort and paginate order records.",
+      "acceptance": "Sorting applies before pagination and preserves the current filters.",
+      "depends_on": [
+        "OPS-06"
+      ]
+    },
+    {
+      "id": "OPS-08",
+      "text": "Save a dashboard view locally. Provide a button named Save view and restore the saved view on reload.",
+      "acceptance": "Reload restores the saved range, team, and table sort.",
+      "depends_on": [
+        "OPS-01",
+        "OPS-07"
+      ]
+    },
+    {
+      "id": "OPS-09",
+      "text": "Export the filtered table as CSV.",
+      "acceptance": "Exported rows match the active filters and have escaped cells.",
+      "depends_on": [
+        "OPS-07"
+      ]
+    },
+    {
+      "id": "OPS-10",
+      "text": "Explain empty and incomplete results. When a selected team or period has missing staffing entries, include the text “Staffing data incomplete” and keep order KPIs visible.",
+      "acceptance": "Missing staffing values show a reason and leave order totals available.",
+      "depends_on": [
+        "OPS-03",
+        "OPS-05"
+      ]
+    }
+  ]
+}

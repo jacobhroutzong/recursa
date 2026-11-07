@@ -96,6 +96,35 @@ class ServerTests(unittest.TestCase):
                                          sum(check["status"] == "passed" for check in checks) / len(checks))
                     else:
                         self.assertIsNone(trial["end_to_end_pass_rate"])
+                with urlopen(base + "/api/comparison-series") as response:
+                    self.assertEqual(response.headers["Content-Type"], "application/json")
+                    series = json.load(response)
+                self.assertEqual([case["id"] for case in series["cases"]], ["tasks", "operations"])
+                self.assertEqual(series["total_trials"], 12)
+                for case in series["cases"]:
+                    source = ROOT / "examples/specs"
+                    scenario_file = source / (case["id"] + "-local-acceptance.json")
+                    spec = generated["spec"] if case["id"] == "tasks" else json.loads(
+                        (source / "operations-local-reviewed.json").read_bytes())
+                    ids = [s["id"] for s in json.loads(scenario_file.read_bytes())]
+                    self.assertEqual(case["requirement_count"], len(spec["requirements"]))
+                    self.assertEqual(case["scenario_count"], len(ids))
+                    self.assertEqual([block["settings"]["seed"] for block in case["blocks"]], [17, 73])
+                    for block in case["blocks"]:
+                        self.assertEqual(block["spec_sha256"], hashlib.sha256(
+                            json.dumps(spec, sort_keys=True).encode()).hexdigest())
+                        self.assertEqual(block["original_scenarios_sha256"],
+                                         hashlib.sha256(scenario_file.read_bytes()).hexdigest())
+                        self.assertEqual(block["budget"], comparison["budget"])
+                        self.assertEqual(block["weights_sha256"], comparison["weights_sha256"])
+                        self.assertEqual(block["paid_api_calls"], 0)
+                        self.assertCountEqual([trial["method"] for trial in block["trials"]],
+                                              ["direct", "structured", "rlm"])
+                        for trial in block["trials"]:
+                            self.assertGreater(trial["usage"]["reserved_calls"], 0)
+                            self.assertIsNone(trial["requirement_satisfaction"])
+                            if trial["end_to_end_pass_rate"] is not None:
+                                self.assertEqual([check["id"] for check in trial["scenarios"]], ids)
                 for route in ("/../README.md", "/api/execute", "/assets/unknown.png", "/assets/task-replay/../generated-task-preview.png", "/api/runs/missing", "/api/runs/private-copied", "/api/runs/generated-record-shaped-source"):
                     with self.assertRaises(HTTPError) as error:
                         urlopen(base + route)

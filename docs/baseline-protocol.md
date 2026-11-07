@@ -27,4 +27,28 @@ Use a CUDA-capable llama-server build with reasoning and prompt-cache controls, 
 
 The baseline CLI also accepts `--method direct` or `--method structured` for standalone runs. Each requires reviewed specification and scenario files, an explicitly authorized supervised provider configuration, a selected model, and a fresh output directory. Optional repairs draw from the same provider reservation and time budget.
 
-This pilot uses one trial per method on one small specification. A research comparison still needs repeated trials across specification sizes, with context-limit failures recorded separately from execution failures.
+## Repeated trials
+
+The follow-up uses two fresh seed blocks for each case, for 12 trials across the three methods. It reuses the pilot's Qwen weights, 8,192-token context, six-call ceiling, 2,304 output tokens per call, 120-second deadline, and zero-repair policy. Both cases use the same budgets. Seed 17 runs Task Management then Operations Analytics, with direct, structured, and contained RLM in that order. Seed 73 reverses both the case and method orders. Prompt caching is disabled. The initial Task Management pilot is displayed separately.
+
+Operations Analytics retains all ten original requirements and adds a fixed synthetic input and observable UI contracts in `examples/specs/operations-local-reviewed.json`. Four independent scenarios check exclusion counts and KPI arithmetic, filtering and staffing totals, drill-down, and saved views with incomplete staffing. A hand-authored Chromium control passed all four before interpretation of the generated runs. The scenarios cover a subset of the specification. For example, they do not exercise CSV downloads or verify sorting before pagination.
+
+```powershell
+python scripts/run_task_comparison.py --server <llama-server> --weights <Qwen3-4B-Q4_K_M.gguf> --output runs/series-17 --cases tasks operations --seed 17 --authorize-live
+python scripts/run_task_comparison.py --server <llama-server> --weights <Qwen3-4B-Q4_K_M.gguf> --output runs/series-73 --cases operations tasks --seed 73 --reverse --authorize-live
+```
+
+The runner writes a private checkpoint after every arm. The series assembler takes the four case-and-seed `comparison-record.json` files, checks matched inputs and limits, and writes the measured Studio record. Missing build or browser measurements stay null. This is a two-case pilot with two seeds, so the results do not establish a general method advantage.
+
+### Repeated results
+
+| Specification | Method | Builds passed / measured | Browser scenarios passed / measured |
+| --- | --- | ---: | ---: |
+| Task Management | Direct | 0 / 2 | Unmeasured |
+| Task Management | Structured | 2 / 2 | 0 / 8 |
+| Task Management | Contained RLM | 1 / 2 | 0 / 4 |
+| Operations Analytics | Direct | Unmeasured | Unmeasured |
+| Operations Analytics | Structured | Unmeasured | Unmeasured |
+| Operations Analytics | Contained RLM | 0 / 1 | Unmeasured |
+
+Both direct Operations runs ended at the 2,304-token output cap. Both structured Operations runs stopped on invalid manifest JSON in the state stage. The seed-17 Operations RLM returned source that failed the build. For seed 73, the broker rejected an incomplete model response. Overall, three Task Management builds reached Chromium, and all 12 measured scenarios failed. The original repaired Task Management showcase is separate. [Series record](../apps/studio/comparison-series.json)

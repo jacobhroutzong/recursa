@@ -11,19 +11,19 @@ Process correction: earlier work implemented portions of sections 6, 9 and 21 be
 | 5. Application synthesis | One repaired model-generated app verified | Task Management compiled and passed four independent Chromium acceptance scenarios after targeted model repairs and host composition of the final filter. The initial generated build failed functional checks |
 | 6. Studio | Verified app workflow replay | Four Task Management workflow chapters use 15 browser frames captured while rerunning the acceptance scenarios against the published build. The reference app remains separate |
 | 7. Live/replay modes | Partial prior work | One contained local inference run is recorded. Public Studio serves read-only replay |
-| 8. Evaluation harness | Three-method local pilot measured | Direct failed the build. Structured built and passed 0 of 4 Chromium scenarios. Contained RLM reached its six-call cap without returning source. Each method ran once under shared inputs, model settings and limits. Repeated trials and larger cases remain open |
+| 8. Evaluation harness | Repeated local trials measured | Twelve fresh trials span Task Management and Operations Analytics under shared settings and limits. Three Task Management builds reached Chromium and passed 0 of 12 measured scenarios. Operations stopped before browser verification |
 | 9. Tracing | Partial prior work | CPU and sanitized local model replays are available. Richer timing and full benchmark traces remain open |
 | 10. Security/reliability | Partial prior work | Contained policy and cleanup checked for the local model run. Browser verification used blocked external network |
-| 11. Example applications | One verified example | Task Management verified after targeted repair. Operations Analytics and Aviation remain specification presets |
+| 11. Example applications | One verified example | Task Management verified after targeted repair. Operations Analytics has a reviewed synthetic dataset and four acceptance scenarios, with no verified generated build. Aviation remains a specification preset |
 | 12. Repository structure | Partial | Existing useful modules only; final organization/license/CI pending |
 | 13. Engineering strategy | Partial | The first contained model-backed vertical slice is recorded |
-| 14. Priority gates | First model-backed slice and pilot measured | Indexed inspection, a completed subcall, one repaired verified build and a matched first-pass pilot. Repeated comparative evaluation remains open |
+| 14. Priority gates | First model-backed slice and repeated trials measured | Indexed inspection, a completed subcall, one repaired verified build and two matched seed blocks across two cases. Broader evaluation remains open |
 | 15. Deployment/portfolio | Development preview published and verified | GitHub source, CPU Basic Space, production project page, embedded Studio, full-screen fallback and homepage/Projects links verified; full research demonstration remains unfinished |
 | 16. Documentation | Partial | Honest README and setup; final complete guide pending |
 | 17. Definition of done | Not satisfied | One verified local model case. Broader examples, comparisons and final research evidence remain open |
 | 18. Final handoff | Pending | Only interim evidence may be reported |
 | 19. Operating rules | Applied throughout | No fabricated evidence or paid provisioning |
-| 20. Implementation sequence | Task Management pilot recorded | The repaired app and workflow replay remain separate from the three first-pass comparison outcomes |
+| 20. Implementation sequence | Repeated local comparison recorded | The repaired app and workflow replay remain separate from the original pilot and 12 fresh first-pass trials |
 | 21. Compute optimization | Partial prior work | CPU/Drive batch tooling; actual Colab and model/GPU resume unverified |
 
 The owner authorized a real Task Management run after offline validation. The contained runtime reported indexed inspection and a subcall. The initial source built and failed functional checks. After targeted repairs and host composition of the final filter, the app passed four declared browser scenarios. [Run evidence](evidence/task-management-local-model.md)

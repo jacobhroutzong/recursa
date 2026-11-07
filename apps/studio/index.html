@@ -292,6 +292,26 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
 </div></div></section>
 <section class="section" id="view-benchmarks" hidden>
   <h2 class="section-title">Benchmarks</h2>
+  <p class="intro" id="series-status" role="status">Loading repeated local trials…</p>
+  <div id="series-results" hidden>
+    <div class="panel">
+      <div class="panel-head"><h2>Repeated matched trials</h2><span class="tag cyan">TWO SPECIFICATIONS</span></div>
+      <div class="panel-body">
+        <div class="spec-actions"><label for="series-case">Specification</label><select id="series-case"></select></div>
+        <p class="intro" id="series-summary"></p>
+      </div>
+      <div class="pilot-scroll" tabindex="0" role="region" aria-label="Repeated trial totals">
+        <table class="metric-table"><thead><tr><th scope="col">Method</th><th scope="col">Builds passed / measured</th><th scope="col">Browser scenarios passed / measured</th><th scope="col">Completed calls</th></tr></thead><tbody id="series-totals"></tbody></table>
+      </div>
+      <div class="panel-body"><p class="intro">Unmeasured outcomes are excluded from the measured denominators. The comparison includes first-pass generation with zero repairs and no paid calls.</p><a href="/api/comparison-series" target="_blank" rel="noopener">Open all measured records ↗</a></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2>Individual trials</h2><span class="tag">MATCHED SEEDS</span></div>
+      <div class="pilot-scroll" tabindex="0" role="region" aria-label="Individual repeated trials">
+        <table class="metric-table"><thead><tr><th scope="col">Seed</th><th scope="col">Method</th><th scope="col">Outcome</th><th scope="col">Build</th><th scope="col">Browser</th><th scope="col">Completed calls</th><th scope="col">Input / output tokens</th><th scope="col">Wall time</th></tr></thead><tbody id="series-trials"></tbody></table>
+      </div>
+    </div>
+  </div>
   <p class="intro" id="pilot-summary" role="status">Loading the recorded Task Management pilot…</p>
   <div id="pilot-results" hidden>
     <div class="panel">
@@ -321,6 +341,7 @@ const $=id=>document.getElementById(id);let runs=[],run=null,selectedEvent=-1,se
 const workflowPath='/assets/task-replay/';
 let workflowPromise=null,workflowChapters=[],workflowFrame=0,workflowTimer=null;
 let comparisonPromise=null;
+let seriesPromise=null;
 const collapsed=new Set();const titles={overview:'Overview',playground:'Specification playground',execution:'Execution explorer',artifacts:'Generated artifacts',benchmarks:'Benchmarks',research:'Research & architecture',progress:'Build progress'};
 function element(tag,text,className){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e}
 const progressButton=element('button','Build progress');progressButton.dataset.view='progress';document.querySelector('.nav').append(progressButton);
@@ -338,7 +359,7 @@ function showView(view){
   $('evidence-notice').hidden=view==='benchmarks';
   $('breadcrumb').textContent=titles[view];
   if(view==='playground')loadPlayground();
-  if(view==='benchmarks')loadComparison();
+  if(view==='benchmarks'){loadSeries();loadComparison();}
   if(view==='artifacts')getCatalog().catch(()=>{});
   else stopWorkflow();
   if(location.hash!=='#'+view)location.hash=view;
@@ -556,10 +577,57 @@ function selectArtifact(index){selectedArtifact=run.artifacts[index];$('file-pat
 $('download-file').addEventListener('click',()=>{if(!selectedArtifact)return;const blob=new Blob([$('source-code').textContent],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=element('a');a.href=url;a.download=String(selectedArtifact.path||'artifact.txt').split(/[\\/]/).pop();a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
 function renderMetrics(){const body=$('metrics-table');clear(body);const metrics=Object.entries(run?.metrics||{});if(!metrics.length){const row=element('tr'),cell=element('td','No measurements recorded.');cell.colSpan=2;row.append(cell);body.append(row)}metrics.forEach(([key,value])=>{const row=element('tr');row.append(element('td',key.replaceAll('_',' ')),element('td',format(value)));body.append(row)})}
 async function fetchJSON(url){const response=await fetch(url,{headers:{Accept:'application/json'}});if(!response.ok)throw Error('Archive returned HTTP '+response.status);return response.json()}
+const methodNames={direct:'Direct LLM',structured:'Structured',rlm:'Contained RLM'};
+function loadSeries(){
+  if(seriesPromise)return;
+  seriesPromise=fetchJSON('/api/comparison-series').then(series=>{
+    const caseSelect=$('series-case');
+    caseSelect.replaceChildren(...series.cases.map(item=>{
+      const option=element('option',item.label);option.value=item.id;return option;
+    }));
+    caseSelect.onchange=()=>renderSeries(series);
+    $('series-status').textContent=series.total_trials+' real local trials · '+series.model+' · shared settings and budgets within each seed block.';
+    $('series-results').hidden=false;
+    renderSeries(series);
+  }).catch(()=>{
+    $('series-status').textContent='The repeated trial record is unavailable.';
+    seriesPromise=null;
+  });
+}
+function renderSeries(series){
+  const selected=series.cases.find(item=>item.id===$('series-case').value);
+  const trials=selected.blocks.flatMap(block=>block.trials.map(trial=>({...trial,seed:block.settings.seed})));
+  const ratio=(passed,total)=>total?passed+' / '+total:'Not measured';
+  const errorLabels={IncompleteResponse:'Incomplete model response',JSONDecodeError:'Invalid manifest JSON',
+    ValueError:'Manifest or verification input rejected'};
+  const cells=(heading,values)=>{
+    const row=element('tr');
+    const title=element('th',heading);title.scope='row';row.append(title);
+    for(const value of values)row.append(element('td',String(value)));
+    return row;
+  };
+  $('series-summary').textContent=selected.requirement_count+' requirements · '+selected.scenario_count+
+    ' declared scenarios per build · '+selected.blocks.length+' trials per method.';
+  $('series-totals').replaceChildren(...Object.entries(methodNames).map(([method,label])=>{
+    const rows=trials.filter(trial=>trial.method===method);
+    const measured=rows.filter(trial=>trial.build_success!=null);
+    const checks=rows.filter(trial=>trial.end_to_end_pass_rate!=null).flatMap(trial=>trial.scenarios);
+    return cells(label,[ratio(measured.filter(trial=>trial.build_success).length,measured.length),
+      ratio(checks.filter(check=>check.status==='passed').length,checks.length),
+      rows.reduce((total,trial)=>total+trial.usage.completed_calls,0)]);
+  }));
+  $('series-trials').replaceChildren(...trials.map(trial=>cells(String(trial.seed),[
+    methodNames[trial.method],errorLabels[trial.error_classification]||trial.status.replaceAll('-',' '),
+    trial.build_success==null?'Not measured':trial.build_success?'Passed':'Failed',
+    trial.end_to_end_pass_rate==null?'Not measured':ratio(trial.scenarios.filter(check=>check.status==='passed').length,trial.scenarios.length),
+    trial.usage.completed_calls,trial.usage.input_tokens==null?'Not measured':
+      trial.usage.input_tokens.toLocaleString()+' / '+trial.usage.output_tokens.toLocaleString(),
+    (trial.wall_ms/1000).toFixed(1)+' s'
+  ])));
+}
 function loadComparison(){
   if(comparisonPromise)return;
   comparisonPromise=fetchJSON('/api/task-comparison').then(pilot=>{
-    const names={direct:'Direct LLM',structured:'Structured',rlm:'Contained RLM'};
     const labels={
       'required-title':'Required title and task creation',
       'toggle-and-persist':'Toggle and persist after reload',
@@ -578,7 +646,7 @@ function loadComparison(){
     }
     $('pilot-methods').replaceChildren(...pilot.trials.map(trial=>{
       const row=element('tr');
-      const method=element('th',names[trial.method]);method.scope='row';
+      const method=element('th',methodNames[trial.method]);method.scope='row';
       const tokens=trial.usage.input_tokens==null?'Not measured':count(trial.usage.input_tokens)+' / '+count(trial.usage.output_tokens);
       const status=trial.build_success===true?'Passed':trial.build_success===false?'Failed':'Not measured';
       const rate=trial.end_to_end_pass_rate==null?'Not measured':new Intl.NumberFormat(undefined,{style:'percent'}).format(trial.end_to_end_pass_rate);

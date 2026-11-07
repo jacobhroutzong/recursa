@@ -88,7 +88,7 @@ The redesigned Studio has a dedicated overview and a replay workspace. Open the 
 
 In **Generated artifacts**, open the generated Task Management app and select **Watch verified workflows**. Choose a chapter, then play or step through actual Chromium frames captured during the published acceptance scenarios. Re-record the frames locally with `python scripts/capture_task_replay.py`. The public viewer serves static PNGs and captions.
 
-The [baseline protocol](docs/baseline-protocol.md) documents the first matched local pilot. Direct failed the build, structured built and passed 0 of 4 browser scenarios, and the contained RLM reached the call cap without returning source. Studio publishes the per-method results and retains nulls for unmeasured outcomes.
+The [baseline protocol](docs/baseline-protocol.md) documents the original pilot and 12 additional matched trials across Task Management and Operations Analytics. Three fresh Task Management builds reached Chromium and passed 0 of 12 measured scenarios. The Operations trials stopped before browser verification. Studio shows each trial and retains nulls for unmeasured outcomes.
 
 
 The **Playground** offers three synthetic specifications, searchable requirements, JSON downloads, and recorded CPU validation. The artifact explorer shows actual source beside a captured screenshot of the verified human-authored Task Management reference app. Studio also shows a separate static preview of the Task Management build produced by a local Qwen run and verified after repair. [Local synthesis evidence](docs/evidence/task-management-local-model.md)

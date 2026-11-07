@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T18:03:28.430243+00:00",
-  "phase": "Section 8 \u00b7 Matched local Task Management pilot",
-  "source_digest": "2c5a8c6f311e43052dfc742853a7f13ed980a7bdd8d88315985ea6c1b4cca304",
+  "updated_at": "2026-11-07T18:24:27.593846+00:00",
+  "phase": "Section 8 \u00b7 Repeated local trials across two specifications",
+  "source_digest": "5aa39981031ca6c60df0533a7a265b325f524a428362a77e2fee86b340a445ae",
   "tests": {
     "total": 108,
     "passed": 108,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T18:03:14.519212+00:00",
-    "source_digest": "2c5a8c6f311e43052dfc742853a7f13ed980a7bdd8d88315985ea6c1b4cca304",
+    "verified_at": "2026-11-07T18:24:10.812895+00:00",
+    "source_digest": "5aa39981031ca6c60df0533a7a265b325f524a428362a77e2fee86b340a445ae",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -58,8 +58,8 @@
     {
       "number": 8,
       "name": "8. Evaluation harness",
-      "status": "Three-method local pilot measured",
-      "evidence": "Direct failed the build. Structured built and passed 0 of 4 Chromium scenarios. Contained RLM reached its six-call cap without returning source. Each method ran once under shared inputs, model settings and limits. Repeated trials and larger cases remain open"
+      "status": "Repeated local trials measured",
+      "evidence": "Twelve fresh trials span Task Management and Operations Analytics under shared settings and limits. Three Task Management builds reached Chromium and passed 0 of 12 measured scenarios. Operations stopped before browser verification"
     },
     {
       "number": 9,
@@ -77,7 +77,7 @@
       "number": 11,
       "name": "11. Example applications",
       "status": "One verified example",
-      "evidence": "Task Management verified after targeted repair. Operations Analytics and Aviation remain specification presets"
+      "evidence": "Task Management verified after targeted repair. Operations Analytics has a reviewed synthetic dataset and four acceptance scenarios, with no verified generated build. Aviation remains a specification preset"
     },
     {
       "number": 12,
@@ -94,8 +94,8 @@
     {
       "number": 14,
       "name": "14. Priority gates",
-      "status": "First model-backed slice and pilot measured",
-      "evidence": "Indexed inspection, a completed subcall, one repaired verified build and a matched first-pass pilot. Repeated comparative evaluation remains open"
+      "status": "First model-backed slice and repeated trials measured",
+      "evidence": "Indexed inspection, a completed subcall, one repaired verified build and two matched seed blocks across two cases. Broader evaluation remains open"
     },
     {
       "number": 15,
@@ -130,8 +130,8 @@
     {
       "number": 20,
       "name": "20. Implementation sequence",
-      "status": "Task Management pilot recorded",
-      "evidence": "The repaired app and workflow replay remain separate from the three first-pass comparison outcomes"
+      "status": "Repeated local comparison recorded",
+      "evidence": "The repaired app and workflow replay remain separate from the original pilot and 12 fresh first-pass trials"
     },
     {
       "number": 21,
