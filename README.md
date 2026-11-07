@@ -72,6 +72,8 @@ The [host broker](docs/host-broker.md) validates requests from the network-disab
 
 `Dockerfile` serves Studio, release progress and allowlisted public captures under `traces/public` on port 7860 without inference dependencies. The owner authorized publication on October 29, 2026. Both GitHub and Hugging Face logins were verified against the intended owners. Never include provider logs, credentials or private specifications in a public bundle. This container is a replay viewer, not an execution sandbox.
 
+Studio's **Security checks** view shows the observed container, worker, broker, replay HTTP and browser controls. The [boundary audit](docs/container-sandbox.md) documents the probe scope and reproduction commands.
+
 The deployment record is maintained in [the ordered progress ledger](docs/implementation-progress.md). Portfolio changes preserve the existing Astro site, add a dedicated project page and link it from Selected projects and Projects. Only normal fast-forward publication is used; unrelated content and infrastructure are preserved.
 
 To publish an updated Space release after authorization, run `python scripts/verify.py`, then `python scripts/prepare_release.py`. The latter produces `.cache/release-location.json` pointing at an allowlisted payload directory. Upload that directory with `hf upload jacobroutzong/recursa <payload> . --type space`; never upload the entire workspace. The packager rejects stale test evidence. Recheck `hf auth whoami` before each publication session.

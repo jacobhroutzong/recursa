@@ -13,7 +13,7 @@ Process correction: earlier work implemented portions of sections 6, 9 and 21 be
 | 7. Live/replay modes | Partial prior work | One contained local inference run is recorded. Public Studio serves read-only replay |
 | 8. Evaluation harness | Paired repair trials measured | Twelve fresh trials across two specifications produced seven repair attempts and three rechecks. Both direct Task Management repairs fixed the build. The three repaired builds passed 0 of 12 measured browser checks. Operations produced no after measurement |
 | 9. Tracing | Versioned benchmark traces published | Execution Explorer lists 27 benchmark traces with stable IDs, input and source hashes, recorded call and verification events, and repair outcomes. The paired series has 22 measured first-pass call durations |
-| 10. Security/reliability | Partial prior work | Contained policy and cleanup checked for the local model run. Browser verification used blocked external network |
+| 10. Security/reliability | Sandbox and replay controls verified | Studio records the current pinned container probes, archive filtering, broker and worker limits, read-only routes, and browser import isolation |
 | 11. Example applications | One verified example | Task Management verified after targeted repair. Operations Analytics has a reviewed synthetic dataset and four acceptance scenarios, with no verified generated build. Aviation remains a specification preset |
 | 12. Repository structure | Partial | Existing useful modules only; final organization/license/CI pending |
 | 13. Engineering strategy | Partial | The first contained model-backed vertical slice is recorded |

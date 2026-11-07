@@ -1,6 +1,6 @@
 # Local container execution — narrow runtime checks verified
 
-The existing Windows job boundary terminates workers and descendants but does not restrict filesystem/network access. `recursa.sandbox` adds an opt-in Linux-container runner with no host-execution fallback. It is separate from the public replay service and is not yet connected to genuine model inference.
+The Windows job boundary terminates workers and descendants but does not restrict filesystem or network access. `recursa.sandbox` adds an opt-in Linux-container runner with no host-execution fallback. Reviewed local synthesis uses a host broker for authorized model requests. The public replay service runs separately.
 
 ## What is implemented
 
@@ -40,4 +40,17 @@ $recursaImage = (Get-Content configs/container-image.json | ConvertFrom-Json).im
 python scripts/verify_container.py --image $recursaImage --output runs/container-verify-001
 ```
 
-The official RLM adapter now also runs inside a pinned SDK image for fixed [offline scripted fixtures](contained-rlm.md), without real credentials or provider access. Genuine model requests still need a mediated host-side gateway and explicit authorization. Live batching remains disabled; the public site remains CPU replay-only.
+The official RLM adapter also runs inside the pinned SDK image for fixed [offline scripted fixtures](contained-rlm.md). Authorized model requests pass through the host broker, while the container retains its network restriction and receives no provider credentials. The public site serves CPU replay only.
+
+## Release boundary checks
+
+Studio's **Security checks** view shows the measured controls, including a real Linux archive probe for file and directory symlinks, mixed-case private directories, and private visibility tags. The replay service denies write methods and execution routes, serves sanitized benchmark records, and pins its inline script with a content hash. Chromium exercises a browser-local import containing hostile markup and checks that the source is displayed as text, makes no embedded request, and remains absent from the public run archive.
+
+The current deadline probe gives the Docker launch and workload 15 seconds total, then verifies that the deliberately sleeping workload started and the owned container was removed. An earlier attempt stopped before the workload printed its start marker. Only the probe that observed workload startup establishes running-workload timeout behavior.
+
+```powershell
+python scripts/build_rlm_image.py
+$image = (Get-Content .cache/rlm-runtime-image.json | ConvertFrom-Json).image_id
+python scripts/verify_container.py --image $image --output .cache/container-audit
+python scripts/verify_security_release.py --container-evidence .cache/container-audit/verification.json --scratch .cache/replay-audit --output apps/studio/security-checks.json
+```

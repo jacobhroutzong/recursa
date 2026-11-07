@@ -20,7 +20,7 @@ def verify(image, output):
     probe = (ROOT / 'scripts/sandbox_probe.py').read_text(encoding='utf-8')
     sources = [
         ('policy-probe', probe, 30, 1048576),
-        ('timeout', 'import time\nprint("started",flush=True)\ntime.sleep(60)', 5, 1048576),
+        ('timeout', 'import time\nprint("started",flush=True)\ntime.sleep(60)', 15, 1048576),
         ('output-limit', 'import sys\nsys.stdout.write("x" * 2000000)\nsys.stdout.flush()', 20, 4096),
         ('memory-limit', 'buffer = bytearray(512 * 1024 * 1024)\nprint(len(buffer))', 20, 1048576),
         ('pid-limit', '''import subprocess,sys,json

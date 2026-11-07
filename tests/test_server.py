@@ -6,7 +6,7 @@ import tempfile
 import threading
 import unittest
 from urllib.error import HTTPError
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 from recursa.server import make_handler
 from recursa.experiments import ROOT, atomic_json
 from recursa.engine import run_smoke
@@ -21,6 +21,8 @@ class ServerTests(unittest.TestCase):
             atomic_json(Path(tmp) / "private/run.json", dict(run, id="private-should-not-be-served"))
             atomic_json(Path(tmp) / "copied-replay.json", dict(run, id="private-copied", visibility="private"))
             atomic_json(Path(tmp) / "artifacts/generated.json", dict(run, id="generated-record-shaped-source"))
+            atomic_json(Path(tmp) / "PRIVATE/uppercase.json", dict(run, id="private-uppercase"))
+            atomic_json(Path(tmp) / "mixed-visibility.json", dict(run, id="private-mixed-tag", visibility="Private"))
             server = ThreadingHTTPServer(("127.0.0.1", 0), make_handler(Path(tmp)))
             thread = threading.Thread(target=server.serve_forever, daemon=True)
             thread.start()
@@ -32,6 +34,11 @@ class ServerTests(unittest.TestCase):
                 with urlopen(base + "/") as response:
                     self.assertIn(b"Recursa", response.read())
                     self.assertIn("frame-src 'none'", response.headers["Content-Security-Policy"])
+                    self.assertIn("script-src 'sha256-", response.headers["Content-Security-Policy"])
+                    self.assertIn("form-action 'none'", response.headers["Content-Security-Policy"])
+                with self.assertRaises(HTTPError) as denied:
+                    urlopen(Request(base + "/api/execute", data=b"{}", method="POST"))
+                self.assertEqual(denied.exception.code, 405)
                 with urlopen(base + "/api/progress") as response:
                     self.assertEqual(response.headers["Cache-Control"], "no-store")
                     self.assertIn("phase", json.loads(response.read()))
@@ -188,6 +195,15 @@ class ServerTests(unittest.TestCase):
                             timed += 1
                     self.assertIn("first-pass", seen)
                 self.assertEqual(timed, 22)
+                with urlopen(base + "/api/security-checks") as response:
+                    self.assertEqual(response.headers["Content-Type"], "application/json")
+                    security = json.load(response)
+                self.assertEqual(security["schema_version"], 1)
+                self.assertFalse(security["live_inference"])
+                self.assertTrue({"Local Linux container", "Replay archive", "Replay HTTP", "Replay browser"}
+                                <= {row["area"] for row in security["checks"]})
+                self.assertTrue(all(row["status"] in {"passed", "failed", "unmeasured"}
+                                    for row in security["checks"]))
                 for route in ("/../README.md", "/api/execute", "/assets/unknown.png", "/assets/task-replay/../generated-task-preview.png", "/api/runs/missing", "/api/runs/private-copied", "/api/runs/generated-record-shaped-source"):
                     with self.assertRaises(HTTPError) as error:
                         urlopen(base + route)

@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T20:27:22.610566+00:00",
-  "phase": "Section 9 \u00b7 Versioned benchmark traces",
-  "source_digest": "31a2e5854bcc5dfe59ced14d99198f8e1c5e5288c68e942d70c52c92ca86e5dc",
+  "updated_at": "2026-11-07T20:41:36.748857+00:00",
+  "phase": "Section 10 \u00b7 Security and reliability checks",
+  "source_digest": "ee0cb3ae414d3fd02bd5471953e0f4a1821d72f0ab8a97b1109e485c1ceff964",
   "tests": {
     "total": 109,
     "passed": 109,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T20:27:08.320834+00:00",
-    "source_digest": "31a2e5854bcc5dfe59ced14d99198f8e1c5e5288c68e942d70c52c92ca86e5dc",
+    "verified_at": "2026-11-07T20:41:18.950583+00:00",
+    "source_digest": "ee0cb3ae414d3fd02bd5471953e0f4a1821d72f0ab8a97b1109e485c1ceff964",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -70,8 +70,8 @@
     {
       "number": 10,
       "name": "10. Security/reliability",
-      "status": "Partial prior work",
-      "evidence": "Contained policy and cleanup checked for the local model run. Browser verification used blocked external network"
+      "status": "Sandbox and replay controls verified",
+      "evidence": "Studio records the current pinned container probes, archive filtering, broker and worker limits, read-only routes, and browser import isolation"
     },
     {
       "number": 11,

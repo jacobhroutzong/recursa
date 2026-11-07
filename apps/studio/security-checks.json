@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-11-07T20:38:38.709954+00:00",
+  "live_inference": false,
+  "runtime_source_sha256": "27d467964a788e6de5fe6160cacb83a424ab39b918208ff90b56b0fe3bc3dd64",
+  "scope": "Local Docker, Windows worker, replay HTTP, and Chromium checks. Containers share a kernel. The report measures the listed controls.",
+  "checks": [
+    {
+      "area": "Local Linux container",
+      "check": "nonroot user",
+      "status": "passed",
+      "evidence": "Observed inside the pinned container"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "host secret absent",
+      "status": "passed",
+      "evidence": "Observed inside the pinned container"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "docker socket absent",
+      "status": "passed",
+      "evidence": "Observed inside the pinned container"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "root write blocked",
+      "status": "passed",
+      "evidence": "Observed inside the pinned container"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "scratch writable",
+      "status": "passed",
+      "evidence": "Observed inside the pinned container"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "capabilities dropped",
+      "status": "passed",
+      "evidence": "Observed inside the pinned container"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "no new privileges",
+      "status": "passed",
+      "evidence": "Observed inside the pinned container"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "seccomp filter",
+      "status": "passed",
+      "evidence": "Observed inside the pinned container"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "cpu quota enforced",
+      "status": "passed",
+      "evidence": "Observed inside the pinned container"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "memory limit enforced",
+      "status": "passed",
+      "evidence": "Observed inside the pinned container"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "pid limit enforced",
+      "status": "passed",
+      "evidence": "Observed inside the pinned container"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "external connection blocked",
+      "status": "passed",
+      "evidence": "Observed inside the pinned container"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "timeout",
+      "status": "passed",
+      "evidence": "Running workload stopped at its deadline"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "output limit",
+      "status": "passed",
+      "evidence": "Combined stdout and stderr stayed within 4 KiB"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "memory limit",
+      "status": "passed",
+      "evidence": "512 MiB allocation hit the 256 MiB cap and Docker reported OOM"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "pid limit",
+      "status": "passed",
+      "evidence": "Process creation was denied at the configured PID cap"
+    },
+    {
+      "area": "Local Linux container",
+      "check": "Container cleanup",
+      "status": "passed",
+      "evidence": "All five reviewed container cases confirmed cleanup"
+    },
+    {
+      "area": "Replay archive",
+      "check": "Private and linked files excluded",
+      "status": "passed",
+      "evidence": "Real Linux files covered mixed-case private directories, a private tag, and file and directory symlinks"
+    },
+    {
+      "area": "Containment",
+      "check": "Reject weakened policy and no host fallback",
+      "status": "passed",
+      "evidence": "11 targeted test case(s)"
+    },
+    {
+      "area": "Provider boundary",
+      "check": "Broker authorization and request limits",
+      "status": "passed",
+      "evidence": "7 targeted test case(s)"
+    },
+    {
+      "area": "Windows worker",
+      "check": "Deadline and descendant cleanup",
+      "status": "passed",
+      "evidence": "8 targeted test case(s)"
+    },
+    {
+      "area": "Generated app browser",
+      "check": "External activity blocked",
+      "status": "passed",
+      "evidence": "1 targeted test case(s)"
+    },
+    {
+      "area": "Replay HTTP",
+      "check": "Read-only routes and sanitized trace responses",
+      "status": "passed",
+      "evidence": "Denied execution, write methods, private paths and encoded traversal. Checked all 27 traces"
+    },
+    {
+      "area": "Replay browser",
+      "check": "Private import stays inert and local",
+      "status": "passed",
+      "evidence": "Chromium checked text-only rendering, no upload or embedded fetch, and hash-based script blocking"
+    }
+  ]
+}

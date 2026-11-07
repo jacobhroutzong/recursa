@@ -348,6 +348,20 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
 </section>
 <section class="section" id="view-research" hidden><h2 class="section-title">Context is an environment.</h2><p class="intro">Recursa applies Recursive Language Models to application synthesis. The research question is whether programmatic inspection helps preserve connected requirements as specifications grow.</p><div class="flow"><div><b>SPECIFICATION</b>Stable requirement IDs<br>Typed dependencies</div><div><b>RLM CONTROLLER</b>Python inspection<br>Adaptive model calls</div><div><b>ARTIFACT REGISTRY</b>Source and provenance<br>Dependency contracts</div><div><b>VERIFICATION</b>Tests and diagnostics<br>Bounded repair</div><div><b>STUDIO</b>Recorded traces<br>Inspectable evidence</div></div><div class="panel"><div class="panel-body research-copy"><h3 style="margin-top:0">The original method</h3><p>Recursive Language Models, by Alex L. Zhang, Tim Kraska, and Omar Khattab, let a model interact programmatically with external context and invoke sub-models. Recursa builds an application synthesis workflow around that idea; it does not claim authorship of RLMs.</p><p><a href="https://arxiv.org/abs/2512.24601" target="_blank" rel="noopener">Read the research paper ↗</a> · <a href="https://github.com/alexzhang13/rlm" target="_blank" rel="noopener">Explore the upstream runtime ↗</a></p><h3>Architectural honesty</h3><p>Deterministic parsing, orchestration, and verification are distinct from model inference. A graph is evidence of RLM behavior only when it records genuine context inspection and model-backed calls. Local smoke runs are labeled accordingly.</p><h3>Compute strategy</h3><p>Develop locally on CPU whenever practical. Public demonstrations use recorded runs without visitor API keys. Optional live experiments require explicit budgets. Substantial accelerator workloads should use the owner's existing Colab allocation; Hugging Face Pro is not assumed to include dedicated GPU hardware.</p><h3>What remains to be established</h3><p>Compilation alone does not prove functional correctness. Requirement satisfaction, interaction tests, actual token usage, execution time, and comparable baseline results are needed before drawing research conclusions. The benefit of recursion is a hypothesis to evaluate.</p></div></div></section>
 <section class="section" id="view-progress" hidden><h2 class="section-title">Build progress</h2><p class="intro">The ordered 1–21 implementation record, updated with each published release. This view checks for updates every 15 seconds while visible. It does not stream private engineering sessions or live model inference.</p><div class="notice" id="progress-summary">Loading release evidence…</div><div class="panel"><div class="panel-head"><h2>Implementation and verification</h2><a href="https://github.com/jacobhroutzong/recursa" target="_blank" rel="noopener">View source ↗</a></div><div style="overflow:auto"><table class="metric-table"><thead><tr><th>Section</th><th>Status</th><th>Evidence and remaining work</th></tr></thead><tbody id="progress-rows"></tbody></table></div></div></section>
+<section class="section" id="view-security" hidden>
+  <h2 class="section-title">Security checks</h2>
+  <p class="intro" id="security-summary" role="status">Loading recorded boundary checks…</p>
+  <div class="panel" id="security-report" hidden>
+    <div class="panel-head"><h2>Sandbox and replay boundaries</h2><a href="/api/security-checks" target="_blank" rel="noopener">Check evidence JSON ↗</a></div>
+    <div class="pilot-scroll" tabindex="0" role="region" aria-label="Recorded boundary checks">
+      <table class="metric-table">
+        <thead><tr><th scope="col">Area</th><th scope="col">Check</th><th scope="col">Result</th><th scope="col">Evidence</th></tr></thead>
+        <tbody id="security-rows"></tbody>
+      </table>
+    </div>
+    <div class="panel-body"><p class="intro" id="security-scope"></p></div>
+  </div>
+</section>
 <footer class="footer"><span>RECURSA STUDIO / Recursive Application Synthesis</span><span>Recorded evidence · CPU-first demonstration · No public inference endpoint</span></footer>
 </div></main></div>
 <script>
@@ -358,9 +372,11 @@ let workflowPromise=null,workflowChapters=[],workflowFrame=0,workflowTimer=null;
 let comparisonPromise=null;
 let seriesPromise=null;
 let repairSeriesPromise=null;
-const collapsed=new Set();const titles={overview:'Overview',playground:'Specification playground',execution:'Execution explorer',artifacts:'Generated artifacts',benchmarks:'Benchmarks',research:'Research & architecture',progress:'Build progress'};
+const collapsed=new Set();const titles={overview:'Overview',playground:'Specification playground',execution:'Execution explorer',artifacts:'Generated artifacts',benchmarks:'Benchmarks',research:'Research & architecture',progress:'Build progress',security:'Security checks'};
 function element(tag,text,className){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e}
 const progressButton=element('button','Build progress');progressButton.dataset.view='progress';document.querySelector('.nav').append(progressButton);
+const securityButton=element('button','Security checks');securityButton.dataset.view='security';document.querySelector('.nav').append(securityButton);
+let securityPromise=null;
 function showView(view){
   if(!Object.hasOwn(titles,view))view='overview';
   document.querySelectorAll('.section').forEach(section=>section.hidden=section.id!=='view-'+view);
@@ -372,10 +388,11 @@ function showView(view){
   $('overview-hero').hidden=view!=='overview';
   document.querySelector('.content > .stats').hidden=!['overview','execution'].includes(view);
   $('release-notice').hidden=!['overview','progress'].includes(view);
-  $('evidence-notice').hidden=view==='benchmarks';
+  $('evidence-notice').hidden=['benchmarks','security'].includes(view);
   $('breadcrumb').textContent=titles[view];
   if(view==='playground')loadPlayground();
   if(view==='benchmarks'){loadRepairSeries();loadSeries();loadComparison();}
+  if(view==='security')loadSecurity();
   if(view==='artifacts')getCatalog().catch(()=>{});
   else stopWorkflow();
   if(location.hash!=='#'+view)location.hash=view;
@@ -626,6 +643,27 @@ function selectArtifact(index){selectedArtifact=run.artifacts[index];$('file-pat
 $('download-file').addEventListener('click',()=>{if(!selectedArtifact)return;const blob=new Blob([$('source-code').textContent],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=element('a');a.href=url;a.download=String(selectedArtifact.path||'artifact.txt').split(/[\\/]/).pop();a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
 function renderMetrics(){const body=$('metrics-table');clear(body);const metrics=Object.entries(run?.metrics||{});if(!metrics.length){const row=element('tr'),cell=element('td','No measurements recorded.');cell.colSpan=2;row.append(cell);body.append(row)}metrics.forEach(([key,value])=>{const row=element('tr');row.append(element('td',key.replaceAll('_',' ')),element('td',format(value)));body.append(row)})}
 async function fetchJSON(url){const response=await fetch(url,{headers:{Accept:'application/json'}});if(!response.ok)throw Error('Archive returned HTTP '+response.status);return response.json()}
+function loadSecurity(){
+  if(securityPromise)return;
+  securityPromise=fetchJSON('/api/security-checks').then(report=>{
+    const count=report.checks.filter(check=>check.status==='passed').length;
+    $('security-summary').textContent=count+' of '+report.checks.length+' checks passed · '+new Date(report.verified_at).toLocaleString();
+    $('security-scope').textContent=report.scope;
+    $('security-rows').replaceChildren(...report.checks.map(check=>{
+      const row=element('tr');
+      const name=element('th',check.check);name.scope='row';
+      const result=element('td');
+      const label={passed:'Passed',failed:'Failed',unmeasured:'Unmeasured'}[check.status]||'Unmeasured';
+      result.append(element('span',label,'tag '+(check.status==='passed'?'cyan':'amber')));
+      row.append(element('td',check.area),name,result,element('td',check.evidence));
+      return row;
+    }));
+    $('security-report').hidden=false;
+  }).catch(()=>{
+    $('security-summary').textContent='The recorded boundary checks are unavailable.';
+    securityPromise=null;
+  });
+}
 const methodNames={direct:'Direct LLM',structured:'Structured',rlm:'Contained RLM'};
 function loadRepairSeries(){
   if(repairSeriesPromise)return;
