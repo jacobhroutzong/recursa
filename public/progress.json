@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T22:11:52.077554+00:00",
+  "updated_at": "2026-11-07T22:17:43.245463+00:00",
   "phase": "Section 12 \u00b7 Clean-checkout verification and CI",
-  "source_digest": "eababb7023f3f1c9702ea1877f9c21d2a53cc4310d33d979e6bfd49f4df131be",
+  "source_digest": "5b920120cfc5fd9a1530769c497fde54baea08e09183716472d8805cee671056",
   "tests": {
     "total": 109,
     "passed": 109,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T22:11:40.085297+00:00",
-    "source_digest": "eababb7023f3f1c9702ea1877f9c21d2a53cc4310d33d979e6bfd49f4df131be",
+    "verified_at": "2026-11-07T22:17:42.173142+00:00",
+    "source_digest": "5b920120cfc5fd9a1530769c497fde54baea08e09183716472d8805cee671056",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [

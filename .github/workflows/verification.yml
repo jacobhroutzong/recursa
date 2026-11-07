@@ -52,6 +52,20 @@ jobs:
           npm ci --ignore-scripts --prefix tooling/frontend
           npm ci --ignore-scripts --prefix tooling/browser
           node tooling/browser/node_modules/playwright/cli.js install --with-deps chromium
+      - name: Enable sandbox namespaces for the pinned Chromium binary
+        run: |
+          browsers=("$HOME"/.cache/ms-playwright/chromium_headless_shell-*/chrome-headless-shell-linux64/chrome-headless-shell)
+          test "${#browsers[@]}" -eq 1
+          test -x "${browsers[0]}"
+          cat > "$RUNNER_TEMP/recursa-chromium.apparmor" <<EOF
+          abi <abi/4.0>,
+          include <tunables/global>
+          profile recursa-chromium "${browsers[0]}" flags=(unconfined) {
+            userns,
+          }
+          EOF
+          sudo apparmor_parser -r "$RUNNER_TEMP/recursa-chromium.apparmor"
+          node --input-type=module -e 'import { chromium } from "./tooling/browser/node_modules/playwright/index.mjs"; const browser = await chromium.launch({ chromiumSandbox: true }); await browser.close();'
       - name: Run offline tests and real browser checks
         run: |
           mkdir -p .cache
