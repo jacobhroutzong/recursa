@@ -1,0 +1,296 @@
+{
+  "schema_version": 1,
+  "id": "generated-task-local-004",
+  "label": "Task Management · Local model synthesis",
+  "mode": "rlm-local-synthesis",
+  "status": "verified-after-repair",
+  "live_inference": true,
+  "spec": {
+    "name": "Task management",
+    "description": "A local productivity app with persistent tasks and deterministic acceptance criteria.",
+    "requirements": [
+      {
+        "id": "TASK-01",
+        "text": "Create a task with a required title. Reject blank titles. For browser acceptance use the accessible input name Task title and button name Add task. On blank submit show an alert containing Enter a task title.",
+        "acceptance": "Submitting a blank title shows an error and does not add a task."
+      },
+      {
+        "id": "TASK-02",
+        "text": "Toggle a task between active and complete. Use a checkbox for each task with accessible name Complete followed by the task title.",
+        "depends_on": [
+          "TASK-01"
+        ],
+        "acceptance": "Toggling twice restores the initial status."
+      },
+      {
+        "id": "TASK-03",
+        "text": "Filter tasks by status and title substring. Use a search input labeled Search tasks and a select labeled Status filter, with all, active, and completed values. When no tasks match, show No tasks match your filters.",
+        "depends_on": [
+          "TASK-02"
+        ],
+        "acceptance": "Completed filter excludes active tasks and combines with text search."
+      },
+      {
+        "id": "TASK-04",
+        "text": "Persist tasks across reloads using local storage. Use browser localStorage and preserve titles and completion flags on reload.",
+        "depends_on": [
+          "TASK-01"
+        ],
+        "acceptance": "Reload restores titles and completion state."
+      },
+      {
+        "id": "TASK-05",
+        "text": "Provide keyboard-accessible labeled controls and an empty state. Use a document title, lang attribute, a main landmark, and labeled controls. Add task follows Task title in the tab order.",
+        "depends_on": [
+          "TASK-03"
+        ],
+        "acceptance": "All task actions are reachable by Tab and empty filters explain the state."
+      }
+    ]
+  },
+  "events": [
+    {
+      "id": "root",
+      "parent_id": null,
+      "type": "execution",
+      "label": "Synthesize Task Management on a local model",
+      "status": "completed",
+      "details": {
+        "container_policy_verified": true,
+        "container_cleanup_verified": true,
+        "image_id": "sha256:c171068d12abf5e0840bac37e26253537997d490bf08e770fe820352bfb725e4",
+        "runtime_source_sha256": "55cf0363811cf4ca5b32482799f71a139d247b8af857c8a16347e64295c2fa10",
+        "spec_sha256": "782b821ee4cb333f377cf2c360799c4381a908f242f96374cfe9414e1204f88c"
+      }
+    },
+    {
+      "id": "context",
+      "parent_id": "root",
+      "type": "context",
+      "label": "Inspect external requirements",
+      "status": "reported",
+      "details": {
+        "container_reported_indexed_inspection": true
+      }
+    },
+    {
+      "id": "subcall",
+      "parent_id": "context",
+      "type": "subcall",
+      "label": "Return the initial app source",
+      "status": "completed",
+      "details": {
+        "container_reported_completed_subcall": true,
+        "host_observed_synthesis_completions": 3,
+        "initial_build_passed": true,
+        "initial_functional_success": false
+      }
+    },
+    {
+      "id": "repair-1",
+      "parent_id": "subcall",
+      "type": "repair",
+      "label": "Repair HTML labels and form structure",
+      "status": "completed",
+      "details": {
+        "provider_reported_usage": {
+          "prompt_tokens": 607,
+          "completion_tokens": 370,
+          "total_tokens": 977
+        },
+        "response_sha256": "9e49a3dc431be154516a6d85f93ecff22abfa73921b6e3b554b1de031b38d1d3"
+      }
+    },
+    {
+      "id": "repair-2",
+      "parent_id": "subcall",
+      "type": "repair",
+      "label": "Rewrite the browser module without dependencies",
+      "status": "completed",
+      "details": {
+        "provider_reported_usage": {
+          "prompt_tokens": 1043,
+          "completion_tokens": 619,
+          "total_tokens": 1662
+        },
+        "response_sha256": "e48f53c0793d3f58b69854760d977720da3dcd98626c16c5fa9881f9a2c5b79d"
+      }
+    },
+    {
+      "id": "repair-3",
+      "parent_id": "subcall",
+      "type": "repair",
+      "label": "Repair checkbox persistence",
+      "status": "completed",
+      "details": {
+        "provider_reported_usage": {
+          "prompt_tokens": 595,
+          "completion_tokens": 502,
+          "total_tokens": 1097
+        },
+        "response_sha256": "5d25ba326ef311327fbbb7904ae412a8ef978417bc66a98b4cadb309afce7c39"
+      }
+    },
+    {
+      "id": "repair-4",
+      "parent_id": "subcall",
+      "type": "repair",
+      "label": "Generate the case-insensitive search predicate",
+      "status": "completed",
+      "details": {
+        "provider_reported_usage": {
+          "prompt_tokens": 124,
+          "completion_tokens": 70,
+          "total_tokens": 194
+        },
+        "response_sha256": "fa6cf4765d27d30078e7a634a20196f0032a01560441a3f09563e04a3c49a73b"
+      }
+    },
+    {
+      "id": "assemble",
+      "parent_id": "repair-4",
+      "type": "artifact",
+      "label": "Assemble the repaired source",
+      "status": "completed",
+      "details": {
+        "host_composition": "The host preserved the status condition and joined it with the title predicate extracted from a model reply.",
+        "paths": [
+          {
+            "path": "index.html",
+            "sha256": "fc1ee6d1a24daf18f7dd39e6b5a14acf215fcbb4892088dbd3329d7256827aad"
+          },
+          {
+            "path": "app.js",
+            "sha256": "a39bcc46e4421867f2cdb27ea20727f5f57a50a21cd0afcedb6f34b28ddc0ee8"
+          },
+          {
+            "path": "styles.css",
+            "sha256": "db07642baa7c9b6e6b2a9cdb8fc0e4468e60c3c5f77ba883c8229419aeaf89f3"
+          }
+        ]
+      }
+    },
+    {
+      "id": "verify",
+      "parent_id": "assemble",
+      "type": "validation",
+      "label": "Verify the built application in Chromium",
+      "status": "passed",
+      "details": {
+        "scenarios": [
+          {
+            "scenario_id": "required-title",
+            "status": "passed",
+            "completed_steps": 7,
+            "requirements": [
+              "TASK-01"
+            ]
+          },
+          {
+            "scenario_id": "toggle-and-persist",
+            "status": "passed",
+            "completed_steps": 9,
+            "requirements": [
+              "TASK-02",
+              "TASK-04"
+            ]
+          },
+          {
+            "scenario_id": "combined-filters",
+            "status": "passed",
+            "completed_steps": 14,
+            "requirements": [
+              "TASK-03",
+              "TASK-05"
+            ]
+          },
+          {
+            "scenario_id": "keyboard-mobile-task-controls",
+            "status": "passed",
+            "completed_steps": 8,
+            "requirements": [
+              "TASK-05"
+            ]
+          }
+        ],
+        "basic_accessibility_audits_passed": true,
+        "scenario_sha256": "59beb608683d76af7c2357f898ad23dc45a357f4a014b512f2abade68170c794"
+      }
+    },
+    {
+      "id": "capture",
+      "parent_id": "verify",
+      "type": "artifact",
+      "label": "Capture the verified app preview",
+      "status": "completed",
+      "details": {
+        "screenshot_sha256": "99351d0e638df686cfa9b9fe3a0cd79a96658c5d163a1445b5bfc35a9141b00c",
+        "kind": "static-browser-capture"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "index.html",
+      "content": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Task Manager</title>\n  <link rel=\"stylesheet\" href=\"styles.css\" />\n</head>\n<body>\n  <main>\n    <h1>Task Manager</h1>\n    <form id=\"task-form\">\n      <label for=\"task-title\">Task title</label>\n      <input type=\"text\" id=\"task-title\" name=\"task-title\" />\n      <button type=\"submit\" id=\"add-task\">Add task</button>\n      <label for=\"search-input\">Search tasks</label>\n      <input type=\"search\" id=\"search-input\" name=\"search-input\" />\n      <label for=\"status-filter\">Status filter</label>\n      <select id=\"status-filter\" name=\"status-filter\">\n        <option value=\"all\">All</option>\n        <option value=\"active\">Active</option>\n        <option value=\"completed\">Completed</option>\n      </select>\n    </form>\n    <div id=\"status-message\"></div>\n    <ul id=\"task-list\"></ul>\n    <p id=\"task-error\" role=\"alert\"></p>\n  </main>\n  <script type=\"module\" src=\"app.js\"></script>\n</body>\n</html>",
+      "requirements": [
+        "TASK-01",
+        "TASK-05"
+      ],
+      "imports": [],
+      "exports": [],
+      "assumptions": [],
+      "sha256": "fc1ee6d1a24daf18f7dd39e6b5a14acf215fcbb4892088dbd3329d7256827aad"
+    },
+    {
+      "path": "app.js",
+      "content": "const taskList = document.getElementById('task-list');\nconst taskError = document.getElementById('task-error');\nconst statusMessage = document.getElementById('status-message');\nconst searchInput = document.getElementById('search-input');\nconst statusFilter = document.getElementById('status-filter');\n\nlet tasks = [];\n\nfunction render() {\n  taskList.innerHTML = '';\n  let filteredTasks = [];\n  \n  for (let task of tasks) {\n    if ((statusFilter.value === 'all' || \n        (statusFilter.value === 'active' && !task.completed) || \n        (statusFilter.value === 'completed' && task.completed)) && (task.title.toLowerCase().includes(searchInput.value.toLowerCase()))) {\n      filteredTasks.push(task);\n    }\n  }\n\n  filteredTasks.sort((a, b) => a.title.localeCompare(b.title));\n\n  for (let task of filteredTasks) {\n    const li = document.createElement('li');\n    \n    const checkbox = document.createElement('input');\n    checkbox.type = 'checkbox';\n    checkbox.setAttribute('aria-label', 'Complete ' + task.title);\n    checkbox.checked = task.completed;\n    checkbox.addEventListener('change', function() {\n      task.completed = checkbox.checked;\n      saveTasks();\n      render();\n    });\n    \n    const span = document.createElement('span');\n    span.textContent = task.title;\n    \n    li.appendChild(checkbox);\n    li.appendChild(span);\n    \n    taskList.appendChild(li);\n  }\n\n  if (filteredTasks.length === 0) {\n    statusMessage.textContent = 'No tasks match your filters.';\n  } else {\n    statusMessage.textContent = '';\n  }\n}\n\nfunction saveTasks() {\n  localStorage.setItem('tasks', JSON.stringify(tasks));\n}\n\nfunction loadTasks() {\n  const savedTasks = localStorage.getItem('tasks');\n  if (savedTasks) {\n    tasks = JSON.parse(savedTasks);\n  }\n}\n\nloadTasks();\nrender();\n\nsearchInput.addEventListener('input', render);\nstatusFilter.addEventListener('change', render);\n\ndocument.getElementById('task-form').addEventListener('submit', function(event) {\n  event.preventDefault();\n  \n  const title = document.getElementById('task-title').value.trim();\n  \n  if (!title) {\n    taskError.textContent = 'Enter a task title.';\n    return;\n  }\n\n  taskError.textContent = '';\n  \n  const task = {\n    title: title,\n    completed: false\n  };\n\n  tasks.push(task);\n  saveTasks();\n  render();\n  \n  document.getElementById('task-title').value = '';\n  \n  // Focus on the next element after the input\n  document.querySelector('input[type=\"text\"]').focus();\n});",
+      "requirements": [
+        "TASK-01",
+        "TASK-02",
+        "TASK-03",
+        "TASK-04",
+        "TASK-05"
+      ],
+      "imports": [],
+      "exports": [],
+      "assumptions": [],
+      "sha256": "a39bcc46e4421867f2cdb27ea20727f5f57a50a21cd0afcedb6f34b28ddc0ee8"
+    },
+    {
+      "path": "styles.css",
+      "content": "body {\n  font-family: Arial, sans-serif;\n  margin: 0;\n  padding: 0;\n  background-color: #f9f9f9;\n}\n\nmain {\n  padding: 2rem;\n}\n\n.task {\n  padding: 1rem;\n  border-bottom: 1px solid #ccc;\n}\n\n.task-actions {\n  display: flex;\n  align-items: center;\n}\n\ninput[type=\"text\"] {\n  padding: 0.5rem;\n  margin-right: 1rem;\n}\n\nbutton {\n  padding: 0.5rem 1rem;\n  background-color: #007bff;\n  color: white;\n  border: none;\n  cursor: pointer;\n}\n\nbutton:hover {\n  background-color: #0056b3;\n}\n\n#status-message {\n  color: red;\n  margin-top: 1rem;\n}\n\n/* Ensure keyboard navigation and focus states are accessible */\ninput:focus, button:focus {\n  outline: 2px solid #007bff;\n  outline-offset: 2px;\n}",
+      "requirements": [
+        "TASK-05"
+      ],
+      "imports": [],
+      "exports": [],
+      "assumptions": [],
+      "sha256": "db07642baa7c9b6e6b2a9cdb8fc0e4468e60c3c5f77ba883c8229419aeaf89f3"
+    }
+  ],
+  "metrics": {
+    "build_success": true,
+    "functional_success": true,
+    "lint_success": true,
+    "end_to_end_pass_rate": 1,
+    "accessibility_success": true,
+    "model_calls": 7,
+    "synthesis_calls": 3,
+    "retained_repair_calls": 4,
+    "input_tokens": 4446,
+    "output_tokens": 3124,
+    "requirement_satisfaction": null,
+    "cost_usd": null
+  },
+  "provenance": {
+    "model": "Qwen/Qwen3-4B-GGUF",
+    "revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+    "model_file_sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+    "runtime": "LM Studio bundled llama.cpp CUDA 2.41.0, llama-server commit b49650a",
+    "synthesis_trial": 4,
+    "compute": "Local RTX 4070 Laptop GPU",
+    "paid_api_calls": 0,
+    "scope": "Selected successful source lineage and declared browser checks. Earlier failed synthesis attempts and discarded repair replies are excluded from the selected call totals."
+  }
+}

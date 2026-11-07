@@ -50,6 +50,15 @@ class ServerTests(unittest.TestCase):
                 self.assertTrue(preview.startswith(b"\x89PNG"))
                 self.assertEqual(hashlib.sha256(preview).hexdigest(),
                                  reference["events"][-1]["details"]["screenshot_sha256"])
+                generated = catalog["generated"]
+                self.assertEqual(generated["mode"], "rlm-local-synthesis")
+                self.assertTrue(generated["metrics"]["functional_success"])
+                self.assertIsNone(generated["metrics"]["requirement_satisfaction"])
+                with urlopen(base + "/assets/generated-task-preview.png") as response:
+                    self.assertEqual(response.headers["Content-Type"], "image/png")
+                    generated_preview = response.read()
+                self.assertEqual(hashlib.sha256(generated_preview).hexdigest(),
+                                 generated["events"][-1]["details"]["screenshot_sha256"])
                 for route in ("/../README.md", "/api/execute", "/assets/unknown.png", "/api/runs/missing", "/api/runs/private-copied", "/api/runs/generated-record-shaped-source"):
                     with self.assertRaises(HTTPError) as error:
                         urlopen(base + route)

@@ -1,4 +1,4 @@
-// Capture the verified Task Management reference build in an isolated browser.
+// Capture a verified Task Management build in an isolated browser.
 import assert from 'node:assert/strict';
 import {readFile, realpath} from 'node:fs/promises';
 import {createRequire} from 'node:module';
@@ -6,7 +6,9 @@ import path from 'node:path';
 
 const require = createRequire(import.meta.url);
 const {chromium} = require('../tooling/browser/node_modules/playwright');
-const [reportPath, output] = process.argv.slice(2);
+const [reportPath, output, viewportHeight = "760"] = process.argv.slice(2);
+const height = Number(viewportHeight);
+assert.ok(Number.isInteger(height) && height >= 300 && height <= 1200);
 const report = JSON.parse(await readFile(reportPath, 'utf8'));
 assert.equal(report.status, 'passed');
 assert.equal(report.verification.functional_success, true);
@@ -16,7 +18,7 @@ const types = {'.html':'text/html', '.js':'text/javascript', '.css':'text/css'};
 const blocked = [];
 const browser = await chromium.launch({headless:true, chromiumSandbox:true});
 try {
-  const page = await browser.newPage({viewport:{width:1000,height:760}, serviceWorkers:'block'});
+  const page = await browser.newPage({viewport:{width:1000,height}, serviceWorkers:'block'});
   await page.route('**/*', async route => {
     const request = route.request();
     const url = new URL(request.url());
@@ -41,7 +43,8 @@ try {
     await page.getByRole('button', {name:'Add task'}).click();
   }
   await page.getByRole('checkbox', {name:'Complete Review the specification'}).check();
-  assert.match(await page.locator('#task-count').textContent(), /3 of 3/);
+  assert.equal(await page.getByRole('checkbox').count(), 3);
+  assert.equal(await page.getByRole('checkbox', {name:'Complete Review the specification'}).isChecked(), true);
   assert.deepEqual(blocked, []);
   await page.screenshot({path:output, fullPage:true, animations:'disabled'});
 } finally {

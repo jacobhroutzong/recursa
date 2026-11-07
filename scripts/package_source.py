@@ -11,9 +11,10 @@ def package(target):
             for path in sorted((ROOT / folder).rglob("*")):
                 if path.is_file() and path.suffix in {".py", ".ps1", ".json", ".html", ".md", ".ipynb", ".mjs", ".ts", ".tsx", ".jsx", ".css"} and "__pycache__" not in path.parts:
                     archive.write(path, "recursa/" + path.relative_to(ROOT).as_posix())
-        preview = ROOT / "apps/studio/assets/task-preview.png"
-        if preview.exists():
-            archive.write(preview, "recursa/apps/studio/assets/task-preview.png")
+        for name in ("task-preview.png", "generated-task-preview.png"):
+            preview = ROOT / "apps/studio/assets" / name
+            if preview.exists():
+                archive.write(preview, "recursa/apps/studio/assets/" + name)
         for name in ("pyproject.toml", "requirements-live.lock", "README.md", "AGENTS.md", "tooling/typecheck/package.json", "tooling/typecheck/package-lock.json", "tooling/frontend/package.json", "tooling/frontend/package-lock.json", "tooling/browser/package.json", "tooling/browser/package-lock.json"):
             path = ROOT / name
             if path.exists():

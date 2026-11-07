@@ -51,6 +51,7 @@ class ProviderAdapter:
             raise ValueError('Remote rates must be positive')
         self._config = config
         self._url = url.rstrip('/') + '/chat/completions'
+        self._http_timeout_cap = 90 if parts.hostname in {'localhost', '127.0.0.1', '::1'} else 30
         self._key_env = config['api_key_env']
         self._cap = cap
         self._budget = budget
@@ -142,7 +143,7 @@ class ProviderAdapter:
                                headers={'Authorization': 'Bearer ' + key, 'Accept-Encoding': 'identity'},
                                json={'model': model, 'messages': messages,
                                      'max_completion_tokens': self._cap, 'stream': False, 'store': False},
-                               timeout=self._remaining(deadline, cap=30)) as response:
+                               timeout=self._remaining(deadline, cap=self._http_timeout_cap)) as response:
                 if response.status_code != 200:
                     raise ProviderFailure('ProviderHTTPError')
                 if response.headers.get('content-encoding', 'identity').lower() != 'identity':

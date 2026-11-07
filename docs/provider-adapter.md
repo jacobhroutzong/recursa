@@ -10,7 +10,7 @@ Responses are limited to 128 KiB, uncompressed, with one completed assistant tex
 
 Sanitized summaries contain prompt/response hashes, reservations, usage counts and classification codes. They exclude credentials, endpoint URLs, raw messages, raw response text and error bodies. Adapter state is serialized under a lock, and returned summaries are copied. Replay imports need no optional HTTP dependency.
 
-The base adapter checks the elapsed deadline around dispatch and between response chunks, with each HTTP operation capped at the remaining time or 30 seconds. Its direct path cannot preempt a blocked operation. Use the supervised host path described below for a process lifetime boundary. Neither path is a sandbox.
+The base adapter checks the elapsed deadline around dispatch and between response chunks, with each HTTP operation capped at the remaining time or 30 seconds for remote endpoints and 90 seconds for loopback endpoints. Its direct path cannot preempt a blocked operation. Use the supervised host path described below for a process lifetime boundary. Neither path is a sandbox.
 
 ## Supervised host path
 
@@ -26,4 +26,4 @@ Seven focused supervisor checks cover actual intercepted worker success, parent 
 
 Run `python -m unittest discover -s tests -p "test_provider*.py" -v` for the adapter and supervisor checks. The container broker invokes the supervised adapter on the supervisor thread with the container deadline. The integrated checks use actual containers and supervised workers with intercepted HTTP. [Host broker verification](host-broker.md)
 
-The contained runner now accepts reviewed specifications. The private Studio replay contains broker outcomes and budget counters. A genuine run remains open. An actual run requires explicit owner authorization, an endpoint and model, configured credentials and a spending cap. Failed or interrupted workers can leave provider usage unknown. The parent retains the reservations.
+The contained runner now accepts reviewed specifications. The private Studio replay contains broker outcomes and budget counters. The authorized Task Management run used the loopback path. An actual run requires explicit owner authorization, an endpoint and model, configured credentials and a spending cap. Failed or interrupted workers can leave provider usage unknown. The parent retains the reservations.

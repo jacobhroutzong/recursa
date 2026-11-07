@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T16:21:24.444376+00:00",
-  "phase": "Section 6 \u00b7 Specification playground and app previews",
-  "source_digest": "c9f2821bf9bece5ab9df1a097b2cbf17b21fdc6e91d0010d93ac43f9cc162954",
+  "updated_at": "2026-11-07T16:59:26.973296+00:00",
+  "phase": "Section 6 \u00b7 Verified local synthesis preview",
+  "source_digest": "eef73fff8c49b165ee929d4b2560cf7dc4f1165a136839a3959daee2e4181954",
   "tests": {
     "total": 106,
     "passed": 106,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T16:21:17.436519+00:00",
-    "source_digest": "c9f2821bf9bece5ab9df1a097b2cbf17b21fdc6e91d0010d93ac43f9cc162954",
+    "verified_at": "2026-11-07T16:57:26.924532+00:00",
+    "source_digest": "eef73fff8c49b165ee929d4b2560cf7dc4f1165a136839a3959daee2e4181954",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -17,7 +17,7 @@
       "number": 1,
       "name": "1. Project identity",
       "status": "Defined; deliverables open",
-      "evidence": "Dedicated GitHub source and CPU replay Space published; genuine applications and research remain pending"
+      "evidence": "GitHub source and CPU replay Space published. The Task Management example has a verified local model preview"
     },
     {
       "number": 2,
@@ -34,50 +34,50 @@
     {
       "number": 4,
       "name": "4. Real RLM engine",
-      "status": "Offline integration verified; real-model gate open",
-      "evidence": "Indexed context, artifact protocol, pre-dispatch reservations and official runtime tested with scripted HTTP responses; owner selected offline implementation/testing"
+      "status": "Local model inspection and subcall verified",
+      "evidence": "One authorized contained Qwen run reported indexed requirement inspection and a completed synthesis subcall. The host recorded three model completions. Broader model comparisons remain open"
     },
     {
       "number": 5,
       "name": "5. Application synthesis",
-      "status": "Private Studio replay tested offline; incomplete",
-      "evidence": "Reviewed runs return revalidated source and an import-only replay with host broker events and separately labeled container observations. Container checks use intercepted responses. Genuine synthesis and functional verification remain open"
+      "status": "One repaired model-generated app verified",
+      "evidence": "Task Management compiled and passed four independent Chromium acceptance scenarios after targeted model repairs and host composition of the final filter. The initial generated build failed functional checks"
     },
     {
       "number": 6,
       "name": "6. Studio",
-      "status": "Playground and captured reference preview",
-      "evidence": "Three synthetic specifications with CPU replays, searchable requirements, JSON export, and a verified Task Management reference screenshot beside the source. Model-generated app previews await an authorized synthesis run"
+      "status": "Verified model-generated preview",
+      "evidence": "Three synthetic specification presets and CPU replays. Studio shows the captured Task Management build, source files, repair provenance, and acceptance results alongside the separate reference app"
     },
     {
       "number": 7,
       "name": "7. Live/replay modes",
       "status": "Partial prior work",
-      "evidence": "Replay works; genuine live run pending"
+      "evidence": "One contained local inference run is recorded. Public Studio serves read-only replay"
     },
     {
       "number": 8,
       "name": "8. Evaluation harness",
       "status": "Pending",
-      "evidence": "No baseline implementations or model measurements"
+      "evidence": "One local model case is measured. Comparable direct and structured baselines remain open"
     },
     {
       "number": 9,
       "name": "9. Tracing",
       "status": "Partial prior work",
-      "evidence": "CPU events only; full schema and real-model trace pending"
+      "evidence": "CPU and sanitized local model replays are available. Richer timing and full benchmark traces remain open"
     },
     {
       "number": 10,
       "name": "10. Security/reliability",
       "status": "Partial prior work",
-      "evidence": "Replay boundaries tested; isolated execution pending"
+      "evidence": "Contained policy and cleanup checked for the local model run. Browser verification used blocked external network"
     },
     {
       "number": 11,
       "name": "11. Example applications",
-      "status": "Pending",
-      "evidence": "None generated through model pipeline"
+      "status": "One verified example",
+      "evidence": "Task Management verified after targeted repair. Operations Analytics and Aviation remain specification presets"
     },
     {
       "number": 12,
@@ -89,13 +89,13 @@
       "number": 13,
       "name": "13. Engineering strategy",
       "status": "Partial",
-      "evidence": "AGENTS exists; real-model vertical slice pending"
+      "evidence": "The first contained model-backed vertical slice is recorded"
     },
     {
       "number": 14,
       "name": "14. Priority gates",
-      "status": "P0 open",
-      "evidence": "Do not expand frontend or large benchmarks yet"
+      "status": "First model-backed slice verified",
+      "evidence": "Indexed inspection, a completed subcall, and one repaired verified build. Comparative evaluation remains open"
     },
     {
       "number": 15,
@@ -113,7 +113,7 @@
       "number": 17,
       "name": "17. Definition of done",
       "status": "Not satisfied",
-      "evidence": "Genuine RLM and research evidence missing"
+      "evidence": "One verified local model case. Broader examples, comparisons and final research evidence remain open"
     },
     {
       "number": 18,
@@ -130,8 +130,8 @@
     {
       "number": 20,
       "name": "20. Implementation sequence",
-      "status": "Step 1 verified; step 2 offline integration passes",
-      "evidence": "Smallest real model-backed route remains current gate"
+      "status": "First real model-backed route verified",
+      "evidence": "Task Management generation, targeted repair, acceptance checks and preview are recorded"
     },
     {
       "number": 21,

@@ -16,7 +16,7 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 VERSION = "1.64.1"
 ACTIONS = {"fill", "click", "select", "press", "reload", "audit_accessibility", "expect_text", "expect_count", "expect_visible", "expect_value", "expect_checked"}
-ROLES = {"button", "textbox", "searchbox", "combobox", "checkbox", "heading", "list", "listitem", "alert", "status", "link", "radio", "tab", "table", "cell", "row", "navigation", "form"}
+ROLES = {"button", "textbox", "searchbox", "combobox", "checkbox", "heading", "list", "listitem", "alert", "status", "link", "radio", "tab", "table", "cell", "row", "navigation", "form", "main"}
 KEYS = {"Enter", "Tab", "Space", "Escape", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"}
 
 

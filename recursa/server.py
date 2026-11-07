@@ -33,9 +33,18 @@ def make_handler(directory):
             if route == "/api/runs":
                 self.send_data(200, list(load_runs(directory).values()))
             elif route == "/api/playground":
-                self.send_data(200, (ROOT / "apps/studio/playground.json").read_bytes())
-            elif route == "/assets/task-preview.png":
-                self.send_data(200, (ROOT / "apps/studio/assets/task-preview.png").read_bytes(), "image/png")
+                studio = ROOT / "apps/studio"
+                catalog = json.loads((studio / "playground.json").read_bytes())
+                generated = studio / "generated-task.json"
+                if generated.is_file():
+                    catalog["generated"] = json.loads(generated.read_bytes())
+                self.send_data(200, catalog)
+            elif route in ("/assets/task-preview.png", "/assets/generated-task-preview.png"):
+                asset = ROOT / "apps/studio" / route.lstrip("/")
+                if asset.is_file():
+                    self.send_data(200, asset.read_bytes(), "image/png")
+                else:
+                    self.send_data(404, {"error": "Preview not found"})
             elif route == "/api/progress":
                 path = ROOT / "public/progress.json"
                 if path.exists():

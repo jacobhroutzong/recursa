@@ -24,7 +24,7 @@ The source response and token-usage values are controlled fixture data. The pare
 
 ## Remaining gate
 
-The remaining evidence gaps are an authorized model run and model-backed application verification. Public Studio serves CPU replays and progress.
+The authorized local Task Management run returned source and passed browser acceptance after repair. Public Studio serves captured previews and recorded traces. [Run evidence](evidence/task-management-local-model.md)
 
 
 ## Reviewed specifications

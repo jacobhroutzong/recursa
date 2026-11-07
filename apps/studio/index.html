@@ -243,7 +243,7 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
         <div class="stat"><div class="stat-label">JSON SIZE</div><div class="stat-value" id="preset-size"></div></div>
         <div class="stat"><div class="stat-label">EXECUTION MODE</div><div class="stat-note">Recorded CPU validation</div></div>
       </div>
-      <div class="spec-actions"><button id="preset-replay" class="primary">Open CPU replay</button><button id="preset-download">Download specification</button><button id="preset-reference">Open reference app</button></div>
+      <div class="spec-actions"><button id="preset-replay" class="primary">Open CPU replay</button><button id="preset-download">Download specification</button><button id="preset-generated" hidden>Open generated app</button><button id="preset-reference">Open reference app</button></div>
     </div></div>
     <div class="panel"><div class="panel-head"><h2>Requirements</h2><input id="requirement-search" class="requirement-search" type="search" aria-label="Search requirements" placeholder="Search requirements"></div>
       <div class="panel-body"><p id="requirement-count" class="intro" role="status"></p><ul id="requirement-list" class="requirement-list"></ul></div>
@@ -251,11 +251,11 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
   </div>
 </section>
 <section class="section" id="view-execution" hidden><h2 class="section-title">Execution explorer</h2><p class="intro">Select a node to inspect recorded context, timing, and outputs. Parent relationships come directly from saved events.</p><div class="run-info"><label for="run-select">Recorded run </label><select class="run-select" id="run-select" aria-label="Select recorded run"></select></div><div class="grid"><div class="panel"><div class="panel-head"><h2>Execution graph</h2><span class="tag" id="trace-count">0 EVENTS</span></div><div class="trace-tools"><label class="visually-hidden" for="event-filter">Filter event type</label><select id="event-filter"><option value="all">All event types</option></select><button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-reset" aria-label="Reset zoom">100%</button><button id="expand-all" disabled>Expand branches</button><button id="step-back" aria-label="Previous event">←</button><button id="step-next" aria-label="Next event">→</button></div><div class="trace-scroll" id="trace-scroll" tabindex="0" role="region" aria-label="Scrollable execution graph"><div class="trace-tree" id="trace-tree"></div></div></div><div class="panel"><div class="panel-head"><h2>Node inspector</h2><small>Recorded evidence</small></div><div class="panel-body inspector" id="inspector"><div class="empty">Select an execution node.</div></div></div></div></section>
-<section class="section" id="view-artifacts" hidden><h2 class="section-title">Artifact explorer</h2><p class="intro">Inspect source files and view captured previews of verified builds.</p><button id="open-reference" class="spec-actions">Open Task Management reference app</button><p id="reference-status" class="intro" role="status"></p><div class="panel"><div class="panel-head"><h2>Artifact explorer</h2><span class="tag" id="artifact-count">0 FILES</span></div><div class="artifact-layout" id="artifact-layout"><div class="file-tree" id="file-tree"></div><div class="code-wrap"><div class="code-toolbar"><span id="file-path">Select a file</span><button id="download-file" disabled>Download source ↓</button></div><pre class="code"><code id="source-code">No artifact selected.</code></pre></div>
+<section class="section" id="view-artifacts" hidden><h2 class="section-title">Artifact explorer</h2><p class="intro">Inspect source files and view captured previews of verified builds.</p><div class="spec-actions"><button id="open-generated" class="primary" hidden>Open generated Task Management app</button><button id="open-reference">Open Task Management reference app</button></div><p id="reference-status" class="intro" role="status"></p><div class="panel"><div class="panel-head"><h2>Artifact explorer</h2><span class="tag" id="artifact-count">0 FILES</span></div><div class="artifact-layout" id="artifact-layout"><div class="file-tree" id="file-tree"></div><div class="code-wrap"><div class="code-toolbar"><span id="file-path">Select a file</span><button id="download-file" disabled>Download source ↓</button></div><pre class="code"><code id="source-code">No artifact selected.</code></pre></div>
 <figure class="preview-panel" id="app-preview" hidden>
   <div class="eyebrow">Verified build screenshot</div>
-  <figcaption>Human-authored Task Management reference app · static capture</figcaption>
-  <a href="/assets/task-preview.png" target="_blank" rel="noopener" aria-label="Open the reference screenshot at full size"><img id="app-preview-image" width="1000" height="850" alt="Task Management app showing three example tasks, one completed, and search and status filters"></a>
+  <figcaption id="app-preview-caption"></figcaption>
+  <a id="app-preview-link" target="_blank" rel="noopener" aria-label="Open the screenshot at full size"><img id="app-preview-image" width="1000" alt="Task Management app showing three example tasks, one completed, and search and status filters"></a>
 </figure>
 </div></div></section>
 <section class="section" id="view-benchmarks" hidden><h2 class="section-title">Benchmarks</h2><p class="intro">Only values present in the selected run are shown. CPU smoke checks establish infrastructure behavior; they do not establish model quality or RLM superiority.</p><div class="panel"><div class="panel-head"><h2>Selected run measurements</h2><span class="tag amber">NO INFERRED RESULTS</span></div><div style="overflow:auto"><table class="metric-table"><thead><tr><th>Metric</th><th>Recorded value</th></tr></thead><tbody id="metrics-table"></tbody></table></div></div><div class="method-grid"><article class="method"><div class="method-number">A / DIRECT LLM</div><h3>Conventional generation</h3><p>Provide the specification to one model-driven workflow. Record context limits and actual validation outcomes.</p></article><article class="method"><div class="method-number">B / STRUCTURED WORKFLOW</div><h3>Nonrecursive decomposition</h3><p>Use dependency-aware generation and verification without a recursive RLM controller.</p></article><article class="method"><div class="method-number">C / RECURSIVE LANGUAGE MODEL</div><h3>Externalized context</h3><p>Measure adaptive inspection and model-backed recursive calls using the same inputs and explicit budgets.</p></article></div><div class="notice" style="margin-top:20px">Comparative conclusions require genuine completed runs, comparable models and budgets, independently checkable requirements, and repeated trials. No comparative improvement is claimed here.</div></section>
@@ -265,7 +265,7 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
 </div></main></div>
 <script>
 'use strict';
-const $=id=>document.getElementById(id);let runs=[],run=null,selectedEvent=-1,selectedArtifact=null,zoom=1,loadVersion=0,previewReference=false,catalogPromise=null,selectedPreset=null;
+const $=id=>document.getElementById(id);let runs=[],run=null,selectedEvent=-1,selectedArtifact=null,zoom=1,loadVersion=0,previewKey=null,catalogPromise=null,selectedPreset=null,hasGenerated=false;
 const collapsed=new Set();const titles={overview:'Overview',playground:'Specification playground',execution:'Execution explorer',artifacts:'Generated artifacts',benchmarks:'Benchmarks',research:'Research & architecture',progress:'Build progress'};
 function element(tag,text,className){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e}
 const progressButton=element('button','Build progress');progressButton.dataset.view='progress';document.querySelector('.nav').append(progressButton);
@@ -282,6 +282,7 @@ function showView(view){
   $('release-notice').hidden=!['overview','progress'].includes(view);
   $('breadcrumb').textContent=titles[view];
   if(view==='playground')loadPlayground();
+  if(view==='artifacts')getCatalog().catch(()=>{});
   if(location.hash!=='#'+view)location.hash=view;
   const active=document.querySelector('.nav [aria-current="page"]');
   if(active&&matchMedia('(max-width:720px)').matches){
@@ -306,18 +307,18 @@ async function loadRun(id){
   const entry=runs.find(r=>r.id===id);
   try{
     const data=entry?._local||await fetchJSON('/api/runs/'+encodeURIComponent(id));
-    if(version===loadVersion)setRun(normalize(data.run||data), entry?._reference===true);
+    if(version===loadVersion)setRun(normalize(data.run||data), entry?._preview);
   }catch(error){if(version===loadVersion)reportError('Could not load run: '+error.message)}
 }
-function setRun(data, reference=false){run=data;previewReference=reference;selectedEvent=-1;selectedArtifact=null;zoom=1;collapsed.clear();$('trace-scroll').scrollTo(0,0);$('evidence-notice').classList.remove('error');$('run-select').value=data.id;const live=String(data.mode||'').toLowerCase();const isPrivate=data.mode==='private-reviewed-replay';const isModel=/rlm|live|direct|baseline/.test(live)&&!(/smoke|deterministic|sample/.test(live));const evidenceTitle=reference?'Verified reference app. ':isPrivate?'Private replay. ':isModel?'Recorded experiment. ':'Deterministic infrastructure evidence. ';
-const evidenceCopy=reference?'This human-authored example passed the local build and browser checks. The preview is a captured screenshot.':isPrivate?'This import stays in this browser session. Host broker events and container-reported observations have separate labels. Source files stay in the run directory.':isModel?'Inspect the saved events and validation outcomes before drawing conclusions.':'This run checks the local workflow. It does not demonstrate model-backed recursion or measure synthesis quality.';
+function setRun(data, preview=null){run=data;previewKey=preview;const reference=preview==='reference';selectedEvent=-1;selectedArtifact=null;zoom=1;collapsed.clear();$('trace-scroll').scrollTo(0,0);$('evidence-notice').classList.remove('error');$('run-select').value=data.id;const live=String(data.mode||'').toLowerCase();const isPrivate=data.mode==='private-reviewed-replay';const isModel=/rlm|live|direct|baseline/.test(live)&&!(/smoke|deterministic|sample/.test(live));const evidenceTitle=preview==='generated'?'Verified model-generated build. ':reference?'Verified reference app. ':isPrivate?'Private replay. ':isModel?'Recorded experiment. ':'Deterministic infrastructure evidence. ';
+const evidenceCopy=preview==='generated'?'Source from a contained local model run. The captured build passed the recorded Task Management acceptance checks.':reference?'This human-authored example passed the local build and browser checks. The preview is a captured screenshot.':isPrivate?'This import stays in this browser session. Host broker events and container-reported observations have separate labels. Source files stay in the run directory.':isModel?'Inspect the saved events and validation outcomes before drawing conclusions.':'This run checks the local workflow. It does not demonstrate model-backed recursion or measure synthesis quality.';
 $('evidence-notice').replaceChildren(element('strong',evidenceTitle),document.createTextNode(evidenceCopy));
 $('stat-calls-label').textContent=isPrivate?'BROKER COMPLETIONS':'MODEL CALLS';
 $('stat-calls').textContent=format(isPrivate?data.metrics.broker_completions:data.metrics.model_calls??data.metrics.calls??(isModel?null:0));
 $('stat-artifacts').textContent=isPrivate?format(data.metrics.validated_source_files):data.artifacts.length;
 $('stat-artifacts-note').textContent=isPrivate?'Validated source files in the run directory':'Inspectable source files';
 $('stat-duration').textContent=duration(data.metrics.duration_ms??(data.metrics.duration_seconds!=null?data.metrics.duration_seconds*1000:undefined));
-$('stat-mode').textContent=reference?'Reference app':isPrivate?'Private replay':data.mode||'Recorded';
+$('stat-mode').textContent=preview==='generated'?'Local synthesis':reference?'Reference app':isPrivate?'Private replay':data.mode||'Recorded';
 $('trace-count').textContent=data.events.length+' EVENTS';$('artifact-count').textContent=data.artifacts.length+' FILES';const filter=$('event-filter');clear(filter);const all=element('option','All event types');all.value='all';filter.append(all);[...new Set(data.events.map(e=>String(e.type||'event')))].forEach(t=>{const op=element('option',t.replaceAll('_',' '));op.value=t;filter.append(op)});renderTrace();renderArtifacts();renderMetrics();if(data.events.length)inspectEvent(0);else $('inspector').replaceChildren(element('div','No events were recorded.','empty'))}
 function traceRows(){
   const byId=new Map(run.events.map((event,index)=>[event.id,index]));
@@ -416,10 +417,20 @@ $('expand-all').addEventListener('click',()=>{collapsed.clear();renderTrace();$(
 $('step-back').addEventListener('click',()=>stepEvent(-1));
 $('step-next').addEventListener('click',()=>stepEvent(1));
 function renderArtifacts(){
-$('artifact-layout').classList.toggle('with-preview',previewReference);
-$('app-preview').hidden=!previewReference;
-if(previewReference)$('app-preview-image').src='/assets/task-preview.png';
-else $('app-preview-image').removeAttribute('src');
+const previewPaths={reference:'/assets/task-preview.png',generated:'/assets/generated-task-preview.png'};
+const screenshot=Object.hasOwn(previewPaths,previewKey)?previewPaths[previewKey]:null;
+$('artifact-layout').classList.toggle('with-preview',Boolean(screenshot));
+$('app-preview').hidden=!screenshot;
+if(screenshot){
+  $('app-preview-image').src=screenshot;
+  $('app-preview-link').href=screenshot;
+  $('app-preview-caption').textContent=previewKey==='generated'
+    ?'Model-generated Task Management app · verified static capture'
+    :'Human-authored Task Management reference app · static capture';
+}else{
+  $('app-preview-image').removeAttribute('src');
+  $('app-preview-link').removeAttribute('href');
+}
 clear($('file-tree'));if(!run)return;run.artifacts.forEach((a,i)=>{const b=element('button','▤ '+(a.path||a.id||'Artifact '+(i+1)),'file-button');b.addEventListener('click',()=>selectArtifact(i));$('file-tree').append(b)});if(run.artifacts.length)selectArtifact(0);else{$('file-tree').append(element('div','No saved source files.','empty'));$('source-code').textContent='No artifacts were recorded.';$('file-path').textContent='No artifact selected';$('download-file').disabled=true}}
 function selectArtifact(index){selectedArtifact=run.artifacts[index];$('file-path').textContent=selectedArtifact.path||'artifact.txt';$('source-code').textContent=typeof selectedArtifact.content==='string'?selectedArtifact.content:format(selectedArtifact.content??selectedArtifact);$('download-file').disabled=false;[...$('file-tree').children].forEach((b,i)=>b.classList.toggle('active',i===index))}
 $('download-file').addEventListener('click',()=>{if(!selectedArtifact)return;const blob=new Blob([$('source-code').textContent],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=element('a');a.href=url;a.download=String(selectedArtifact.path||'artifact.txt').split(/[\\/]/).pop();a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
@@ -427,7 +438,11 @@ function renderMetrics(){const body=$('metrics-table');clear(body);const metrics
 async function fetchJSON(url){const response=await fetch(url,{headers:{Accept:'application/json'}});if(!response.ok)throw Error('Archive returned HTTP '+response.status);return response.json()}
 function getCatalog(){
   if(!catalogPromise){
-    catalogPromise=fetchJSON('/api/playground').catch(error=>{catalogPromise=null;throw error});
+    catalogPromise=fetchJSON('/api/playground').then(catalog=>{
+      hasGenerated=Boolean(catalog.generated);
+      $('open-generated').hidden=!hasGenerated;
+      return catalog;
+    }).catch(error=>{catalogPromise=null;throw error});
   }
   return catalogPromise;
 }
@@ -460,6 +475,7 @@ function selectPreset(preset){
   $('preset-dependencies').textContent=spec.requirements.reduce((count,item)=>count+(item.depends_on||[]).length,0);
   $('preset-size').textContent=(size/1024).toFixed(1)+' KiB';
   $('preset-reference').hidden=preset.key!=='tasks';
+  $('preset-generated').hidden=preset.key!=='tasks'||!hasGenerated;
   $('requirement-search').value='';
   for(const button of $('preset-list').children){
     button.setAttribute('aria-pressed',String(button.dataset.preset===preset.key));
@@ -486,31 +502,35 @@ function renderRequirements(){
   }
   $('requirement-count').textContent=matched+' of '+requirements.length+' requirements';
 }
-function openCatalogRun(data,view,reference=false){
+function openCatalogRun(data,view,preview=null){
   const normalized=normalize(data);
   ++loadVersion;
   runs=runs.filter(entry=>entry.id!==normalized.id);
   runs.unshift({id:normalized.id,label:normalized.label,mode:normalized.mode,status:normalized.status,
-                _local:normalized,_reference:reference});
+                _local:normalized,_preview:preview});
   renderArchive();
-  setRun(normalized,reference);
+  setRun(normalized,preview);
   showView(view);
 }
-async function openReference(){
+async function openCatalogApp(key){
   const status=$('reference-status');
   status.textContent='';
   try {
     const catalog=await getCatalog();
-    openCatalogRun(catalog.reference,'artifacts',true);
+    openCatalogRun(catalog[key],'artifacts',key);
   } catch(error){
     showView('artifacts');
-    status.textContent='The reference app could not be loaded. Try opening it again.';
+    status.textContent='The app could not be loaded. Try opening it again.';
   }
 }
 $('requirement-search').addEventListener('input',renderRequirements);
 $('preset-replay').addEventListener('click',()=>openCatalogRun(selectedPreset.replay,'execution'));
-$('preset-reference').addEventListener('click',openReference);
-$('open-reference').addEventListener('click',openReference);
+for(const id of ['preset-reference','open-reference']){
+  $(id).addEventListener('click',()=>openCatalogApp('reference'));
+}
+for(const id of ['preset-generated','open-generated']){
+  $(id).addEventListener('click',()=>openCatalogApp('generated'));
+}
 $('preset-download').addEventListener('click',()=>{
   const url=URL.createObjectURL(new Blob([specJSON()],{type:'application/json'}));
   const link=element('a');
