@@ -5,16 +5,16 @@ import json
 import os
 from pathlib import Path
 import re
+from queue import Empty, Full, Queue
 import shutil
 import subprocess
 import sys
 import threading
-import time
 import uuid
 
 from recursa.budget import BudgetExceeded, Deadline
 from recursa.experiments import atomic_json
-from recursa.broker import OfflineBroker, PREFIX, FRAME_LIMIT
+from recursa.broker import OfflineBroker, ProviderBroker, PREFIX, FRAME_LIMIT
 
 ROOT = Path(__file__).resolve().parents[1]
 BOOTSTRAP = "import json,sys; p=json.load(sys.stdin); exec(compile(p['source'],'<recursa-sandbox>','exec'),{'__name__':'__main__','context':p.get('context')})"
@@ -75,8 +75,8 @@ def run_python(source, image, output_dir, *, context=None, max_wall_seconds=30, 
     task correctness. Docker containers share a kernel; this is not a VM claim.
     """
     name = 'recursa-' + uuid.uuid4().hex
-    if broker is not None and type(broker) is not OfflineBroker:
-        raise ValueError('Only the offline scripted host broker is implemented')
+    if broker is not None and type(broker) not in (OfflineBroker, ProviderBroker):
+        raise ValueError('Use a supported concrete host broker')
     arguments = create_arguments(image, name, mediated=broker is not None)
     if not isinstance(source, str) or len(source.encode()) > 100000:
         raise ValueError('Source must be bounded text')
@@ -91,7 +91,7 @@ def run_python(source, image, output_dir, *, context=None, max_wall_seconds=30, 
         raise ValueError('Use a fresh output directory')
     (directory / 'private').mkdir(parents=True)
     report = {'status': 'unavailable', 'image_id': image, 'source_sha256': hashlib.sha256(source.encode()).hexdigest(),
-              'live_inference': False, 'policy_verified': False, 'cleanup_verified': None,
+              'live_inference': None if type(broker) is ProviderBroker else False, 'policy_verified': False, 'cleanup_verified': None,
               'returncode': None, 'functional_success': None, 'max_wall_seconds': max_wall_seconds,
               'scope': 'Local container process result only; untrusted output is not research evidence'}
     atomic_json(directory / 'input.json', {'source': source, 'context': context, 'image_id': image})
@@ -101,7 +101,8 @@ def run_python(source, image, output_dir, *, context=None, max_wall_seconds=30, 
     overflow = threading.Event()
     create_attempted = False
     readers = []
-    input_lock = threading.Lock()
+    stop_io = threading.Event()
+    requests, replies = Queue(maxsize=1), Queue(maxsize=1)
     environment = {k: v for k, v in os.environ.items() if not k.upper().startswith('DOCKER_')}
 
     def command(args, timeout):
@@ -162,24 +163,28 @@ def run_python(source, image, output_dir, *, context=None, max_wall_seconds=30, 
                                 overflow.set()
                                 break
                             if line.startswith(PREFIX):
-                                response = broker.respond(line[len(PREFIX):])
-                                atomic_json(directory / 'broker-report.json', broker.summary())
                                 try:
-                                    with input_lock:
-                                        process.stdin.write(json.dumps(response).encode() + b'\n')
-                                        process.stdin.flush()
-                                except (OSError, ValueError):
-                                    return
+                                    requests.put_nowait(line[len(PREFIX):])
+                                except Full:
+                                    overflow.set()
+                                    break
                         if len(pending) > FRAME_LIMIT + len(PREFIX):
                             overflow.set()
 
         def send():
             try:
-                with input_lock:
-                    process.stdin.write(payload + (b'\n' if broker is not None else b''))
+                process.stdin.write(payload + (b'\n' if broker is not None else b''))
+                process.stdin.flush()
+                if broker is None:
+                    process.stdin.close()
+                    return
+                while not stop_io.is_set():
+                    try:
+                        reply = replies.get(timeout=0.1)
+                    except Empty:
+                        continue
+                    process.stdin.write(reply)
                     process.stdin.flush()
-                    if broker is None:
-                        process.stdin.close()
             except (OSError, ValueError):
                 pass
 
@@ -187,15 +192,34 @@ def run_python(source, image, output_dir, *, context=None, max_wall_seconds=30, 
             reader = threading.Thread(target=drain, args=(stream, directory / 'private' / filename), daemon=True)
             reader.start()
             readers.append(reader)
-        threading.Thread(target=send, daemon=True).start()
+        writer = threading.Thread(target=send, daemon=True)
+        writer.start()
+        readers.append(writer)
         while process.poll() is None:
             if overflow.is_set():
                 report['status'] = 'output-limit'
                 break
+            if broker is None:
+                try:
+                    process.wait(timeout=min(0.1, deadline.remaining()))
+                except subprocess.TimeoutExpired:
+                    pass
+                continue
             try:
-                process.wait(timeout=min(0.1, deadline.remaining()))
-            except subprocess.TimeoutExpired:
-                pass
+                request = requests.get(timeout=min(0.1, deadline.remaining()))
+            except Empty:
+                continue
+            if process.poll() is not None or overflow.is_set():
+                continue
+            # Run the broker on the supervisor thread so Ctrl-C reaches the
+            # provider worker's lifetime boundary. Pipe writes stay off-thread.
+            response = broker.respond(request, deadline=deadline)
+            deadline.remaining()
+            atomic_json(directory / 'broker-report.json', broker.summary())
+            try:
+                replies.put_nowait(json.dumps(response).encode() + b'\n')
+            except Full:
+                overflow.set()
         else:
             state = decoded(['container', 'inspect', container_id])[0]['State']
             report['returncode'] = state.get('ExitCode')
@@ -211,6 +235,7 @@ def run_python(source, image, output_dir, *, context=None, max_wall_seconds=30, 
         report['status'] = 'error' if container_id else 'unavailable'
         report['error_classification'] = type(error).__name__
     finally:
+        stop_io.set()
         if create_attempted and not container_id:
             # A timed-out create may still have reached the daemon. Recover only
             # this run's generated name with its matching ownership label.

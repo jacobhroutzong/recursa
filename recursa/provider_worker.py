@@ -1,4 +1,4 @@
-"""Supervised host provider calls. No container, CLI batch or HTTP route uses this.
+"""Supervised host provider calls. The container broker calls this on the host.
 
 The worker is trusted host code, not a sandbox. Only explicit authorization can
 create a session. Tests intercept HTTP inside a real lifetime-managed worker.
@@ -29,11 +29,11 @@ class SupervisedProviderAdapter(ProviderAdapter):
         self._directory = Path(output_dir).resolve()
         self._directory.mkdir(parents=True, exist_ok=False)
 
-    def complete(self, model, messages):
+    def complete(self, model, messages, *, deadline=None):
         # Serialize durable summaries with the same lock as reservations.
         with self._lock:
             try:
-                return super().complete(model, messages)
+                return super().complete(model, messages, deadline=deadline)
             finally:
                 try:
                     atomic_json(self._directory / 'session-report.json', self.summary())
@@ -41,7 +41,7 @@ class SupervisedProviderAdapter(ProviderAdapter):
                     self._closed = 'ProviderRecordUnavailable'
                     raise ProviderFailure('ProviderRecordUnavailable') from None
 
-    def _request(self, model, messages, key):
+    def _request(self, model, messages, key, *, deadline=None):
         # Parent complete() has already validated and reserved this request.
         # Never transmit the credential in stdin or persist it in a report.
         directory = self._directory / f'call-{self._budget.calls:06d}'
@@ -57,12 +57,13 @@ class SupervisedProviderAdapter(ProviderAdapter):
         })
         config = deepcopy(self._config)
         config['budget'].update(max_calls=1, max_output_tokens=self._cap,
-                                max_wall_seconds=self._budget.remaining())
+                                max_wall_seconds=self._remaining(deadline))
         payload = json.dumps({'config': config, 'model': model, 'messages': messages,
                               'output': str(directory), 'authorize_live': True}, allow_nan=False).encode()
+        timeout = self._remaining(deadline)
         try:
             report = run_worker([sys.executable, '-m', 'recursa.provider_worker'], payload,
-                                timeout=self._budget.remaining(), cwd=ROOT)
+                                timeout=timeout, cwd=ROOT)
         except BaseException as error:
             code = 'ProviderCancelled' if isinstance(error, KeyboardInterrupt) else 'ProviderWorkerUnavailable'
             self._closed = code

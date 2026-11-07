@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-04T12:03:23.403236+00:00",
+  "updated_at": "2026-11-07T15:18:11.405756+00:00",
   "phase": "Section 5 \u00b7 offline synthesis and verification",
-  "source_digest": "960ba40338dba99c857428cb901b1cb3a7d88cbd403a98de089d3b47b004bb54",
+  "source_digest": "ae1a4293dc61f1e8cbed2cd6418273785f033a53224c54a0a9515fd0ff96bc03",
   "tests": {
-    "total": 103,
-    "passed": 103,
+    "total": 104,
+    "passed": 104,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-04T12:03:18.991293+00:00",
-    "source_digest": "960ba40338dba99c857428cb901b1cb3a7d88cbd403a98de089d3b47b004bb54",
+    "verified_at": "2026-11-07T15:18:06.750840+00:00",
+    "source_digest": "ae1a4293dc61f1e8cbed2cd6418273785f033a53224c54a0a9515fd0ff96bc03",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -40,8 +40,8 @@
     {
       "number": 5,
       "name": "5. Application synthesis",
-      "status": "Offline provider supervision tested; incomplete",
-      "evidence": "Host mediation verified with actual scripted container cases. Separate supervised provider transport passes intercepted worker checks for parent-owned budgets, whole-request timeout, descendant cleanup, durable cancellation, corrupt results and sanitized errors. It is not connected to the container runner. Broker integration, private trace export, broader packages and genuine synthesis remain open"
+      "status": "Offline provider broker integrated; incomplete",
+      "evidence": "The network-disabled container reaches the supervised host worker through validated pipes. Intercepted root/subcall and host budget denial exercise the integrated path. A general contained specification runner, private trace export and genuine synthesis remain open"
     },
     {
       "number": 6,

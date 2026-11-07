@@ -1,14 +1,14 @@
-# Host-side model request mediation — scripted backend only
+# Host-side model request mediation
 
-`recursa.broker.OfflineBroker` now mediates the contained official RLM's completion requests over bounded stdin/stdout pipes. The container keeps `network=none`; no host port, host mount, real credential or network-provider callback is exposed. Only fixed scripted text responses are implemented.
+The host broker receives bounded completion frames from the contained runtime. `OfflineBroker` supplies fixed scripted responses. `ProviderBroker` requires explicit authorization and creates a supervised host adapter from fixed endpoint, credential environment variable, model pricing and budget settings. The container retains `network=none` and communicates over private pipes.
 
 ## Boundary
 
-The owner-controlled broker fixes model names, reply strings, per-call output reservations and a shared `CallBudget`. Each request must be a JSON object with exactly `type`, sequential integer `id`, allowlisted `model` and text-only `messages`. URLs, headers, token overrides, unknown models, duplicate IDs, non-text payloads and oversized frames are rejected before dispatch. A protocol violation closes the broker. Failed or oversized response attempts keep their reservations. Error replies contain classification codes only.
+The host fixes model names, per-call output reservations and a shared `CallBudget`. Each request must be a JSON object with exactly `type`, sequential integer `id`, allowlisted `model` and text-only `messages`. URLs, headers, token overrides, unknown models, duplicate IDs, non-text payloads and oversized frames are rejected before dispatch. A protocol violation closes the broker. Failed or oversized response attempts keep their reservations. Error replies contain classification codes only.
 
 The child cannot set provider configuration or change the host budget. Broker counters and prompt/response hashes are recorded by the host; the child's reported call/token counts are not authoritative. Captured protocol content stays bounded under `private/`; sanitized summaries contain hashes and host observations. Output-token reservations are allowances, not measured inference-token usage.
 
-Requests use a versioned line prefix with bounded JSON frames. Responses travel back on the same private input pipe. Container entry point, command, working directory, stdin and TTY state are inspected before source dispatch, in addition to the existing user/network/filesystem/resource policy. The existing non-mediated container path remains available. Containers still share a kernel; these controls are not a universal sandbox-security claim.
+Requests use a versioned line prefix with bounded JSON frames. Responses travel back on the same private input pipe. Container entry point, command, working directory, stdin and TTY state are inspected before source dispatch, in addition to the existing user/network/filesystem/resource policy. Bounded queues separate pipe reads and writes from the supervisor thread. The supervisor dispatches requests so cancellation reaches the provider worker, and the worker uses the earlier of the container and provider deadlines. Container output and provider response files are private.
 
 ## Actual observed verification
 
@@ -25,6 +25,8 @@ The dependency layer is cached; source changes require a source-matched runtime 
 
 A dedicated host-only sentinel was set during the suite and was absent inside both RLM fixtures. Container policy and cleanup were verified in all cases. The five basic isolation/resource probes and the two earlier contained-RLM fixtures were rerun successfully after the protocol change. Unit tests also cover replay, response expansion, input byte limits, unknown models and sanitized rejection.
 
+The supervised integration adds two actual-container cases. One passes the scripted root and subcall through separate supervised workers and validates the returned artifact. The other caps the host at one call and verifies that the subcall is denied before a second worker starts. Both intercept HTTP in the worker. [Integration evidence](evidence/mediated-container-2026-11-07.json)
+
 ## Remaining work
 
-The broker still has no live-provider dispatch path. A separate [host provider adapter](provider-adapter.md) now has intercepted HTTP tests for authorization, fixed settings, retained reservations, usage reconciliation and sanitized failures. Its supervised path additionally verifies whole-request timeout, descendant cleanup and durable cancellation while keeping the budget in the parent. It is not connected to the runner, which accepts only the concrete offline broker type. Broker integration, independently authorized endpoint/model selection, full private trace export and genuine application-generation evaluation remain open. A generic “continue” cannot initiate inference. Public hosting remains CPU replay-only with no execution or broker endpoint.
+The contained official RLM launcher currently uses a fixed specification fixture. A general runner for reviewed specifications, private trace export and model-backed application generation remain open. The genuine run requires explicit owner authorization and configured provider limits. Public hosting serves CPU replays and progress.

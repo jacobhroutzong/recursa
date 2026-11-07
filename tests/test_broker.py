@@ -1,7 +1,12 @@
 import json
 import unittest
+from pathlib import Path
+import tempfile
+from unittest.mock import patch
 
-from recursa.broker import OfflineBroker
+from recursa.broker import OfflineBroker, ProviderBroker
+from recursa.budget import Deadline
+from test_provider import config
 
 
 def limits(calls=2):
@@ -62,3 +67,23 @@ class OfflineBrokerTests(unittest.TestCase):
             self.assertFalse(broker.respond(raw)['ok'])
             self.assertFalse(broker.respond(frame())['ok'], 'A protocol rejection closes the broker')
             self.assertEqual(broker.summary()['reserved_calls'], 0)
+
+
+class ProviderBrokerTests(unittest.TestCase):
+    def test_authorization_protocol_and_expired_deadline_prevent_worker_launch(self):
+        with tempfile.TemporaryDirectory() as tmp, patch('recursa.provider_worker.run_worker') as launch:
+            root = Path(tmp)
+            with self.assertRaises(ValueError):
+                ProviderBroker(config(), root / 'unauthorized')
+            self.assertFalse((root / 'unauthorized').exists())
+            for index, (raw, deadline, expected) in enumerate((
+                (frame(model='fixture', url='https://invalid.example'), None, 'ProtocolError'),
+                (frame(model='unknown'), None, 'ProtocolError'),
+                (frame(model='fixture'), Deadline(0.000001), 'BudgetExceeded'),
+            )):
+                broker = ProviderBroker(config(), root / str(index), authorize_live=True)
+                reply = broker.respond(raw, deadline=deadline)
+                self.assertFalse(reply['ok'])
+                self.assertEqual(reply['error'], expected)
+                self.assertEqual(broker.summary()['provider']['reserved_calls'], 0)
+            launch.assert_not_called()

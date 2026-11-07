@@ -9,6 +9,7 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import httpx
 from recursa import provider_worker
+from recursa.container_rlm import scripted_responses
 
 
 def intercepted(request):
@@ -22,8 +23,11 @@ def intercepted(request):
         time.sleep(300)
     if text == 'http-error':
         return httpx.Response(500, json={'error': 'private-provider-body'})
+    replies = scripted_responses()
+    if body['model'] in replies:
+        assert request.headers['Authorization'] == 'Bearer fixture-host-provider-key'
     return httpx.Response(200, json={
-        'choices': [{'finish_reason': 'stop', 'message': {'role': 'assistant', 'content': 'fixture reply'}}],
+        'choices': [{'finish_reason': 'stop', 'message': {'role': 'assistant', 'content': replies.get(body['model'], 'fixture reply')}}],
         'usage': {'prompt_tokens': 5, 'completion_tokens': 3, 'total_tokens': 8},
     })
 
