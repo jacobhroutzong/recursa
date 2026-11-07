@@ -8,18 +8,20 @@ from run_task_comparison import load_case
 from recursa.experiments import atomic_json
 
 
-LABELS = {"tasks": "Task Management", "operations": "Operations Analytics"}
+LABELS = {"tasks": "Task Management", "operations": "Operations Analytics", "aviation": "Aviation Operations"}
 MATCHED_FIELDS = ("model", "revision", "weights_sha256", "runtime_binary_sha256",
                   "rlm_runtime_source_sha256", "budget", "output_tokens_per_call")
 METHODS = {"direct", "structured", "rlm"}
 
 
-def assemble(paths):
+def assemble(paths, *, expanded=False):
     blocks = [json.loads(path.read_bytes()) for path in paths]
     first = blocks[0]
     settings = {k: v for k, v in first["settings"].items() if k != "seed"}
     repair_budget = first.get("repair_budget")
-    cases = {case: {} for case in LABELS}
+    if expanded and repair_budget is not None:
+        raise ValueError("The expanded benchmark measures first-pass trials only")
+    cases = {case: {} for case in LABELS if expanded or case != "aviation"}
     for block in blocks:
         if (any(block[key] != first[key] for key in MATCHED_FIELDS)
                 or {k: v for k, v in block["settings"].items() if k != "seed"} != settings
@@ -36,11 +38,12 @@ def assemble(paths):
         if any(trial["usage"]["reserved_calls"] < 1 for trial in trials):
             raise ValueError("A recorded arm has no reserved inference")
         cases[case][seed] = block
-    if len(cases["tasks"]) < 2 or cases["tasks"].keys() != cases["operations"].keys():
-        raise ValueError("Both specifications need at least two matched seed blocks")
+    seeds = cases["tasks"].keys()
+    if len(seeds) < 2 or any(case.keys() != seeds for case in cases.values()):
+        raise ValueError("Every specification needs the same two or more matched seed blocks")
     published = []
-    for case, label in LABELS.items():
-        spec, original, scenarios = load_case(case)
+    for case, blocks_by_seed in cases.items():
+        spec, original, scenarios = load_case(case, expanded=expanded)
         ids = [scenario["id"] for scenario in scenarios]
         expected = {
             "spec_sha256": sha256(json.dumps(spec, sort_keys=True).encode()).hexdigest(),
@@ -48,7 +51,7 @@ def assemble(paths):
             "original_scenarios_sha256": sha256(original).hexdigest(),
             "requirement_count": len(spec["requirements"]), "scenario_ids": ids,
         }
-        for block in cases[case].values():
+        for block in blocks_by_seed.values():
             if any(block[key] != value for key, value in expected.items()):
                 raise ValueError(f"{case} block does not match the reviewed inputs")
             for trial in block["trials"]:
@@ -69,8 +72,8 @@ def assemble(paths):
                         or rate != sum(check["status"] == "passed" for check in checks) / len(ids)
                     ):
                         raise ValueError("Browser measurement does not match its scenario outcomes")
-        published.append({"id": case, "label": label, "requirement_count": expected["requirement_count"],
-                          "scenario_count": len(ids), "blocks": [cases[case][seed] for seed in sorted(cases[case])]})
+        published.append({"id": case, "label": LABELS[case], "requirement_count": expected["requirement_count"],
+                          "scenario_count": len(ids), "blocks": [blocks_by_seed[seed] for seed in sorted(seeds)]})
     result = {"schema_version": 1, "kind": "matched-local-series", "model": first["model"],
               "total_trials": sum(len(block["trials"]) for block in blocks), "cases": published}
     if repair_budget:
@@ -81,9 +84,10 @@ def assemble(paths):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--expanded", action="store_true", help="Require the expanded three-specification protocol")
     parser.add_argument("blocks", nargs="+", type=Path)
     args = parser.parse_args()
-    atomic_json(args.output, assemble(args.blocks))
+    atomic_json(args.output, assemble(args.blocks, expanded=args.expanded))
 
 
 if __name__ == "__main__":

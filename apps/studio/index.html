@@ -111,6 +111,10 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
 .metric-table th { color:var(--muted); font:10px var(--mono); letter-spacing:.5px; text-transform:uppercase }
 .metric-table tr:last-child td { border-bottom:0 }
 .pilot-scroll { overflow:auto }
+#series-results .pilot-scroll { max-block-size:min(440px,75vh) }
+#series-results .metric-table { border-collapse:separate; border-spacing:0 }
+#series-results .metric-table thead { position:sticky; inset-block-start:0; z-index:2; background:var(--panel) }
+#series-results .metric-table tbody th { position:sticky; inset-inline-start:0; z-index:1; background:var(--panel) }
 .pilot-scroll td:not(:first-child) { font-variant-numeric:tabular-nums }
 .pilot-scroll .tag { white-space:nowrap }
 .method-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px }
@@ -311,20 +315,20 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
   <p class="intro" id="series-status" role="status">Loading repeated local trials…</p>
   <div id="series-results" hidden>
     <div class="panel">
-      <div class="panel-head"><h2>Repeated matched trials</h2><span class="tag cyan">TWO SPECIFICATIONS</span></div>
+      <div class="panel-head"><h2>Repeated matched trials</h2><span class="tag cyan" id="series-scope"></span></div>
       <div class="panel-body">
-        <div class="spec-actions"><label for="series-case">Specification</label><select id="series-case"></select></div>
+        <div class="spec-actions"><label for="series-archive">Benchmark</label><select id="series-archive"></select><label for="series-case">Specification</label><select id="series-case"></select></div>
         <p class="intro" id="series-summary"></p>
       </div>
       <div class="pilot-scroll" tabindex="0" role="region" aria-label="Repeated trial totals">
         <table class="metric-table"><thead><tr><th scope="col">Method</th><th scope="col">Builds passed / measured</th><th scope="col">Browser scenarios passed / measured</th><th scope="col">Completed calls</th></tr></thead><tbody id="series-totals"></tbody></table>
       </div>
-      <div class="panel-body"><p class="intro">Unmeasured outcomes are excluded from the measured denominators. The comparison includes first-pass generation with zero repairs and no paid calls.</p><a href="/api/comparison-series" target="_blank" rel="noopener">Open all measured records ↗</a></div>
+      <div class="panel-body"><p class="intro">Unmeasured outcomes are excluded from the measured denominators. Both benchmarks measure first-pass generation with zero repairs and no paid calls. The expanded benchmark adds Aviation, sorting before pagination, and filtered CSV export checks.</p><a id="series-record" href="/api/comparison-series" target="_blank" rel="noopener">Open measured records ↗</a></div>
     </div>
     <div class="panel">
       <div class="panel-head"><h2>Individual trials</h2><span class="tag">MATCHED SEEDS</span></div>
       <div class="pilot-scroll" tabindex="0" role="region" aria-label="Individual repeated trials">
-        <table class="metric-table"><thead><tr><th scope="col">Seed</th><th scope="col">Method</th><th scope="col">Outcome</th><th scope="col">Build</th><th scope="col">Browser</th><th scope="col">Completed calls</th><th scope="col">Input / output tokens</th><th scope="col">Wall time</th></tr></thead><tbody id="series-trials"></tbody></table>
+        <table class="metric-table"><thead><tr><th scope="col">Seed</th><th scope="col">Method</th><th scope="col">Outcome</th><th scope="col">Build</th><th scope="col">Browser</th><th scope="col">Completed calls</th><th scope="col">Input / output tokens</th><th scope="col">Wall time</th><th scope="col">Trace</th></tr></thead><tbody id="series-trials"></tbody></table>
       </div>
     </div>
   </div>
@@ -739,21 +743,39 @@ function renderRepairSeries(series){
 }
 function loadSeries(){
   if(seriesPromise)return;
-  seriesPromise=fetchJSON('/api/comparison-series').then(series=>{
-    const caseSelect=$('series-case');
-    caseSelect.replaceChildren(...series.cases.map(item=>{
-      const option=element('option',item.label);option.value=item.id;return option;
+  const archives=[
+    {id:'expanded',label:'Expanded three-spec benchmark',url:'/api/expanded-comparison-series'},
+    {id:'repeated',label:'Original two-spec benchmark',url:'/api/comparison-series'}
+  ];
+  seriesPromise=Promise.allSettled(archives.map(archive=>fetchJSON(archive.url))).then(results=>{
+    const available=archives.flatMap((archive,index)=>results[index].status==='fulfilled'?[{...archive,series:results[index].value}]:[]);
+    if(!available.length)throw Error('No benchmark archives');
+    const archiveSelect=$('series-archive'),caseSelect=$('series-case');
+    archiveSelect.replaceChildren(...available.map(archive=>{
+      const option=element('option',archive.label);option.value=archive.id;return option;
     }));
-    caseSelect.onchange=()=>renderSeries(series);
-    $('series-status').textContent=series.total_trials+' real local trials · '+series.model+' · shared settings and budgets within each seed block.';
+    archiveSelect.onchange=()=>{
+      const archive=available.find(item=>item.id===archiveSelect.value);
+      const {series}=archive;
+      caseSelect.replaceChildren(...series.cases.map(item=>{
+        const option=element('option',item.label);option.value=item.id;return option;
+      }));
+      caseSelect.onchange=()=>renderSeries(series,archive.id);
+      const {budget,output_tokens_per_call}=series.cases[0].blocks[0];
+      $('series-status').textContent=series.total_trials+' real local trials · '+series.model+' · '+
+        budget.max_wall_seconds+' s, '+budget.max_calls+' calls, '+output_tokens_per_call.toLocaleString()+' output tokens per call at most.';
+      $('series-scope').textContent=series.cases.length+' specifications';
+      $('series-record').href=archive.url;
+      renderSeries(series,archive.id);
+    };
     $('series-results').hidden=false;
-    renderSeries(series);
+    archiveSelect.onchange();
   }).catch(()=>{
     $('series-status').textContent='The repeated trial record is unavailable.';
     seriesPromise=null;
   });
 }
-function renderSeries(series){
+function renderSeries(series,archive){
   const selected=series.cases.find(item=>item.id===$('series-case').value);
   const trials=selected.blocks.flatMap(block=>block.trials.map(trial=>({...trial,seed:block.settings.seed})));
   const ratio=(passed,total)=>total?passed+' / '+total:'Not measured';
@@ -775,14 +797,23 @@ function renderSeries(series){
       ratio(checks.filter(check=>check.status==='passed').length,checks.length),
       rows.reduce((total,trial)=>total+trial.usage.completed_calls,0)]);
   }));
-  $('series-trials').replaceChildren(...trials.map(trial=>cells(String(trial.seed),[
-    methodNames[trial.method],errorLabels[trial.error_classification]||trial.status.replaceAll('-',' '),
-    trial.build_success==null?'Not measured':trial.build_success?'Passed':'Failed',
-    trial.end_to_end_pass_rate==null?'Not measured':ratio(trial.scenarios.filter(check=>check.status==='passed').length,trial.scenarios.length),
-    trial.usage.completed_calls,trial.usage.input_tokens==null?'Not measured':
-      trial.usage.input_tokens.toLocaleString()+' / '+trial.usage.output_tokens.toLocaleString(),
-    (trial.wall_ms/1000).toFixed(1)+' s'
-  ])));
+  $('series-trials').replaceChildren(...trials.map(trial=>{
+    const row=cells(String(trial.seed),[
+      methodNames[trial.method],errorLabels[trial.error_classification]||trial.status.replaceAll('-',' '),
+      trial.build_success==null?'Not measured':trial.build_success?'Passed':'Failed',
+      trial.end_to_end_pass_rate==null?'Not measured':ratio(trial.scenarios.filter(check=>check.status==='passed').length,trial.scenarios.length),
+      trial.usage.completed_calls,trial.usage.input_tokens==null?'Not measured':
+        trial.usage.input_tokens.toLocaleString()+' / '+trial.usage.output_tokens.toLocaleString(),
+      (trial.wall_ms/1000).toFixed(1)+' s'
+    ]);
+    const trace=element('button','Inspect trace');
+    trace.setAttribute('aria-label','Inspect '+methodNames[trial.method]+' trace for seed '+trial.seed);
+    trace.addEventListener('click',async()=>{
+      if(await loadRun('benchmark-'+archive+'-'+selected.id+'-'+trial.seed+'-'+trial.method))showView('execution');
+    });
+    const action=element('td');action.append(trace);row.append(action);
+    return row;
+  }));
 }
 function loadComparison(){
   if(comparisonPromise)return;

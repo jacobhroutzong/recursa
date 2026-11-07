@@ -213,13 +213,23 @@ class ServerTests(unittest.TestCase):
                             if repair["status"] == "no-verified-candidate":
                                 self.assertEqual(repair["attempts"], 0)
                                 self.assertIsNone(repair["after"])
+                with urlopen(base + "/api/expanded-comparison-series") as response:
+                    expanded = json.load(response)
+                self.assertEqual(expanded["total_trials"], 18)
+                self.assertEqual({case["id"]: case["scenario_count"] for case in expanded["cases"]},
+                                 {"tasks": 4, "operations": 6, "aviation": 4})
+                operations = next(case for case in expanded["cases"] if case["id"] == "operations")
+                for block in operations["blocks"]:
+                    self.assertEqual(block["scenario_ids"][-2:],
+                                     ["ops-sort-before-pagination", "ops-export-filtered-csv"])
                 with urlopen(base + "/api/benchmark-traces") as response:
                     trace_index = json.load(response)
                 self.assertEqual(trace_index["schema_version"], 1)
                 entries = trace_index["traces"]
-                self.assertEqual(len({entry["id"] for entry in entries}), 27)
+                self.assertEqual(len(entries), 45)
+                self.assertEqual(len({entry["id"] for entry in entries}), len(entries))
                 self.assertEqual({entry["trace_group"] for entry in entries},
-                                 {"Original pilot", "Repeated first pass", "Paired repair"})
+                                 {"Original pilot", "Repeated first pass", "Paired repair", "Expanded matched benchmark"})
                 timed = 0
                 for entry in entries:
                     with urlopen(base + "/api/runs/" + entry["id"]) as response:
@@ -235,7 +245,8 @@ class ServerTests(unittest.TestCase):
                         self.assertNotIn("diagnostic", event["details"])
                         self.assertNotIn("content", event["details"])
                         seen.add(event["id"])
-                        if event["id"].startswith("first-call-") and event["duration_ms"] is not None:
+                        if (entry["trace_group"] != "Expanded matched benchmark"
+                                and event["id"].startswith("first-call-") and event["duration_ms"] is not None):
                             timed += 1
                     self.assertIn("first-pass", seen)
                 self.assertEqual(timed, 22)

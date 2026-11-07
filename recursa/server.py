@@ -68,7 +68,8 @@ def make_handler(directory):
                     if generated.is_file():
                         catalog[key] = json.loads(generated.read_bytes())
                 self.send_data(200, catalog)
-            elif route in ("/api/task-comparison", "/api/comparison-series", "/api/repair-series"):
+            elif route in ("/api/task-comparison", "/api/comparison-series", "/api/repair-series",
+                           "/api/expanded-comparison-series"):
                 comparison = ROOT / "apps/studio" / (route.rsplit("/", 1)[1] + ".json")
                 if comparison.is_file():
                     self.send_data(200, comparison.read_bytes())

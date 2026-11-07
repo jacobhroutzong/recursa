@@ -29,6 +29,7 @@ KEY_ENV = "RECURSA_LOCAL_SESSION_KEY"
 SETTINGS = {"context_tokens": 8192, "temperature": 0.2, "seed": 42, "top_k": 40,
             "top_p": 0.95, "min_p": 0.05, "reasoning": False, "prompt_cache": False}
 OUTPUT_PER_CALL = 2304
+CASE_IDS = ("tasks", "operations", "aviation")
 BUDGET = {"max_wall_seconds": 120, "max_calls": 6, "max_output_tokens": 13824,
           "max_input_bytes": 100000, "max_cost_usd": 0, "max_depth": 1,
           "max_concurrency": 1, "max_repairs": 0}
@@ -140,11 +141,20 @@ def verify_rlm(spec, scenarios, directory, config, record, deadline):
     return result["status"], reviewed["broker"]["provider"], result["verification"], observations
 
 
-def load_case(case):
-    known = json.loads((ROOT / "apps/studio/generated-task.json").read_bytes())
+def load_case(case, *, expanded=False):
+    if case not in CASE_IDS:
+        raise ValueError("Unknown benchmark specification")
     directory = ROOT / "examples/specs"
-    spec = known["spec"] if case == "tasks" else json.loads((directory / "operations-local-reviewed.json").read_bytes())
-    scenario_bytes = (directory / f"{case}-local-acceptance.json").read_bytes()
+    if case == "tasks":
+        spec = json.loads((ROOT / "apps/studio/generated-task.json").read_bytes())["spec"]
+        scenario_bytes = (directory / "tasks-local-acceptance.json").read_bytes()
+    else:
+        prefix = "operations-benchmark" if case == "operations" and expanded else f"{case}-local"
+        spec = json.loads((directory / f"{prefix}-reviewed.json").read_bytes())
+        scenario_bytes = (directory / f"{prefix}-acceptance.json").read_bytes()
+        if case == "operations" and expanded:
+            original = json.loads((directory / "operations-local-acceptance.json").read_bytes())
+            scenario_bytes = json.dumps(original + json.loads(scenario_bytes), sort_keys=True).encode()
     # The original repair diagnostic points at app.js. The benchmark compares
     # applications with arbitrary module names and uses the common entry point.
     scenarios = [{**scenario, "source_path": "index.html"} for scenario in json.loads(scenario_bytes)]
@@ -155,9 +165,9 @@ def load_case(case):
     return spec, scenario_bytes, scenarios
 
 
-def run_pilot(output, port, record, runtime_hash, *, case="tasks", seed=42, reverse=False, repair=False):
+def run_pilot(output, port, record, runtime_hash, *, case="tasks", seed=42, reverse=False, repair=False, expanded=False):
     known = json.loads((ROOT / "apps/studio/generated-task.json").read_bytes())
-    spec, scenario_bytes, scenarios = load_case(case)
+    spec, scenario_bytes, scenarios = load_case(case, expanded=expanded)
     provider = {"base_url": f"http://127.0.0.1:{port}/v1", "api_key_env": KEY_ENV}
     rates = {MODEL: {"input_per_million": 0, "output_per_million": 0}}
     baseline_config = {**provider, "rates": rates, "budget": BUDGET, "output_tokens": OUTPUT_PER_CALL}
@@ -228,7 +238,8 @@ def main():
     for flag in ("server", "weights", "output"):
         parser.add_argument("--" + flag, type=Path, required=True)
     parser.add_argument("--authorize-live", action="store_true")
-    parser.add_argument("--cases", nargs="+", choices=("tasks", "operations"), default=["tasks"])
+    parser.add_argument("--cases", nargs="+", choices=CASE_IDS, default=["tasks"])
+    parser.add_argument("--expanded", action="store_true", help="Use the expanded Operations browser contract")
     parser.add_argument("--seed", type=int, default=SETTINGS["seed"])
     parser.add_argument("--reverse", action="store_true", help="Reverse method order for this block")
     parser.add_argument("--repair", action="store_true", help="Run one shared repair attempt for eligible outputs")
@@ -238,7 +249,7 @@ def main():
     if not 0 <= args.seed < 2**31 or len(args.cases) != len(set(args.cases)):
         parser.error("Provide a nonnegative 31-bit seed and unique cases")
     for case in args.cases:
-        load_case(case)
+        load_case(case, expanded=args.expanded)
     record = json.loads((ROOT / ".cache/rlm-runtime-image.json").read_bytes())
     if record["runtime_source_sha256"] != runtime_source_hash():
         parser.error("Build the current runtime first with scripts/build_rlm_image.py")
@@ -279,7 +290,7 @@ def main():
             for case in args.cases:
                 directory = args.output if len(args.cases) == 1 else args.output / case
                 run_pilot(directory, port, record, runtime_hash, case=case, seed=args.seed,
-                          reverse=args.reverse, repair=args.repair)
+                          reverse=args.reverse, repair=args.repair, expanded=args.expanded)
         finally:
             if server.poll() is None:
                 server.terminate()

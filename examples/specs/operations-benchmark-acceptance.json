@@ -1,0 +1,172 @@
+[
+  {
+    "id": "ops-sort-before-pagination",
+    "requirements": [
+      "OPS-07"
+    ],
+    "source_path": "index.html",
+    "steps": [
+      {
+        "action": "select",
+        "target": {
+          "role": "combobox",
+          "name": "Team"
+        },
+        "value": "North"
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "cell",
+          "name": "N1"
+        },
+        "count": 1
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "cell",
+          "name": "N3"
+        },
+        "count": 0
+      },
+      {
+        "action": "select",
+        "target": {
+          "role": "combobox",
+          "name": "Sort orders"
+        },
+        "value": "Duration descending"
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "cell",
+          "name": "N1"
+        },
+        "count": 0
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "cell",
+          "name": "N2"
+        },
+        "count": 1
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "cell",
+          "name": "N3"
+        },
+        "count": 1
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "cell",
+          "name": "S2"
+        },
+        "count": 0
+      },
+      {
+        "action": "click",
+        "target": {
+          "role": "button",
+          "name": "Next page"
+        }
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "cell",
+          "name": "N1"
+        },
+        "count": 1
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "cell",
+          "name": "N2"
+        },
+        "count": 0
+      },
+      {
+        "action": "expect_count",
+        "target": {
+          "role": "cell",
+          "name": "N3"
+        },
+        "count": 0
+      }
+    ]
+  },
+  {
+    "id": "ops-export-filtered-csv",
+    "requirements": [
+      "OPS-09"
+    ],
+    "source_path": "index.html",
+    "steps": [
+      {
+        "action": "select",
+        "target": {
+          "role": "combobox",
+          "name": "Team"
+        },
+        "value": "North"
+      },
+      {
+        "action": "select",
+        "target": {
+          "role": "combobox",
+          "name": "Reporting period"
+        },
+        "value": "Jan 2"
+      },
+      {
+        "action": "select",
+        "target": {
+          "role": "combobox",
+          "name": "Sort orders"
+        },
+        "value": "Duration descending"
+      },
+      {
+        "action": "expect_csv_download",
+        "target": {
+          "role": "button",
+          "name": "Export CSV"
+        },
+        "rows": [
+          [
+            "id",
+            "day",
+            "team",
+            "minutes",
+            "completed",
+            "note"
+          ],
+          [
+            "N3",
+            "2",
+            "North",
+            "60",
+            "true",
+            "Rush, \"fragile\""
+          ],
+          [
+            "N2",
+            "2",
+            "North",
+            "40",
+            "false",
+            ""
+          ]
+        ]
+      }
+    ]
+  }
+]

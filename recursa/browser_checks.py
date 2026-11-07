@@ -15,7 +15,7 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 VERSION = "1.64.1"
-ACTIONS = {"fill", "click", "select", "press", "reload", "audit_accessibility", "expect_text", "expect_count", "expect_visible", "expect_value", "expect_checked"}
+ACTIONS = {"fill", "click", "select", "press", "reload", "audit_accessibility", "expect_text", "expect_count", "expect_visible", "expect_value", "expect_checked", "expect_csv_download"}
 ROLES = {"button", "textbox", "searchbox", "combobox", "checkbox", "heading", "list", "listitem", "alert", "status", "link", "radio", "tab", "table", "cell", "row", "navigation", "form", "main", "region"}
 KEYS = {"Enter", "Tab", "Space", "Escape", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"}
 
@@ -48,8 +48,9 @@ def validate_scenarios(scenarios):
         steps = scenario.get("steps")
         if not isinstance(steps, list) or not 1 <= len(steps) <= 100:
             raise ValueError("Each scenario needs 1–100 steps")
+        downloads = 0
         for step in steps:
-            if not isinstance(step, dict) or set(step) - {"action", "target", "value", "count", "checked"} or step.get("action") not in ACTIONS:
+            if not isinstance(step, dict) or set(step) - {"action", "target", "value", "count", "checked", "rows"} or step.get("action") not in ACTIONS:
                 raise ValueError("Unsupported declarative action")
             action = step["action"]
             if action in {"reload", "audit_accessibility"}:
@@ -76,6 +77,18 @@ def validate_scenarios(scenarios):
                 raise ValueError("Count assertion requires integer 0–1000")
             if action == "expect_checked" and type(step.get("checked")) is not bool:
                 raise ValueError("Checked assertion requires a boolean")
+            if action == "expect_csv_download":
+                downloads += 1
+                rows = step.get("rows")
+                if (downloads != 1 or set(step) != {"action", "target", "rows"}
+                        or not isinstance(rows, list) or not 2 <= len(rows) <= 20
+                        or any(not isinstance(row, list) or not 1 <= len(row) <= 12 for row in rows)
+                        or any(len(row) != len(rows[0]) for row in rows)
+                        or any(not isinstance(cell, str) or len(cell) > 200 or any(c in cell for c in "\r\n\x00")
+                               for row in rows for cell in row)):
+                    raise ValueError("Provide one bounded CSV assertion with fixed rows")
+            elif "rows" in step:
+                raise ValueError("Only CSV assertions accept rows")
     if len(json.dumps(scenarios)) > 300000:
         raise ValueError("Scenario payload is too large")
     return scenarios

@@ -12,6 +12,7 @@ ARCHIVES = {
     "pilot": ("task-comparison.json", "Original pilot", "task-comparison-002"),
     "repeated": ("comparison-series.json", "Repeated first pass", "series-seed"),
     "paired": ("repair-series.json", "Paired repair", "repair-seed"),
+    "expanded": ("expanded-comparison-series.json", "Expanded matched benchmark", "expanded-seed"),
 }
 
 
@@ -139,7 +140,9 @@ def project(archive, case, label, group, block, trial, directory):
 
 def build(public, runs):
     traces = []
-    for archive, (_, _, folder) in ARCHIVES.items():
+    for archive, (filename, _, folder) in ARCHIVES.items():
+        if archive == "expanded" and not (public / filename).is_file():
+            continue
         for case, label, group, block in trial_blocks(public, archive):
             seed = block["settings"]["seed"]
             run = runs / folder if archive == "pilot" else runs / f"{folder}-{seed}" / case
@@ -148,7 +151,9 @@ def build(public, runs):
                 if block[field] != private_block[field]:
                     raise ValueError("Private block identity does not match the published benchmark")
             for trial, observed in zip(block["trials"], private_block["trials"], strict=True):
-                if {key: value for key, value in trial.items() if key != "initial_calls"} != observed:
+                # Historical public records added timing annotations after the original run.
+                expected = trial if archive == "expanded" else {key: value for key, value in trial.items() if key != "initial_calls"}
+                if expected != observed:
                     raise ValueError("Private trial does not match the published benchmark")
                 traces.append(project(archive, case, label, group, block, trial, run / trial["method"]))
     if len({trace["id"] for trace in traces}) != len(traces):

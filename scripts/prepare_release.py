@@ -23,6 +23,7 @@ if __name__ == "__main__":
     paths = [ROOT / "Dockerfile", ROOT / "apps/studio/index.html", public / "progress.json"]
     paths.extend(ROOT / "apps/studio" / name for name in ("playground.json", "generated-task.json", "task-comparison.json", "comparison-series.json", "repair-series.json", "assets/task-preview.png", "assets/generated-task-preview.png"))
     paths.append(ROOT / "apps/studio/benchmark-traces.json")
+    paths.append(ROOT / "apps/studio/expanded-comparison-series.json")
     paths.append(ROOT / "apps/studio/security-checks.json")
     paths.extend(ROOT / "apps/studio" / name for name in ("generated-operations.json", "assets/generated-operations-preview.png"))
     paths.extend(ROOT / "apps/studio" / name for name in ("generated-aviation.json", "assets/generated-aviation-preview.png"))

@@ -17,6 +17,22 @@ const checks=[];
 const result=(status, extra={})=>({status,checks,functional_success:null,end_to_end_pass_rate:null,e2e_pass_rate:null,build_success:null,...extra});
 const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.woff':'font/woff','.woff2':'font/woff2'};
 const csp="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'none'";
+async function verifyCsv(download, expectedRows) {
+  const filename=await download.path();
+  if((await stat(filename)).size>16384)throw Error('CsvTooLarge');
+  const text=new TextDecoder('utf-8',{fatal:true}).decode(await readFile(filename));
+  const rows=text.replace(/\r?\n$/,'').split(/\r?\n/).map(line=>{
+    const fields=[];
+    const field=/(?:(?:"((?:[^"]|"")*)")|([^",]*))(,|$)/y;
+    while(true){
+      const match=field.exec(line);
+      if(!match)throw Error('InvalidCsv');
+      fields.push(match[1]===undefined?match[2]:match[1].replaceAll('""','"'));
+      if(!match[3])return fields;
+    }
+  });
+  if(JSON.stringify(rows)!==JSON.stringify(expectedRows))throw Error('UnexpectedCsvRows');
+}
 try {
   const {chromium}=require(path.join(payload.tool_directory,'playwright'));
   const {expect}=require(path.join(payload.tool_directory,'playwright/test.js'));
@@ -43,7 +59,9 @@ try {
     checks.push(row);
     const violations=[];
     const violation=kind=>{if(violations.length<32)violations.push(kind);};
-    const context=await browser.newContext({viewport:scenario.viewport||{width:1280,height:800},acceptDownloads:false,serviceWorkers:'block',permissions:[]});
+    const csvScenario=scenario.steps.some(step=>step.action==='expect_csv_download');
+    const context=await browser.newContext({viewport:scenario.viewport||{width:1280,height:800},acceptDownloads:csvScenario,serviceWorkers:'block',permissions:[]});
+    let expectingCsv=false;
     try {
       await context.route('**/*',async route=>{
         const request=route.request();
@@ -53,7 +71,14 @@ try {
       await context.routeWebSocket(/.*/,async ws=>{violation('websocket-blocked');await ws.close();});
       const page=await context.newPage();
       context.on('page',other=>{if(other!==page){violation('popup-blocked');other.close().catch(()=>{});}});
-      page.on('download',download=>{violation('download-blocked');download.cancel().catch(()=>{});});
+      page.on('download',download=>{
+        if(expectingCsv && download.url().startsWith(`blob:${origin}/`) && /\.csv$/i.test(download.suggestedFilename())){
+          expectingCsv=false;
+          return;
+        }
+        violation('download-blocked');
+        download.cancel().catch(()=>{});
+      });
       page.on('dialog',dialog=>{violation('dialog-blocked');dialog.dismiss().catch(()=>{});});
       page.on('console',message=>{if(/violates.*Content Security Policy|Content Security Policy.*violat/i.test(message.text()))violation('csp-blocked-resource');});
       page.on('pageerror',()=>violation('application-runtime-error'));
@@ -81,6 +106,13 @@ try {
             case 'expect_visible':await expect(locator).toBeVisible({timeout:2000});break;
             case 'expect_value':await expect(locator).toHaveValue(step.value,{timeout:2000});break;
             case 'expect_checked':step.checked?await expect(locator).toBeChecked({timeout:2000}):await expect(locator).not.toBeChecked({timeout:2000});break;
+            case 'expect_csv_download':{
+              expectingCsv=true;
+              const [download]=await Promise.all([page.waitForEvent('download',{timeout:2000}),locator.click()]);
+              if(expectingCsv)throw Error('BlockedCsvDownload');
+              await verifyCsv(download,step.rows);
+              break;
+            }
             default:throw Error('UnsupportedAction');
           }
         }
@@ -106,7 +138,8 @@ try {
     }
   }
   const passed=checks.filter(c=>c.status==='passed').length;
-  process.stdout.write(JSON.stringify(result(passed===checks.length?'passed':'failed',{functional_success:passed===checks.length,end_to_end_pass_rate:passed/payload.scenarios.length,e2e_pass_rate:passed/payload.scenarios.length,duration_ms:Math.round(performance.now()-started),browser:'chromium',tool:'playwright@1.64.1',scenario_count:payload.scenarios.length,scope:'Only independently authored declared scenarios; no general application correctness claim',isolation:{fresh_context:true,chromium_sandbox:true,external_network:'blocked',service_workers:'blocked',downloads:'blocked'}})));
+  const csvEnabled=payload.scenarios.some(scenario=>scenario.steps.some(step=>step.action==='expect_csv_download'));
+  process.stdout.write(JSON.stringify(result(passed===checks.length?'passed':'failed',{functional_success:passed===checks.length,end_to_end_pass_rate:passed/payload.scenarios.length,e2e_pass_rate:passed/payload.scenarios.length,duration_ms:Math.round(performance.now()-started),browser:'chromium',tool:'playwright@1.64.1',scenario_count:payload.scenarios.length,scope:'Only independently authored declared scenarios; no general application correctness claim',isolation:{fresh_context:true,chromium_sandbox:true,external_network:'blocked',service_workers:'blocked',downloads:csvEnabled?'one-reviewed-csv-per-opt-in-scenario':'blocked'}})));
 } catch(error) {
   const unavailable=/Executable doesn't exist|browserType.launch|Failed to launch|ENOENT|MODULE_NOT_FOUND/i.test(String(error));
   process.stdout.write(JSON.stringify(result(timedOut?'timeout':unavailable?'unavailable':'error',{error_classification:timedOut?'DeadlineExceeded':unavailable?'BrowserUnavailable':'HarnessError'})));

@@ -53,6 +53,37 @@ The runner writes a private checkpoint after every arm. The series assembler tak
 
 Both direct Operations runs ended at the 2,304-token output cap. Both structured Operations runs stopped on invalid manifest JSON in the state stage. The seed-17 Operations RLM returned source that failed the build. For seed 73, the broker rejected an incomplete model response. Overall, three Task Management builds reached Chromium, and all 12 measured scenarios failed. The original repaired Task Management showcase is separate. [Series record](../apps/studio/comparison-series.json)
 
+## Expanded three-specification benchmark
+
+Two fresh seed blocks use the same local Qwen weights, sampling settings, and per-arm ceiling of 120 seconds, six calls, and 13,824 reserved output tokens (2,304 per call). Seed 29 runs Task Management, Operations Analytics, and Aviation Operations in that order, with direct, structured, and contained RLM within each case. Seed 83 reverses both orders. This series measures first-pass outcomes with zero repairs and zero paid calls.
+
+Task Management retains four scenarios. Aviation Operations uses the four reviewed acceptance scenarios with diagnostics anchored to `index.html`. Operations retains the original four and adds two independently checked scenarios. The first changes the order sort under a team filter and checks the partition across pages. The second applies team and period filters and reads the CSV download to check its header, row order, selected records, and escaping of a synthetic note with a comma and quotes. The benchmark uses a separate Operations specification with explicit control labels and CSV columns. Historical results and showcase replays keep their original inputs.
+
+Chromium permits a single same-origin `.csv` blob only during the declared export action. The trusted harness inspects up to 16 KiB of UTF-8 CSV in Playwright's temporary download directory and closes the context to discard the file. External requests, unsolicited downloads, service workers, and popups remain blocked. The CSV check covers this synthetic dataset and its declared header and output shape.
+
+```powershell
+python scripts/run_task_comparison.py --server <llama-server> --weights <Qwen3-4B-Q4_K_M.gguf> --output runs/expanded-seed-29 --cases tasks operations aviation --seed 29 --expanded --authorize-live
+python scripts/run_task_comparison.py --server <llama-server> --weights <Qwen3-4B-Q4_K_M.gguf> --output runs/expanded-seed-83 --cases aviation operations tasks --seed 83 --reverse --expanded --authorize-live
+```
+
+Use `scripts/assemble_comparison_series.py --expanded` with the six aggregate case-and-seed records. Keep the raw prompts, responses, logs, and candidate source private.
+
+### Expanded results
+
+| Specification | Method | Builds passed / measured | Browser scenarios passed / measured | Completed calls |
+| --- | --- | ---: | ---: | ---: |
+| Task Management | Direct | 0 / 2 | Unmeasured | 2 |
+| Task Management | Structured | 1 / 1 | 0 / 4 | 4 |
+| Task Management | Contained RLM | 1 / 2 | 0 / 4 | 6 |
+| Operations Analytics | Direct | Unmeasured | Unmeasured | 0 |
+| Operations Analytics | Structured | Unmeasured | Unmeasured | 2 |
+| Operations Analytics | Contained RLM | Unmeasured | Unmeasured | 4 |
+| Aviation Operations | Direct | Unmeasured | Unmeasured | 0 |
+| Aviation Operations | Structured | Unmeasured | Unmeasured | 2 |
+| Aviation Operations | Contained RLM | Unmeasured | Unmeasured | 4 |
+
+Across 18 trials, five reached build measurement, two built, and the two builds passed 0 of 8 Chromium checks. All 12 Operations and Aviation trials stopped before build measurement. Direct responses for those cases were incomplete, structured runs encountered invalid JSON or incomplete responses, and the contained RLM broker rejected incomplete responses. Trial wall time ranged from 13.8 to 66.2 seconds and the archive records 33 call durations, including denied and failed calls. Both new Operations scenarios passed the separate offline control, which also rejected a malformed CSV export. The missing browser outcomes limit any comparison of application quality. [Expanded series record](../apps/studio/expanded-comparison-series.json)
+
 ## Paired repair trials
 
 The paired series reruns both seed blocks with the same first-pass generation settings and budgets. After each arm, the runner saves its first-pass measurement before attempting repair. Every method uses the same host-side policy and model for repair. The contained RLM still generates through the isolated runtime.
@@ -73,7 +104,7 @@ New runs measure host request wall time around the transport, including worker o
 
 ## Versioned benchmark traces
 
-Execution Explorer groups the 27 traces by **Original pilot**, **Repeated first pass**, and **Paired repair**. Each trace has a stable ID of the form `benchmark-<archive>-<case>-<seed>-<method>`. The public index is `/api/benchmark-traces`. The Explorer's **Trace JSON** link opens the selected record at `/api/runs/<id>`.
+Execution Explorer groups the 45 traces by **Original pilot**, **Repeated first pass**, **Paired repair**, and **Expanded matched benchmark**. Each trace has a stable ID of the form `benchmark-<archive>-<case>-<seed>-<method>`. The public index is `/api/benchmark-traces`. The Explorer's **Trace JSON** link opens the selected record at `/api/runs/<id>`.
 
 The archive and index use `schema_version: 1`. A trace uses the existing replay envelope and declares `trace_schema_version: 1`. Its ordered `events` have unique IDs, parent IDs, event types, labels, observed statuses, nullable durations in milliseconds, and stage-specific details. Nodes include source hashes and requirement references, initial calls, measured verification and scenario outcomes, and repair evidence where it exists. Missing durations remain null. Parent links describe the evidence hierarchy. They do not imply timestamps or unrecorded model-call nesting.
 
