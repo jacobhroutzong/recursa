@@ -85,6 +85,14 @@ try {
           }
         }
         row.completed_steps++;
+        if(payload.capture_directory){
+          const {width,height}=page.viewportSize();
+          await page.screenshot({
+            path:path.join(payload.capture_directory,`${scenario.id}-${row.completed_steps}.png`),
+            clip:{x:0,y:0,width:Math.min(width,960),height:Math.min(height,340)},
+            animations:'disabled',timeout:2000
+          });
+        }
       }
       if(violations.length)throw Error('ProhibitedActivity');
       row.status='passed';

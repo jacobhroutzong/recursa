@@ -15,6 +15,8 @@ def package(target):
             preview = ROOT / "apps/studio/assets" / name
             if preview.exists():
                 archive.write(preview, "recursa/apps/studio/assets/" + name)
+        for frame in sorted((ROOT / "apps/studio/assets/task-replay").glob("*.png")):
+            archive.write(frame, "recursa/" + frame.relative_to(ROOT).as_posix())
         for name in ("pyproject.toml", "requirements-live.lock", "README.md", "AGENTS.md", "tooling/typecheck/package.json", "tooling/typecheck/package-lock.json", "tooling/frontend/package.json", "tooling/frontend/package-lock.json", "tooling/browser/package.json", "tooling/browser/package-lock.json"):
             path = ROOT / name
             if path.exists():

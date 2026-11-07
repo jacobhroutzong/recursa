@@ -173,6 +173,15 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
 .preview-panel { margin:0; padding:12px; border-left:1px solid var(--line); background:#101824; min-width:0 }
 .preview-panel img { display:block; width:100%; height:auto; border:1px solid #405167; border-radius:8px }
 .preview-panel figcaption { margin:10px 0; color:#c0ccdd; font-size:12px }
+.workflow-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(230px,300px); gap:20px; align-items:start }
+.workflow-stage { margin:0; min-width:0; display:grid; place-items:center; padding:8px; background:#0c1320; border:1px solid var(--line); border-radius:10px }
+.workflow-stage img { width:100%; max-width:960px; max-height:340px; object-fit:contain; display:block; border-radius:6px }
+.workflow-stage img.mobile { max-width:390px }
+.workflow-controls { display:grid; gap:12px; min-width:0 }
+.workflow-controls select { width:100% }
+.workflow-controls .spec-actions { margin:0 }
+.workflow-controls progress { width:100%; accent-color:var(--accent) }
+@media (max-width:900px) { .workflow-grid { grid-template-columns:1fr } }
 @media(max-width:1060px) {
   .artifact-layout.with-preview { grid-template-columns:minmax(120px,200px) minmax(0,1fr) }
   .preview-panel { grid-column:1/-1; border-left:0; border-top:1px solid var(--line) }
@@ -251,7 +260,27 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
   </div>
 </section>
 <section class="section" id="view-execution" hidden><h2 class="section-title">Execution explorer</h2><p class="intro">Select a node to inspect recorded context, timing, and outputs. Parent relationships come directly from saved events.</p><div class="run-info"><label for="run-select">Recorded run </label><select class="run-select" id="run-select" aria-label="Select recorded run"></select></div><div class="grid"><div class="panel"><div class="panel-head"><h2>Execution graph</h2><span class="tag" id="trace-count">0 EVENTS</span></div><div class="trace-tools"><label class="visually-hidden" for="event-filter">Filter event type</label><select id="event-filter"><option value="all">All event types</option></select><button id="zoom-out" aria-label="Zoom out">−</button><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-reset" aria-label="Reset zoom">100%</button><button id="expand-all" disabled>Expand branches</button><button id="step-back" aria-label="Previous event">←</button><button id="step-next" aria-label="Next event">→</button></div><div class="trace-scroll" id="trace-scroll" tabindex="0" role="region" aria-label="Scrollable execution graph"><div class="trace-tree" id="trace-tree"></div></div></div><div class="panel"><div class="panel-head"><h2>Node inspector</h2><small>Recorded evidence</small></div><div class="panel-body inspector" id="inspector"><div class="empty">Select an execution node.</div></div></div></div></section>
-<section class="section" id="view-artifacts" hidden><h2 class="section-title">Artifact explorer</h2><p class="intro">Inspect source files and view captured previews of verified builds.</p><div class="spec-actions"><button id="open-generated" class="primary" hidden>Open generated Task Management app</button><button id="open-reference">Open Task Management reference app</button></div><p id="reference-status" class="intro" role="status"></p><div class="panel"><div class="panel-head"><h2>Artifact explorer</h2><span class="tag" id="artifact-count">0 FILES</span></div><div class="artifact-layout" id="artifact-layout"><div class="file-tree" id="file-tree"></div><div class="code-wrap"><div class="code-toolbar"><span id="file-path">Select a file</span><button id="download-file" disabled>Download source ↓</button></div><pre class="code"><code id="source-code">No artifact selected.</code></pre></div>
+<section class="section" id="view-artifacts" hidden><h2 class="section-title">Artifact explorer</h2><p class="intro">Inspect source files and view captured previews of verified builds.</p><div class="spec-actions"><button id="open-generated" class="primary" hidden>Open generated Task Management app</button><button id="open-reference">Open Task Management reference app</button><button id="watch-workflows" aria-controls="workflow-player" aria-expanded="false" hidden>Watch verified workflows</button></div><p id="reference-status" class="intro" role="status"></p>
+<div class="panel" id="workflow-player" hidden>
+  <div class="panel-head"><h2>Task Management workflow replay</h2><span class="tag">CHROMIUM CAPTURE</span></div>
+  <div class="panel-body">
+    <p class="intro">Recorded browser frames from the four passing acceptance scenarios.</p>
+    <div class="workflow-grid">
+      <figure class="workflow-stage"><img id="workflow-image" hidden alt="Captured Task Management browser frame"></figure>
+      <div class="workflow-controls">
+        <label for="workflow-chapter">Workflow</label>
+        <select id="workflow-chapter" disabled></select>
+        <p id="workflow-caption" role="status">Loading recorded frames…</p>
+        <progress id="workflow-progress" aria-label="Workflow frame progress" max="1" value="0"></progress>
+        <div class="spec-actions">
+          <button id="workflow-prev" disabled>Previous</button><button id="workflow-play" class="primary" disabled>Play</button><button id="workflow-next" disabled>Next</button>
+        </div>
+        <a id="workflow-full-size" target="_blank" rel="noopener" hidden>Open frame at full size ↗</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel"><div class="panel-head"><h2>Artifact explorer</h2><span class="tag" id="artifact-count">0 FILES</span></div><div class="artifact-layout" id="artifact-layout"><div class="file-tree" id="file-tree"></div><div class="code-wrap"><div class="code-toolbar"><span id="file-path">Select a file</span><button id="download-file" disabled>Download source ↓</button></div><pre class="code"><code id="source-code">No artifact selected.</code></pre></div>
 <figure class="preview-panel" id="app-preview" hidden>
   <div class="eyebrow">Verified build screenshot</div>
   <figcaption id="app-preview-caption"></figcaption>
@@ -266,6 +295,8 @@ pre.code { margin:0; padding:17px; overflow:auto; max-height:400px; min-height:2
 <script>
 'use strict';
 const $=id=>document.getElementById(id);let runs=[],run=null,selectedEvent=-1,selectedArtifact=null,zoom=1,loadVersion=0,previewKey=null,catalogPromise=null,selectedPreset=null,hasGenerated=false;
+const workflowPath='/assets/task-replay/';
+let workflowPromise=null,workflowChapters=[],workflowFrame=0,workflowTimer=null;
 const collapsed=new Set();const titles={overview:'Overview',playground:'Specification playground',execution:'Execution explorer',artifacts:'Generated artifacts',benchmarks:'Benchmarks',research:'Research & architecture',progress:'Build progress'};
 function element(tag,text,className){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(className)e.className=className;return e}
 const progressButton=element('button','Build progress');progressButton.dataset.view='progress';document.querySelector('.nav').append(progressButton);
@@ -283,6 +314,7 @@ function showView(view){
   $('breadcrumb').textContent=titles[view];
   if(view==='playground')loadPlayground();
   if(view==='artifacts')getCatalog().catch(()=>{});
+  else stopWorkflow();
   if(location.hash!=='#'+view)location.hash=view;
   const active=document.querySelector('.nav [aria-current="page"]');
   if(active&&matchMedia('(max-width:720px)').matches){
@@ -416,7 +448,69 @@ $('zoom-reset').addEventListener('click',()=>{zoom=1;renderTrace()});
 $('expand-all').addEventListener('click',()=>{collapsed.clear();renderTrace();$('trace-scroll').focus()});
 $('step-back').addEventListener('click',()=>stepEvent(-1));
 $('step-next').addEventListener('click',()=>stepEvent(1));
+function stopWorkflow(){
+  clearInterval(workflowTimer);workflowTimer=null;
+  $('workflow-play').textContent='Play';
+}
+function renderWorkflow(){
+  const chapter=workflowChapters[Number($('workflow-chapter').value)];
+  const frame=chapter.frames[workflowFrame];
+  const image=$('workflow-image');
+  image.src=workflowPath+frame.file;
+  image.hidden=false;
+  const fullSize=$('workflow-full-size');
+  fullSize.href=image.src;
+  fullSize.hidden=false;
+  image.classList.toggle('mobile',chapter.id==='keyboard-mobile-task-controls');
+  $('workflow-caption').textContent=frame.caption+' Frame '+(workflowFrame+1)+' of '+chapter.frames.length+' · '+chapter.checked_steps+' test steps passed.';
+  $('workflow-progress').max=chapter.frames.length;
+  $('workflow-progress').value=workflowFrame+1;
+  $('workflow-prev').disabled=workflowFrame===0;
+  $('workflow-next').disabled=workflowFrame===chapter.frames.length-1;
+}
+$('watch-workflows').addEventListener('click',async()=>{
+  const panel=$('workflow-player');
+  panel.hidden=!panel.hidden;
+  $('watch-workflows').setAttribute('aria-expanded',String(!panel.hidden));
+  if(panel.hidden){stopWorkflow();return;}
+  if(!workflowPromise){
+    workflowPromise=fetchJSON(workflowPath+'manifest.json').then(manifest=>{
+      if(manifest.run_id!==run?.id || !manifest.chapters.length ||
+        manifest.chapters.some(chapter=>!chapter.frames.length || chapter.frames.some(frame=>!/^[a-z-]+-\d{1,2}\.png$/.test(frame.file))))
+        throw Error('Invalid workflow archive');
+      workflowChapters=manifest.chapters;
+      $('workflow-chapter').replaceChildren(...workflowChapters.map((chapter,index)=>{
+        const option=element('option',chapter.title);option.value=String(index);return option;
+      }));
+      $('workflow-chapter').disabled=false;
+      $('workflow-play').disabled=false;
+    }).catch(error=>{workflowPromise=null;throw error;});
+  }
+  try{
+    await workflowPromise;
+    if(!panel.hidden){renderWorkflow();$('workflow-chapter').focus();}
+  }catch{
+    $('workflow-caption').textContent='Could not load the recorded workflows. Close and reopen the replay to retry.';
+  }
+});
+$('workflow-chapter').addEventListener('change',()=>{stopWorkflow();workflowFrame=0;renderWorkflow();});
+$('workflow-prev').addEventListener('click',()=>{stopWorkflow();workflowFrame--;renderWorkflow();});
+$('workflow-next').addEventListener('click',()=>{stopWorkflow();workflowFrame++;renderWorkflow();});
+$('workflow-play').addEventListener('click',()=>{
+  if(workflowTimer!==null){stopWorkflow();return;}
+  const last=workflowChapters[Number($('workflow-chapter').value)].frames.length-1;
+  if(workflowFrame===last){workflowFrame=0;renderWorkflow();}
+  $('workflow-play').textContent='Pause';
+  workflowTimer=setInterval(()=>{
+    workflowFrame++;renderWorkflow();
+    if(workflowFrame===last)stopWorkflow();
+  },2200);
+});
 function renderArtifacts(){
+stopWorkflow();
+$('workflow-player').hidden=true;
+$('watch-workflows').setAttribute('aria-expanded','false');
+$('watch-workflows').hidden=previewKey!=='generated';
 const previewPaths={reference:'/assets/task-preview.png',generated:'/assets/generated-task-preview.png'};
 const screenshot=Object.hasOwn(previewPaths,previewKey)?previewPaths[previewKey]:null;
 $('artifact-layout').classList.toggle('with-preview',Boolean(screenshot));

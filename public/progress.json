@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T16:59:26.973296+00:00",
-  "phase": "Section 6 \u00b7 Verified local synthesis preview",
-  "source_digest": "eef73fff8c49b165ee929d4b2560cf7dc4f1165a136839a3959daee2e4181954",
+  "updated_at": "2026-11-07T17:48:38.001709+00:00",
+  "phase": "Sections 6\u20138 \u00b7 Verified workflow replay and baseline setup",
+  "source_digest": "bd5610a3f88884efc66d44131ae79f10726d02db643e91afeb34bb6219221575",
   "tests": {
-    "total": 106,
-    "passed": 106,
+    "total": 107,
+    "passed": 107,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T16:57:26.924532+00:00",
-    "source_digest": "eef73fff8c49b165ee929d4b2560cf7dc4f1165a136839a3959daee2e4181954",
+    "verified_at": "2026-11-07T17:48:23.168011+00:00",
+    "source_digest": "bd5610a3f88884efc66d44131ae79f10726d02db643e91afeb34bb6219221575",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -46,8 +46,8 @@
     {
       "number": 6,
       "name": "6. Studio",
-      "status": "Verified model-generated preview",
-      "evidence": "Three synthetic specification presets and CPU replays. Studio shows the captured Task Management build, source files, repair provenance, and acceptance results alongside the separate reference app"
+      "status": "Verified app workflow replay",
+      "evidence": "Four Task Management workflow chapters use 15 browser frames captured while rerunning the acceptance scenarios against the published build. The reference app remains separate"
     },
     {
       "number": 7,
@@ -58,8 +58,8 @@
     {
       "number": 8,
       "name": "8. Evaluation harness",
-      "status": "Pending",
-      "evidence": "One local model case is measured. Comparable direct and structured baselines remain open"
+      "status": "Direct baseline wired and tested offline",
+      "evidence": "The full-spec direct runner uses supervised budgets and the common application verifier. A genuine matched trial and the structured baseline remain open"
     },
     {
       "number": 9,

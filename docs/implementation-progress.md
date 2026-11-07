@@ -9,9 +9,9 @@ Process correction: earlier work implemented portions of sections 6, 9 and 21 be
 | 3. Technical architecture | Decided; modules in progress | `architecture.md`; official package installed and inspected |
 | 4. Real RLM engine | Local model inspection and subcall verified | One authorized contained Qwen run reported indexed requirement inspection and a completed synthesis subcall. The host recorded three model completions. Broader model comparisons remain open |
 | 5. Application synthesis | One repaired model-generated app verified | Task Management compiled and passed four independent Chromium acceptance scenarios after targeted model repairs and host composition of the final filter. The initial generated build failed functional checks |
-| 6. Studio | Verified model-generated preview | Three synthetic specification presets and CPU replays. Studio shows the captured Task Management build, source files, repair provenance, and acceptance results alongside the separate reference app |
+| 6. Studio | Verified app workflow replay | Four Task Management workflow chapters use 15 browser frames captured while rerunning the acceptance scenarios against the published build. The reference app remains separate |
 | 7. Live/replay modes | Partial prior work | One contained local inference run is recorded. Public Studio serves read-only replay |
-| 8. Evaluation harness | Pending | One local model case is measured. Comparable direct and structured baselines remain open |
+| 8. Evaluation harness | Direct baseline wired and tested offline | The full-spec direct runner uses supervised budgets and the common application verifier. A genuine matched trial and the structured baseline remain open |
 | 9. Tracing | Partial prior work | CPU and sanitized local model replays are available. Richer timing and full benchmark traces remain open |
 | 10. Security/reliability | Partial prior work | Contained policy and cleanup checked for the local model run. Browser verification used blocked external network |
 | 11. Example applications | One verified example | Task Management verified after targeted repair. Operations Analytics and Aviation remain specification presets |

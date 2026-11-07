@@ -1,0 +1,130 @@
+{
+  "run_id": "generated-task-local-004",
+  "browser": "chromium",
+  "scenarios_sha256": "59beb608683d76af7c2357f898ad23dc45a357f4a014b512f2abade68170c794",
+  "artifacts": {
+    "index.html": "fc1ee6d1a24daf18f7dd39e6b5a14acf215fcbb4892088dbd3329d7256827aad",
+    "app.js": "a39bcc46e4421867f2cdb27ea20727f5f57a50a21cd0afcedb6f34b28ddc0ee8",
+    "styles.css": "db07642baa7c9b6e6b2a9cdb8fc0e4468e60c3c5f77ba883c8229419aeaf89f3"
+  },
+  "chapters": [
+    {
+      "id": "required-title",
+      "title": "Create a task",
+      "checked_steps": 7,
+      "frames": [
+        {
+          "file": "required-title-3.png",
+          "step": 3,
+          "caption": "Submit a blank title. The error appears and the list stays empty.",
+          "sha256": "58404f5e50fd090dcffafde4049f4b55dac5e97f67627e525cc8547e465190ff"
+        },
+        {
+          "file": "required-title-4.png",
+          "step": 4,
+          "caption": "Enter “Write notes” in the task title field.",
+          "sha256": "acf464d6bfd1a06bead8c54f2c4a6a5614b0de3d66ab611e5fa0cdaf7a2e1e5c"
+        },
+        {
+          "file": "required-title-6.png",
+          "step": 6,
+          "caption": "Submit the form. The new task appears in the list.",
+          "sha256": "1c3b6386095ebd6642861c4483fc2d8c524b0eafb15ab32140e6119666d248aa"
+        }
+      ]
+    },
+    {
+      "id": "toggle-and-persist",
+      "title": "Complete and reload",
+      "checked_steps": 9,
+      "frames": [
+        {
+          "file": "toggle-and-persist-2.png",
+          "step": 2,
+          "caption": "Create “Persistent task.”",
+          "sha256": "6921e6ad821c1e950678734785d246f9a8e1165c168a62ea288745873d73ecf4"
+        },
+        {
+          "file": "toggle-and-persist-4.png",
+          "step": 4,
+          "caption": "Check the task. Chromium verifies its completed state.",
+          "sha256": "f07e14c6641c3bc109c5e07a2a6aa676f09c4fa5c9d41ee7513a1728f6439557"
+        },
+        {
+          "file": "toggle-and-persist-6.png",
+          "step": 6,
+          "caption": "Reload the page. The same task is still checked.",
+          "sha256": "46d47e869214abac592520ff39bdbc268ee029e9b40c95b0945b080ea8434c6d"
+        },
+        {
+          "file": "toggle-and-persist-8.png",
+          "step": 8,
+          "caption": "Toggle it again. Chromium verifies that it is active.",
+          "sha256": "c4f0401fc695fd6266a0f958959643943e185df3052048aedd630f8fcc3416c9"
+        }
+      ]
+    },
+    {
+      "id": "combined-filters",
+      "title": "Combine status and search",
+      "checked_steps": 14,
+      "frames": [
+        {
+          "file": "combined-filters-5.png",
+          "step": 5,
+          "caption": "Create two tasks and mark Alpha complete.",
+          "sha256": "c260d9900ee678a1ff51c14ce239bcd9d2e42943326f2348cbfa600d79445bb3"
+        },
+        {
+          "file": "combined-filters-8.png",
+          "step": 8,
+          "caption": "Select Completed. Alpha remains visible and active Beta is excluded.",
+          "sha256": "b7b0cf8ef7ff1c0185b7bea499fcac62fcaa8824e323045d968914786d10eb4d"
+        },
+        {
+          "file": "combined-filters-10.png",
+          "step": 10,
+          "caption": "Search for “lPh.” The case-insensitive substring still matches Alpha.",
+          "sha256": "7b65787ffa8f69e40a67cbfbb09a977e8463ba4d029ab19f1a1bc5beea475231"
+        },
+        {
+          "file": "combined-filters-13.png",
+          "step": 13,
+          "caption": "Search for “Beta” with Completed selected. The empty state appears.",
+          "sha256": "90be548896280d17539b0e2e8ccc6570ba95cc66b154a199311daab3769dac9c"
+        }
+      ]
+    },
+    {
+      "id": "keyboard-mobile-task-controls",
+      "title": "Use the keyboard on mobile",
+      "checked_steps": 8,
+      "frames": [
+        {
+          "file": "keyboard-mobile-task-controls-1.png",
+          "step": 1,
+          "caption": "Enter a title at the 390-pixel mobile viewport.",
+          "sha256": "f612232415e26f11380392056ec5875970e45d413ba271ee38e86878cceb783b"
+        },
+        {
+          "file": "keyboard-mobile-task-controls-2.png",
+          "step": 2,
+          "caption": "Press Tab to focus Add task.",
+          "sha256": "f72d01fd500c297ddbde562b0d43ce25b49a5c065b53156b4dc4a4fa07b20a98"
+        },
+        {
+          "file": "keyboard-mobile-task-controls-4.png",
+          "step": 4,
+          "caption": "Press Enter to add the task.",
+          "sha256": "a5753c4bb70afdaed8cfa5e0fae6bfd71974ba25d56d2227a57b931dc1fa6030"
+        },
+        {
+          "file": "keyboard-mobile-task-controls-7.png",
+          "step": 7,
+          "caption": "Press Space on the focused checkbox. The task is checked and the main region is visible.",
+          "sha256": "8fb495c01fed836a9810708b34d6feb8cfca75402a530384a2c2075a882bfc07"
+        }
+      ]
+    }
+  ]
+}

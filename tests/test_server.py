@@ -59,7 +59,21 @@ class ServerTests(unittest.TestCase):
                     generated_preview = response.read()
                 self.assertEqual(hashlib.sha256(generated_preview).hexdigest(),
                                  generated["events"][-1]["details"]["screenshot_sha256"])
-                for route in ("/../README.md", "/api/execute", "/assets/unknown.png", "/api/runs/missing", "/api/runs/private-copied", "/api/runs/generated-record-shaped-source"):
+                replay_url = base + "/assets/task-replay/"
+                with urlopen(replay_url + "manifest.json") as response:
+                    replay = json.load(response)
+                self.assertEqual(replay["run_id"], generated["id"])
+                self.assertEqual(replay["artifacts"], {a["path"]: a["sha256"] for a in generated["artifacts"]})
+                scenarios = (ROOT / "examples/specs/tasks-local-acceptance.json").read_bytes()
+                self.assertEqual(replay["scenarios_sha256"], hashlib.sha256(scenarios).hexdigest())
+                self.assertEqual([(c["id"], c["checked_steps"]) for c in replay["chapters"]],
+                                 [(s["id"], len(s["steps"])) for s in json.loads(scenarios)])
+                for chapter in replay["chapters"]:
+                    for frame in chapter["frames"]:
+                        with urlopen(replay_url + frame["file"]) as response:
+                            self.assertEqual(response.headers["Content-Type"], "image/png")
+                            self.assertEqual(hashlib.sha256(response.read()).hexdigest(), frame["sha256"])
+                for route in ("/../README.md", "/api/execute", "/assets/unknown.png", "/assets/task-replay/../generated-task-preview.png", "/api/runs/missing", "/api/runs/private-copied", "/api/runs/generated-record-shaped-source"):
                     with self.assertRaises(HTTPError) as error:
                         urlopen(base + route)
                     self.assertEqual(error.exception.code, 404)

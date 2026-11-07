@@ -3,6 +3,7 @@ import argparse
 import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+import re
 from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -45,6 +46,13 @@ def make_handler(directory):
                     self.send_data(200, asset.read_bytes(), "image/png")
                 else:
                     self.send_data(404, {"error": "Preview not found"})
+            elif re.fullmatch(r"/assets/task-replay/(manifest\.json|[a-z-]+-\d{1,2}\.png)", route):
+                asset = ROOT / "apps/studio" / route.lstrip("/")
+                if asset.is_file():
+                    mime = "image/png" if asset.suffix == ".png" else "application/json"
+                    self.send_data(200, asset.read_bytes(), mime)
+                else:
+                    self.send_data(404, {"error": "Replay frame not found"})
             elif route == "/api/progress":
                 path = ROOT / "public/progress.json"
                 if path.exists():

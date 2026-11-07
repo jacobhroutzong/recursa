@@ -13,6 +13,7 @@ def source_digest():
     for folder in ("recursa", "tests", "scripts", "apps/studio", "examples/fixtures", "examples/specs"):
         files.extend(p for p in (ROOT / folder).rglob("*") if p.is_file() and p.suffix in {".py", ".html", ".ps1", ".mjs", ".ts", ".tsx", ".jsx", ".css", ".json"} and "__pycache__" not in p.parts)
     files.extend(ROOT / "apps/studio/assets" / name for name in ("task-preview.png", "generated-task-preview.png"))
+    files.extend((ROOT / "apps/studio/assets/task-replay").glob("*.png"))
     for name in ("frontend", "browser"):
         files.extend(ROOT / 'tooling' / name / file for file in ('package.json', 'package-lock.json'))
     files.extend(ROOT / name for name in ("requirements-live.lock", "pyproject.toml", "tooling/typecheck/package.json", "tooling/typecheck/package-lock.json"))
@@ -39,7 +40,7 @@ def build_progress():
     if evidence is not None and evidence.get("source_digest") != identity:
         raise ValueError("Code changed after tests; rerun scripts/verify.py before publication")
     return {"schema_version": 1, "updated_at": datetime.now(timezone.utc).isoformat(),
-            "phase": "Section 6 · Verified local synthesis preview", "source_digest": identity,
+            "phase": "Sections 6–8 · Verified workflow replay and baseline setup", "source_digest": identity,
             "tests": evidence, "sections": sections,
             "mode": "public-development-preview", "live_inference": False,
             "notice": "Auto-refresh shows the latest published release. This is development progress, not live model inference.",

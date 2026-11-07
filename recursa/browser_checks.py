@@ -87,7 +87,7 @@ def _unmeasured(status, classification):
             "scope": "Independently authored scenarios only; not general application correctness"}
 
 
-def check_application(build_dir, scenarios, *, tool_directory=None, max_seconds=45):
+def check_application(build_dir, scenarios, *, tool_directory=None, max_seconds=45, capture_directory=None):
     """Run reviewed scenarios against a dedicated ephemeral static origin.
 
     Missing tools/browser are unmeasured. Actual failed assertions, prohibited
@@ -124,6 +124,12 @@ def check_application(build_dir, scenarios, *, tool_directory=None, max_seconds=
     environment.pop("NODE_PATH", None)
     payload = {"build_dir": str(directory), "files": files, "scenarios": scenarios,
                "tool_directory": str(tools.resolve()), "max_seconds": max_seconds}
+    if capture_directory is not None:
+        capture = Path(capture_directory).resolve()
+        if capture.is_relative_to(directory):
+            raise ValueError("Browser captures must be outside the application directory")
+        capture.mkdir(exist_ok=True, parents=True)
+        payload["capture_directory"] = str(capture)
     options = {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP} if os.name == "nt" else {"start_new_session": True}
     process = subprocess.Popen([node, str(ROOT / "scripts/browser_checks.mjs")], stdin=subprocess.PIPE,
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=environment, **options)
