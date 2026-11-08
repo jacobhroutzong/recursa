@@ -7,6 +7,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def package(target):
     with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED) as archive:
+        for name in ("LICENSE", "NOTICE"):
+            archive.write(ROOT / name, "recursa/" + name)
         for folder in ("recursa", "scripts", "configs", "examples/specs", "examples/fixtures", "apps/studio", "tests", "docs", "notebooks"):
             for path in sorted((ROOT / folder).rglob("*")):
                 if path.is_file() and path.suffix in {".py", ".ps1", ".json", ".html", ".md", ".ipynb", ".mjs", ".ts", ".tsx", ".jsx", ".css"} and "__pycache__" not in path.parts:

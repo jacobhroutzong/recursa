@@ -20,7 +20,8 @@ if __name__ == "__main__":
     releases = ROOT / ".cache/space-releases"
     releases.mkdir(exist_ok=True, parents=True)
     destination = Path(mkdtemp(prefix=progress["source_digest"][:16] + "-", dir=releases))
-    paths = [ROOT / "Dockerfile", ROOT / "apps/studio/index.html", public / "progress.json"]
+    paths = [ROOT / "Dockerfile", ROOT / "LICENSE", ROOT / "NOTICE", ROOT / "docs/attribution.md",
+             ROOT / "apps/studio/index.html", public / "progress.json"]
     paths.extend(ROOT / "apps/studio" / name for name in ("playground.json", "generated-task.json", "task-comparison.json", "comparison-series.json", "repair-series.json", "assets/task-preview.png", "assets/generated-task-preview.png"))
     paths.append(ROOT / "apps/studio/benchmark-traces.json")
     paths.append(ROOT / "apps/studio/expanded-comparison-series.json")

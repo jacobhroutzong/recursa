@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-11-07T22:42:13.642731+00:00",
+  "updated_at": "2026-11-08T00:24:30.768298+00:00",
   "phase": "Research milestone \u00b7 Expanded matched benchmark",
-  "source_digest": "961d3ed7e3e36040a0fe7c2385332f648bac19178affd4009ab8ba348900d718",
+  "source_digest": "e1f08e45d7421e254625fcb15009102c73f24e7d0210c19384a30c0dde9bec53",
   "tests": {
     "total": 110,
     "passed": 110,
     "failed": 0,
     "skipped": 0,
-    "verified_at": "2026-11-07T22:42:09.552868+00:00",
-    "source_digest": "961d3ed7e3e36040a0fe7c2385332f648bac19178affd4009ab8ba348900d718",
+    "verified_at": "2026-11-08T00:24:22.813805+00:00",
+    "source_digest": "e1f08e45d7421e254625fcb15009102c73f24e7d0210c19384a30c0dde9bec53",
     "scope": "Offline fixtures and deterministic checks; no genuine model inference"
   },
   "sections": [
@@ -83,7 +83,7 @@
       "number": 12,
       "name": "12. Repository structure",
       "status": "Clean-checkout and CI gates verified",
-      "evidence": "The clean-checkout milestone passed the hosted Windows and Linux CPU replay jobs and the isolated Linux Chromium and Docker job. Licensing review remains open"
+      "evidence": "The clean-checkout milestone passed the hosted Windows and Linux CPU replay jobs and the isolated Linux Chromium and Docker job. Apache 2.0 applies to Recursa\u2019s original code and documentation"
     },
     {
       "number": 13,
@@ -100,26 +100,26 @@
     {
       "number": 15,
       "name": "15. Deployment/portfolio",
-      "status": "Development preview published and verified",
-      "evidence": "GitHub source, CPU Basic Space, production project page, embedded Studio, full-screen fallback and homepage/Projects links verified; full research demonstration remains unfinished"
+      "status": "Updated case study verified locally",
+      "evidence": "The updated Astro entry, portfolio suite, live embed, and full-screen fallback passed desktop and mobile checks. The owner cleared publication following the Colab CPU smoke result and waived the fresh-runtime resume check"
     },
     {
       "number": 16,
       "name": "16. Documentation",
-      "status": "Partial",
-      "evidence": "Honest README and setup; final complete guide pending"
+      "status": "Handoff and setup guides prepared",
+      "evidence": "Architecture, evidence links, benchmark instructions, environment configuration, troubleshooting, and component attribution are documented"
     },
     {
       "number": 17,
       "name": "17. Definition of done",
-      "status": "Release and research gates open",
-      "evidence": "Three verified showcases and a working public Studio. The completion checkpoint tracks clean-checkout verification, broader evaluation, and final handoff"
+      "status": "Feature baseline accepted",
+      "evidence": "Three verified showcases and a working public Studio. The completion checkpoint records release verification and limitations"
     },
     {
       "number": 18,
       "name": "18. Final handoff",
-      "status": "Pending",
-      "evidence": "Only interim evidence may be reported"
+      "status": "Prepared locally",
+      "evidence": "The handoff records engineering, demonstration, research, portfolio, and release evidence. The owner reported a complete Colab CPU smoke trial and waived fresh-runtime resume verification"
     },
     {
       "number": 19,
@@ -136,8 +136,8 @@
     {
       "number": 21,
       "name": "21. Compute optimization",
-      "status": "Partial prior work",
-      "evidence": "CPU/Drive batch tooling; actual Colab and model/GPU resume unverified"
+      "status": "Local notebook reproduction verified",
+      "evidence": "Local extraction, fresh-session checkpoint reuse, interrupted checkpoint recovery, and CSV/ZIP export passed with a simulated Drive mount. The owner reported Colab CPU batch `46597473698c60f5` complete. Drive-backed resume after runtime deletion is untested on Colab"
     }
   ],
   "mode": "public-development-preview",

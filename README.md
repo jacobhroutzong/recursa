@@ -1,6 +1,7 @@
 ---
 title: Recursa
 emoji: 🔁
+license: apache-2.0
 colorFrom: indigo
 colorTo: blue
 sdk: docker
@@ -13,11 +14,15 @@ A CPU-first research workbench for inspecting application specifications, execut
 
 Implementation follows the [ordered 1–21 progress record](docs/implementation-progress.md). An authorized contained Qwen run recorded context inspection and a synthesis subcall. The [completion checkpoint](docs/completion-checkpoint.md) tracks release verification, broader evaluation, and the final handoff.
 
-![Recursa Studio showing a recorded CPU validation](docs/screenshots/studio.png)
+![Recursa Studio inspecting a recorded model call in the Execution Explorer](docs/screenshots/studio.png)
+
+Recursa runs the official RLM in a pinned Docker container, mediates model calls through a host broker, and checks returned web source with Node.js and Playwright. The public replay uses Python and a standalone browser UI. [Architecture](docs/architecture.md) · [RLM research](https://arxiv.org/abs/2512.24601)
 
 Published development preview: [Recursa Studio on Hugging Face](https://huggingface.co/spaces/jacobroutzong/recursa) · [Portfolio project](https://jacobroutzong.dev/projects/recursa/) · [Source](https://github.com/jacobhroutzong/recursa). Production page, embed, fallback and internal portfolio links were verified in the browser. The public demo is replay-only. Build progress refreshes every 15 seconds and changes after a release is published, not with each private engineering action.
 
 ## Run locally
+
+The [reproduction guide](docs/reproduction.md) covers local and Colab setup, model configuration, and troubleshooting. The [handoff](docs/handoff.md) links the evidence, and [attribution](docs/attribution.md) lists the upstream component licenses.
 
 Python 3.11+ is the only requirement. No pip installation, API key, Node build, or GPU is needed.
 
@@ -44,7 +49,7 @@ python scripts/package_source.py
 
 Upload `recursa-source.zip` to your Google Drive, open `notebooks/recursa_colab.ipynb` in Colab, and use **Run all**. The notebook mounts Drive interactively, extracts the allowlisted source archive, and runs the exact repository command with durable Drive output. Defaults expect `MyDrive/Recursa/recursa-source.zip`. There is no manual copying of source cells or recurring environment rebuild; this stdlib workflow has no dependencies to install. Update the source archive when code changes; fingerprints prevent stale checkpoint reuse.
 
-This notebook was generated and structurally checked locally; execution inside an authenticated Colab session has not been tested. It does not select GPUs, guarantee availability, launch an inference server, or automate session creation. See [compute policy](docs/compute.md).
+The packaged notebook passed local extraction, checkpoint reuse, interrupted-checkpoint recovery, and artifact export with a simulated Drive mount. The owner reported a successful Colab CPU smoke run for batch `46597473698c60f5`. Drive-backed resume after runtime deletion is untested on Colab and was waived for this release. [Compute policy](docs/compute.md) · [Colab acceptance steps](docs/reproduction.md#interactive-colab-cpu-acceptance)
 
 ## Verification
 
@@ -93,6 +98,8 @@ To publish an updated Space release after authorization, run `python scripts/ver
 The target research runtime is the official [RLM project](https://github.com/alexzhang13/rlm), based on [Recursive Language Models](https://arxiv.org/abs/2512.24601) by Alex L. Zhang, Tim Kraska and Omar Khattab. The first contained local model case recorded external context inspection and a completed synthesis subcall. The default CPU validator is deterministic orchestration, not RLM inference. The local upstream REPL must not be exposed publicly or considered a sandbox.
 
 The pinned `rlms` package and local `llama.cpp` server are MIT-licensed upstream. The Qwen3-4B GGUF weights are Apache-2.0. The public Studio payload excludes the model weights, inference server binary, and `rlms` package. These upstream licenses apply to their respective components. [RLM license](https://github.com/alexzhang13/rlm/blob/main/LICENSE) · [llama.cpp license](https://github.com/ggml-org/llama.cpp/blob/master/LICENSE) · [Qwen model card](https://huggingface.co/Qwen/Qwen3-4B-GGUF)
+
+Recursa’s original code and documentation are licensed under Apache 2.0. [License](LICENSE) · [Notice](NOTICE) · [Component attribution](docs/attribution.md)
 
 The adapter supports reviewed application verification and focused repair under shared call/token/cost reservations and an elapsed-time deadline; an intercepted-transport regression proves the wiring without genuine inference. The offline fixture command accepts `--max-wall-seconds`, runs in a worker with a parent deadline, and retains measured partial stages on exhaustion. Windows kill-on-close job tests verify descendant cleanup even when a scripted upstream REPL blocks. This controls lifetime and is not filesystem/network sandboxing; the shipped worker has no provider execution mode. The Task Management run used local open weights and has a sanitized model replay. Fair direct and structured baselines, GPU checkpoint continuation, fine-tuning, and statistical evaluation remain open. Current resume is **between trials**, not inside an interrupted model/training process.
 

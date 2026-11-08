@@ -1,7 +1,7 @@
 # Existing-subscription compute policy
 
 1. Local CPU checks and replay development come first. Nothing in the default path imports torch, downloads weights or uses the GPU.
-2. Use remote inference only when a real backend, authorization and provider-level usage limits exist. Current live configs are design examples and are rejected, even with `--authorize-live`.
+2. Use remote inference only when a real backend, authorization and provider-level usage limits exist. The CPU experiment CLI rejects live configurations. Authorized local inference uses the contained runner or matched benchmark CLI.
 3. Prefer Colab Pro for future substantial accelerators. Do not provision paid HF GPUs, new cloud services or hardware automatically.
 4. Use a durable Google Drive directory for Colab batch outputs. Every trial writes its input and `running` checkpoint before work, then atomically replaces checkpoint/result JSON. Source, configuration and specification hashes prevent stale reuse. This provides between-trial recovery; model-state checkpoints are not implemented.
 5. Output ZIP and CSV are regenerated after each completed/failed/timed-out trial. An abrupt VM termination may precede export; preserved trial files can be exported by rerunning. Drive must already be mounted and writable.
@@ -13,6 +13,8 @@
 
 Create the source archive with `python scripts/package_source.py`, store it at `MyDrive/Recursa/recursa-source.zip`, and upload/open the repository notebook. Run all prompts once for Drive access, loads the archive and executes the CPU config. Change the notebook's archive/config/output constants to use a different reviewed input. Every session reconstructs source from the same durable ZIP; no code copying is needed. Python 3.11+ is checked. This stdlib path needs no dependency installation. Future GPU dependencies should use a pinned optional lockfile, not an uncontrolled upgrade of the global notebook environment.
 
-Google documents variable resource availability and VM termination. Notebook loading, mounting and cell execution are the verified supported interaction model; unattended session startup/control has not been verified and is not attempted. A future GPU experiment must explicitly record detected hardware, model revision, data revision, software lock, seeds and checkpoint compatibility, and stop if its required accelerator is absent.
+The packaged notebook code passed a local filesystem simulation with fresh extraction, completed-checkpoint reuse, recovery from a seeded `running` checkpoint, and CSV and ZIP export. The owner reported successful Colab CPU execution for batch `46597473698c60f5`. Drive-backed resume after runtime deletion is untested on Colab and was waived for this release. Google documents variable availability and runtime termination. [CPU acceptance procedure](reproduction.md#interactive-colab-cpu-acceptance) · [Colab FAQ](https://research.google.com/colaboratory/faq.html)
+
+A future GPU experiment must record detected hardware, model and data revisions, software lock, seeds, and checkpoint compatibility. It must stop if the required accelerator is absent.
 
 References verified October 28, 2026: [Colab FAQ](https://research.google.com/colaboratory/faq.html), [HF GPU hardware](https://huggingface.co/docs/hub/spaces-gpus), [RLM runtime source](https://github.com/alexzhang13/rlm). GPU Space upgrades are separately billed; PRO does not imply dedicated GPU hardware. No subscription price or compute quota is hardcoded.

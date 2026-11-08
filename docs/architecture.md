@@ -1,26 +1,15 @@
-# 3. Technical architecture decision
+# Recursa architecture
 
-The official `rlms==0.1.3` distribution was installed into a project-local Python 3.12 environment and inspected directly. Its import namespace is `rlm`. Exact installed dependencies are in `requirements-live.lock`. The default replay/CPU path remains dependency-free; live inference is optional.
+![Reviewed specifications enter the contained RLM. The host broker mediates model calls. The host checks returned source before publishing reviewed traces to the replay Studio.](recursa-architecture.svg)
 
-## Module boundaries
+Recursa uses the official `rlms==0.1.3` runtime (Python import `rlm`). Python 3.11+ and the standard library are sufficient for CPU smoke runs and the replay server. The research lane adds the pinned SDK, a local Linux Docker engine, Node.js and Chromium.
 
-| Module | Responsibility | Current implementation |
-| --- | --- | --- |
-| Context environment | Validate and index requirements; track bounded reads | `engine.py`, `context.py` |
-| Recursive controller | Official RLM completion with compact root instructions | `live.py`, local trusted-execution mode only |
-| Task graph | Requirement ordering and model-selected synthesis dependencies | `engine.validate_spec`, `taskgraph.py`; offline refinement/state tests pass |
-| Artifact registry | Validate paths, requirement references and source hashes | `artifacts.py`; functional build verification pending |
-| Verification engine | Source checks, then build/test/repair | `verification.py` parses JS/JSON; build/functional tests/repair pending |
-| Experiment runner | Checkpoint/resume and budgets | `experiments.py`; CPU path verified |
-| Trace API | Read-only evidence delivery | `server.py`; schema hardening pending section 9 |
-| Studio | Replay inspection and source viewing | Existing standalone HTML/JS prototype |
+| Boundary | Implementation and evidence |
+| --- | --- |
+| Reviewed specification | [engine](../recursa/engine.py) validates stable requirement IDs and dependencies. [context](../recursa/context.py) provides indexed inspection. [taskgraph](../recursa/taskgraph.py) records dependency-aware synthesis state. |
+| Model-controlled execution | [container_rlm](../recursa/container_rlm.py) invokes the official completion loop with the specification as external context. [sandbox](../recursa/sandbox.py) verifies the pinned image and network-disabled, non-root container policy before dispatch. |
+| Host request broker | [Host broker](host-broker.md) describes bounded private pipes and host-owned usage reservations. Provider configuration stays on the host. The authorized Qwen run recorded requirement inspection and a completed subcall. |
+| Artifact and verification pipeline | [artifacts](../recursa/artifacts.py) validates paths, hashes and requirement provenance. [pipeline](../recursa/pipeline.py) runs source checks, builds and declared browser acceptance. [repair](../recursa/repair.py) records bounded edits and rechecks. |
+| Recorded evidence | [experiments](../recursa/experiments.py) saves CPU checkpoints and exports. [server](../recursa/server.py) serves allowlisted recordings and inspected source to [Studio](../apps/studio/index.html). The public host has replay routes only. |
 
-The initial stdlib API and frontend avoid build/install cost while proving the core. React/TypeScript/FastAPI migration is deferred until the model-backed vertical slice works, per section 14's P0 gate. Provider details stay out of Studio. No empty packages are created merely to match the suggested layout.
-
-## Verified runtime interfaces
-
-`RLM.completion(prompt, root_prompt=None)` loads `prompt` as external context. The compact `root_prompt` explains the task. `other_backends` and `other_backend_kwargs` configure a separate sub-model. `custom_tools` inject indexed requirement readers. `RLMLogger()` captures trajectories in memory; raw trajectories remain private. `max_depth`, `max_iterations`, `max_timeout`, `max_tokens` and `max_concurrent_subcalls` exist in the installed version. The official OpenAI-compatible client accepts a base URL and sampling args.
-
-The runtime's budget checks occur after iterations and depend on provider cost support. They are insufficient alone for a strict monetary cap. Recursa must reserve configured upper estimates before each provider request, count failed attempts and disable implicit retries. Cost estimates depend on owner-supplied rates; they are not provider billing guarantees.
-
-The direct local REPL executes model code with host-process privileges and requires explicitly trusted experiments. Five narrow container probes passed. The adapter runs inside the SDK container for fixed scripted fixtures, with stale-image rejection and parent-side artifact validation. A host-side offline broker now owns request validation and reservations over bounded pipes; no live provider backend is implemented. Genuinely authorized contained inference remains an acceptance gate. Public hosting continues to serve replays only.
+The official runtime implements the completion loop and sub-model calls. Recursa adds specification inspection, resource limits, artifact handling, verification and replay. The host reserves usage before provider dispatch because provider reports and SDK accounting arrive after requests. The sandbox shares a kernel with its engine, and Chromium executes reviewed application candidates inside a separate browser boundary. See the [containment policy](container-sandbox.md) and [browser boundaries](application-verification.md).

@@ -1,5 +1,7 @@
 FROM python:3.11-slim
 WORKDIR /app
+COPY LICENSE NOTICE /app/
+COPY docs/attribution.md /app/docs/attribution.md
 COPY recursa /app/recursa
 COPY apps/studio /app/apps/studio
 COPY traces/public /app/runs

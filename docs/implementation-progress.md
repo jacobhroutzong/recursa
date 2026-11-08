@@ -15,15 +15,15 @@ Process correction: earlier work implemented portions of sections 6, 9 and 21 be
 | 9. Tracing | Versioned benchmark traces published | Execution Explorer lists 45 benchmark traces with stable IDs, input and source hashes, recorded call and verification events, and repair outcomes where applicable |
 | 10. Security/reliability | Sandbox and replay controls verified | Studio records the current pinned container probes, archive filtering, broker and worker limits, read-only routes, and browser import isolation |
 | 11. Example applications | Three verified examples | Aviation joins Task Management and Operations Analytics. Its synthetic exercise passed flight and stand checks, scoped detail, acknowledgement persistence and reset, and keyboard summary preparation |
-| 12. Repository structure | Clean-checkout and CI gates verified | The clean-checkout milestone passed the hosted Windows and Linux CPU replay jobs and the isolated Linux Chromium and Docker job. Licensing review remains open |
+| 12. Repository structure | Clean-checkout and CI gates verified | The clean-checkout milestone passed the hosted Windows and Linux CPU replay jobs and the isolated Linux Chromium and Docker job. Apache 2.0 applies to Recursa’s original code and documentation |
 | 13. Engineering strategy | Partial | The first contained model-backed vertical slice is recorded |
 | 14. Priority gates | First model-backed slice and expanded trials measured | Indexed inspection, a completed subcall, a repaired verified build, and two matched first-pass seed blocks across three cases |
-| 15. Deployment/portfolio | Development preview published and verified | GitHub source, CPU Basic Space, production project page, embedded Studio, full-screen fallback and homepage/Projects links verified; full research demonstration remains unfinished |
-| 16. Documentation | Partial | Honest README and setup; final complete guide pending |
-| 17. Definition of done | Release and research gates open | Three verified showcases and a working public Studio. The completion checkpoint tracks clean-checkout verification, broader evaluation, and final handoff |
-| 18. Final handoff | Pending | Only interim evidence may be reported |
+| 15. Deployment/portfolio | Updated case study verified locally | The updated Astro entry, portfolio suite, live embed, and full-screen fallback passed desktop and mobile checks. The owner cleared publication following the Colab CPU smoke result and waived the fresh-runtime resume check |
+| 16. Documentation | Handoff and setup guides prepared | Architecture, evidence links, benchmark instructions, environment configuration, troubleshooting, and component attribution are documented |
+| 17. Definition of done | Feature baseline accepted | Three verified showcases and a working public Studio. The completion checkpoint records release verification and limitations |
+| 18. Final handoff | Prepared locally | The handoff records engineering, demonstration, research, portfolio, and release evidence. The owner reported a complete Colab CPU smoke trial and waived fresh-runtime resume verification |
 | 19. Operating rules | Applied throughout | No fabricated evidence or paid provisioning |
 | 20. Implementation sequence | Repeated local comparison recorded | The repaired app and workflow replay remain separate from the original pilot and 12 fresh first-pass trials |
-| 21. Compute optimization | Partial prior work | CPU/Drive batch tooling; actual Colab and model/GPU resume unverified |
+| 21. Compute optimization | Local notebook reproduction verified | Local extraction, fresh-session checkpoint reuse, interrupted checkpoint recovery, and CSV/ZIP export passed with a simulated Drive mount. The owner reported Colab CPU batch `46597473698c60f5` complete. Drive-backed resume after runtime deletion is untested on Colab |
 
 The owner authorized a real Task Management run after offline validation. The contained runtime reported indexed inspection and a subcall. The initial source built and failed functional checks. After targeted repairs and host composition of the final filter, the app passed four declared browser scenarios. [Run evidence](evidence/task-management-local-model.md)

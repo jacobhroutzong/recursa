@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="400" viewBox="0 0 900 400" role="img" aria-labelledby="title desc">
+  <title id="title">Recursa execution and replay architecture</title>
+  <desc id="desc">Reviewed specifications enter a contained RLM. Model calls are mediated by a host broker. Returned files pass through host verification, then reviewed evidence is published to the read-only Studio.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0l10 5-10 5z" fill="#83d8e1"/></marker>
+  </defs>
+  <rect width="900" height="400" rx="20" fill="#101923"/>
+  <g fill="#e9f3f7" font-family="system-ui,sans-serif">
+    <text x="38" y="54" font-size="32" font-weight="700">Recursa execution and replay</text>
+    <text x="38" y="85" font-size="19" fill="#b4c8d7">Local synthesis and verification</text>
+    <g fill="#1b2a39" stroke="#4d718a" stroke-width="2">
+      <rect x="38" y="111" width="237" height="97" rx="12"/>
+      <rect x="332" y="111" width="237" height="97" rx="12"/>
+      <rect x="626" y="111" width="237" height="97" rx="12"/>
+      <rect x="332" y="274" width="237" height="87" rx="12"/>
+      <rect x="626" y="274" width="237" height="87" rx="12" stroke="#83d8e1"/>
+    </g>
+    <g stroke="#83d8e1" stroke-width="2" fill="none" marker-end="url(#arrow)">
+      <path d="M286 160h34"/><path d="M580 160h34"/>
+      <path d="M744 219v43"/>
+    </g>
+    <path d="M451 220v42" stroke="#83d8e1" stroke-width="2" fill="none" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <g font-size="23" font-weight="650">
+      <text x="56" y="148">Reviewed spec</text><text x="350" y="148">Contained RLM</text><text x="644" y="148">Host verification</text>
+      <text x="350" y="309">Host broker</text><text x="644" y="309">Read-only Studio</text>
+    </g>
+    <g font-size="17" fill="#bdd2df">
+      <text x="56" y="179">Indexed requirements</text><text x="350" y="179">Network-disabled Python</text><text x="644" y="179">Source, build, Chromium</text>
+      <text x="350" y="337">Bounded model calls</text><text x="644" y="337">Reviewed traces and replays</text>
+    </g>
+  </g>
+</svg>

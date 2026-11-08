@@ -1,0 +1,7 @@
+Recursa — Recursive Application Synthesis
+Copyright 2026 Jacob Routzong
+
+Recursa applies the Recursive Language Models method by Alex L. Zhang,
+Tim Kraska, and Omar Khattab. The optional upstream rlms runtime and other
+third-party components retain their respective licenses and notices.
+See docs/attribution.md for component details.
