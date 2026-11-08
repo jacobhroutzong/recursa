@@ -18,7 +18,7 @@ Recursa is a research workbench for turning reviewed specifications into web app
 
 The [repository](https://github.com/jacobhroutzong/recursa) contains the implementation, [reviewed specifications](../examples/specs/), [public trace archive](../apps/studio/benchmark-traces.json), [screenshot](screenshots/studio.png), and [Colab notebook](../notebooks/recursa_colab.ipynb). Local run folders retain raw model traffic and generated candidates for private review. The public deployment contains only allowlisted recordings, source from reviewed showcases, and replay assets.
 
-The [live Space](https://huggingface.co/spaces/jacobroutzong/recursa) and [portfolio](https://jacobroutzong.dev/projects/recursa/) are the production targets for this release. The latest release status is tracked in the [ordered record](implementation-progress.md) and [roadmap](completion-checkpoint.md).
+The Space and portfolio serve the verified milestone release. The completion checkpoint records the deployed revisions, final checks, benchmark results, and Colab limitation. [Live Space](https://huggingface.co/spaces/jacobroutzong/recursa) · [Production portfolio](https://jacobroutzong.dev/projects/recursa/) · [Completion checkpoint](completion-checkpoint.md#published-milestone--complete)
 
 ## Engineering opportunities
 
