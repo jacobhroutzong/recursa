@@ -8,9 +8,12 @@ sdk: docker
 app_port: 7860
 ---
 
-# Recursa — Recursive Application Synthesis
+# Recursa Studio
 
-A CPU-first research workbench for inspecting application specifications, execution traces, and artifacts. Studio shows three model-assisted builds with verified browser workflows, alongside separate matched experiments with direct, structured, and contained RLM methods.
+Recursa Studio brings two research areas together through shared navigation.
+
+- **Application Synthesis** uses Recursive Language Models to inspect external specifications and issue focused subcalls. Recursa's public workbench replays specification inspection, synthesis traces, artifacts, build and browser verification, and matched experiments with direct, structured, and contained RLM methods. The three verified showcases involved repair or host assistance. Unassisted first-pass trials have separate records, and missing outcomes and costs remain unmeasured. Scripted fixtures and deterministic CPU checks validate the workflow. [Application Synthesis Studio](https://jacobroutzong.dev/projects/recursa/studio/)
+- **Agent Optimization** follows Harness² Lab's Propose → Probe → Compose workflow, including selection, reusable lessons, edit lineage, and adaptive compute. Its default interactive backend is a scripted, stochastic simulator. Its toy-world scores do not establish model-backed improvement. Harness² Lab independently implements the method by Xu et al. No matched experiment measures the effect of Harness² on Recursa synthesis. [Harness² Lab](https://jacobroutzong.dev/projects/harness2-lab/) · [Harness² source and attribution](https://github.com/jacobhroutzong/harness2-lab) · [Harness² paper](https://arxiv.org/abs/2610.14224)
 
 Implementation follows the [ordered 1–21 progress record](docs/implementation-progress.md). An authorized contained Qwen run recorded context inspection and a synthesis subcall. The [completion checkpoint](docs/completion-checkpoint.md) tracks release verification, broader evaluation, and the final handoff.
 
@@ -19,6 +22,8 @@ Implementation follows the [ordered 1–21 progress record](docs/implementation-
 Recursa runs the official RLM in a pinned Docker container, mediates model calls through a host broker, and checks returned web source with Node.js and Playwright. The public replay uses Python and a standalone browser UI. [Architecture](docs/architecture.md) · [RLM research](https://arxiv.org/abs/2512.24601)
 
 Published development preview: [Recursa Studio on Hugging Face](https://huggingface.co/spaces/jacobroutzong/recursa) · [Portfolio project](https://jacobroutzong.dev/projects/recursa/) · [Source](https://github.com/jacobhroutzong/recursa). Production page, embed, fallback and internal portfolio links were verified in the browser. The public demo is replay-only. Build progress refreshes every 15 seconds and changes after a release is published, not with each private engineering action.
+
+The [portfolio handoff](docs/portfolio.md#recursa-studio-portfolio-handoff) covers navigation, the static export, and the checks for a separate portfolio update.
 
 ## Run locally
 
@@ -60,6 +65,8 @@ python -S scripts/verify_checkout.py
 ```
 
 This exercises CPU checkpoint creation, export, resume, and read-only HTTP replay. [GitHub Actions Verification](https://github.com/jacobhroutzong/recursa/actions/workflows/verification.yml) runs the portable gate on Windows and Linux and separately exercises locked tooling, Chromium, and Linux container containment with offline fixtures.
+
+With the pinned browser tooling installed and Studio running locally, `node scripts/verify_replay_browser.mjs http://127.0.0.1:7860/` checks both research areas, keyboard navigation, the existing views, and local import isolation in headless Chromium. Pass a locally served portfolio export URL as a second argument to check navigation and replay data on the static path too.
 
 ```powershell
 python -m unittest discover -s tests -v

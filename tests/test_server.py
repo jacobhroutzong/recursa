@@ -32,7 +32,13 @@ class ServerTests(unittest.TestCase):
                     archive = json.loads(response.read())
                     self.assertEqual([r["id"] for r in archive], [run["id"]])
                 with urlopen(base + "/") as response:
-                    self.assertIn(b"Recursa", response.read())
+                    page = response.read().decode("utf-8")
+                    self.assertIn('<h1 id="hero-title">Recursa <span>Studio</span></h1>', page)
+                    self.assertIn("<h2>Application Synthesis</h2>", page)
+                    self.assertIn(
+                        '<a href="https://jacobroutzong.dev/projects/harness2-lab/">Agent Optimization</a>',
+                        page,
+                    )
                     self.assertIn("frame-src 'none'", response.headers["Content-Security-Policy"])
                     self.assertIn("script-src 'sha256-", response.headers["Content-Security-Policy"])
                     self.assertIn("form-action 'none'", response.headers["Content-Security-Policy"])
